@@ -1,5 +1,6 @@
 
 import json
+import copy
 
 NUMBERS = list(range(1, 13))
 LETTERS = list(reversed(["A", "B", "C", "D", "E", "F", "G", "H"]))
@@ -35,8 +36,9 @@ def getpos_x_y(row: int, column: int):
 
     x_spacing = 9
     y_spacing = 9
-
-    y_end = (y_offset + 7 * y_spacing)
+    y_max = 85.47
+    
+    y_end = y_max - y_offset
 
     x_pos = x_offset + column * x_spacing
     y_pos = y_end - row * y_spacing
@@ -62,7 +64,7 @@ def getwells():
     getpos_x_y_from_name("H12")
     return []
 
-def get_updated_labware(labware, x_offs, y_offs):
+def get_updated_labware(labware, x_offs, y_offs, data_to_update: dict = None):
     global x_offset
     global y_offset
 
@@ -88,6 +90,12 @@ def get_updated_labware(labware, x_offs, y_offs):
             newdict["ordering"] = WELLS_ORDERING
         else:
             newdict[field] = labware[field]
+        
+        # Updating data
+        if data_to_update and field in data_to_update:
+            for d in data_to_update[field]:
+                print("Copying {} {} value {}".format(field, d, data_to_update[field][d]))
+                newdict[field][d] = data_to_update[field][d]
     return newdict
 
 
@@ -97,12 +105,29 @@ with open(filename, "r") as f:
     x_offset = 11.24
     y_offset = 14.38
 
+    data = {"brand": { "brand": "Custom", "brandId": "Vertical_PCR_Plate_100ul"},
+            "metadata": {"displayName": "Vertical 96 Well Plate 100ul aligned {} {}"},
+            "parameters": {"loadName":"customvertical_96_wellplate_100ul_{}{}"}
+            }
+
+    def getUpdatedData(top_bottom: str, left_right: str):
+        newdata = copy.deepcopy(data)
+        for d in newdata:
+            for f in newdata[d]:
+                newdata[d][f] = newdata[d][f].format(top_bottom, left_right)
+        return newdata
 
 
-    with open("customvertical_96_top_aligned.json", "w") as fp:
-        json.dump(get_updated_labware(labware, 11.24, 14.38), fp)
+    with open("customvertical_96_top_left_aligned.json", "w") as fp:
+        json.dump(get_updated_labware(labware, 11.24, 12, getUpdatedData("top", "left") ), fp)
 
-    with open("customvertical_96_bottom_aligned.json", "w") as fp:
-        json.dump(get_updated_labware(labware, 11.24, 50), fp)
+    with open("customvertical_96_bottom_left_aligned.json", "w") as fp:
+        json.dump(get_updated_labware(labware, 11.24, -15, getUpdatedData("bottom", "left")), fp)
+
+    with open("customvertical_96_top_right_aligned.json", "w") as fp:
+        json.dump(get_updated_labware(labware, 54, 12, getUpdatedData("top", "right")), fp)
+
+    with open("customvertical_96_bottom_right_aligned.json", "w") as fp:
+        json.dump(get_updated_labware(labware, 54, -15, getUpdatedData("bottom", "right")), fp)
 
 
