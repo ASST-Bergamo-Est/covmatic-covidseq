@@ -1,9 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-import pytest
-
-from ..covmatic_covidseq.robot import Robot, RobotException
+from ..covmatic_covidseq.robot.robot import Robot, RobotException
 
 OT_NAME = "OT"
 WRONG_NAME = "OT 1"
@@ -41,8 +39,8 @@ CHECK_RETURN_VALUE_FINISHED = {
 
 class TestRobot(unittest.TestCase):
     def setup_mocks(self):
-        self._api_patcher = patch('ot_protocol.covmatic_covidseq.robot.RobotManagerApi')
-        self._sleep_patcher = patch('ot_protocol.covmatic_covidseq.robot.time.sleep')
+        self._api_patcher = patch('ot_protocol.covmatic_covidseq.robot.robot.RobotManagerApi')
+        self._sleep_patcher = patch('ot_protocol.covmatic_covidseq.robot.robot.time.sleep')
         self._mock_api = self._api_patcher.start()
         self._mock_sleep = self._sleep_patcher.start()
 
