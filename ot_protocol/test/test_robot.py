@@ -131,3 +131,46 @@ class TestDropFunction(TestRobot):
     def test_request_argument(self):
         self._mock_api().action_request.assert_called_once_with(expected_drop_action)
 
+
+class TestDropFunctionWaitForComplete(TestRobot):
+    def setUp(self):
+        super().setUp()
+        self._mock_api().action_request.side_effect = [FAKE_ID_DROP]
+
+    def test_request_calls_check(self):
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+        self._mock_api().check_action.assert_called()
+
+    def test_request_calls_check_with_action_id(self):
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+        self._mock_api().check_action.assert_called_with(FAKE_ID_DROP)
+
+    def test_request_read_check_return_value(self):
+        self._mock_api().check_action.side_effect = [CHECK_RETURN_VALUE_FINISHED]
+
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+
+        self._mock_api().check_action.assert_called_once_with(FAKE_ID_DROP)
+
+    def test_request_keep_calling_while_pending(self):
+        self._mock_api().check_action.side_effect = [CHECK_RETURN_VALUE_PENDING, CHECK_RETURN_VALUE_FINISHED]
+
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+
+        self._mock_api().check_action.assert_called_with(FAKE_ID_DROP)
+        self.assertEqual(self._mock_api().check_action.call_count, 2)
+
+    def test_request_uses_timed_request(self):
+        self._mock_api().check_action.side_effect = [CHECK_RETURN_VALUE_PENDING, CHECK_RETURN_VALUE_FINISHED]
+
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+
+        self._mock_sleep.assert_called()
+
+    def test_request_keep_calling_while_pending_long(self):
+        self._mock_api().check_action.side_effect = [CHECK_RETURN_VALUE_PENDING for _ in range(99)] + [CHECK_RETURN_VALUE_FINISHED]
+
+        self._r.drop_plate(SLOT_NAME, PLATE_NAME)
+
+        self._mock_api().check_action.assert_called_with(FAKE_ID_DROP)
+        self.assertEqual(self._mock_api().check_action.call_count, 100)
