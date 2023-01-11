@@ -2,7 +2,7 @@
 import logging
 import time
 
-from .robot_api import RobotManagerApi
+from .robot_api import RobotManagerHTTP, RobotManagerSimulator
 
 
 class RobotException(Exception):
@@ -10,12 +10,17 @@ class RobotException(Exception):
 
 
 class Robot:
-    def __init__(self, robot_name: str):
+    def __init__(self,
+                 robot_name: str,
+                 simulate: bool = False,
+                 check_wait_time: float = 0.5):
         if not robot_name.isalnum():
             raise RobotException("Robot name not aphanumeric: {}".format(robot_name))
         self._robot_name = robot_name
-        self._api = RobotManagerApi()
         self._logger = logging.getLogger(__name__)
+        self._logger.info("Simulate is {}".format(simulate))
+        self._check_wait_time = 0 if simulate else check_wait_time
+        self._api = RobotManagerSimulator() if simulate else RobotManagerHTTP()
 
     def build_request(self, action: str, slot: str, plate_name: str, ):
         return {
@@ -42,4 +47,5 @@ class Robot:
             if res["status"] != "pending":
                 break
             else:
-                time.sleep(0.5)
+                if self._check_wait_time:
+                    time.sleep(self._check_wait_time)
