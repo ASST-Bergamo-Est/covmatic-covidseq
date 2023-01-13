@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "covmatic-covidseq"
-version = "0.0.1"
 authors = [
     { name="Agostino Facotti", email="agostino.facotti@asst-bergamoest.it"},
 ]
@@ -16,6 +15,37 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dynamic = ["version"]
 
 [project-urls]
 "Homepage" = "https://github.com/ASST-Bergamo-Est/CovidSeq"
+
+[tool.hatch.version]
+path = "covmatic_covidseq/__init__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=covmatic_covidseq {args}"
+no-cov = "cov --no-cov {args}"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38", "39", "310", "311"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "hatch_demo/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
