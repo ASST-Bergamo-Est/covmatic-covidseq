@@ -3,36 +3,31 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "covmatic-robotcontrol"
-description = 'Covmatic package to use a RobotManager instanceù'
+name = "covmatic-covidseq"
+description = 'Covmatic package that implements the Illumina CovidSeq NGS library preparation'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "U.N. Owen", email = "void@some.where" },
+    { name="Agostino Facotti", email="agostino.facotti@asst-bergamoest.it"},
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
 ]
-dependencies = []
 dynamic = ["version"]
 
+dependencies = ["covmatic-robotstation"]
+
 [project.urls]
-Documentation = "https://github.com/unknown/covmatic-robotcontrol#readme"
-Issues = "https://github.com/unknown/covmatic-robotcontrol/issues"
-Source = "https://github.com/unknown/covmatic-robotcontrol"
+Documentation = "https://github.com/ASST-Bergamo-Est/covmatic-covidseq"
+Issues = "https://github.com/ASST-Bergamo-Est/covmatic-covidseq/issues"
+Source = "https://github.com/ASST-Bergamo-Est/covmatic-covidseq"
 
 [tool.hatch.version]
-path = "covmatic_robotcontrol/__about__.py"
+path = "src/covmatic_covidseq/__init__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -40,17 +35,23 @@ dependencies = [
   "pytest-cov",
 ]
 [tool.hatch.envs.default.scripts]
-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=covmatic_robotcontrol --cov=tests {args}"
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src.covmatic_covidseq --cov=tests {args}"
 no-cov = "cov --no-cov {args}"
 
 [[tool.hatch.envs.test.matrix]]
-python = ["37", "38", "39", "310", "311"]
+python = ["37", "38"]
+
+[tool.hatch.envs.simulate.scripts]
+run = "opentrons_simulate {matrix:protocols} {args}"
+
+[[tool.hatch.envs.simulate.matrix]]
+protocols = ["a"]
 
 [tool.coverage.run]
 branch = true
 parallel = true
 omit = [
-  "covmatic_robotcontrol/__about__.py",
+  "src.covmatic_covidseq/__init__.py",
 ]
 
 [tool.coverage.report]
@@ -58,4 +59,10 @@ exclude_lines = [
   "no cov",
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
+]
+
+[tool.hatch.build]
+exclude = [
+  "/.github",
+  "/.idea",
 ]
