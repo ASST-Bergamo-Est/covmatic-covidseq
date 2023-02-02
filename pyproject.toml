@@ -42,10 +42,11 @@ no-cov = "cov --no-cov {args}"
 python = ["37", "38"]
 
 [tool.hatch.envs.simulate.scripts]
+install = "pip install ."
 run = "opentrons_simulate {matrix:protocols} {args}"
 
 [[tool.hatch.envs.simulate.matrix]]
-protocols = ["protocols/station_execution.py"]
+protocols = ["protocols/station_reagent.py"]
 
 [tool.coverage.run]
 branch = true

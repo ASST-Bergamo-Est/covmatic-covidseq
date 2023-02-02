@@ -15,7 +15,7 @@ class ReagentStation(CovidseqBaseStation):
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
         self._tipracks300 = [
-            self._ctx.load_labware('opentrons_96_filtertiprack_300ul', slot, '300ul filter tiprack')
+            self._ctx.load_labware('opentrons_96_filtertiprack_200ul', slot, '200ul filter tiprack')
             for slot in self._tipracks300_slots]
 
     @labware_loader(0, "_tipracks1000")
@@ -39,9 +39,7 @@ class ReagentStation(CovidseqBaseStation):
         }
 
     def body(self):
-        # self.robot_pick_plate("SLOT1", "REAGENT_PLATE")
-        print("HELLO!")
-        pass
+        self.robot_pick_plate("TC", "REAGENT_PLATE")
 
 
 if __name__ == "__main__":

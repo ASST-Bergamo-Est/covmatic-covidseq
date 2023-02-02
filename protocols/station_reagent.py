@@ -1,9 +1,9 @@
-# Placeholder file to be filled
+from covmatic_covidseq.stations.reagent import ReagentStation
 
 metadata = {'apiLevel': '2.7'}
-
+station = ReagentStation()
 
 def run(ctx):
-    pass
+    station.run(ctx)
 
 
