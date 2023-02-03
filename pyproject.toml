@@ -19,7 +19,9 @@ classifiers = [
 ]
 dynamic = ["version"]
 
-dependencies = ["covmatic-robotstation"]
+dependencies = [
+  "covmatic-robotstation"
+]
 
 [project.urls]
 Documentation = "https://github.com/ASST-Bergamo-Est/covmatic-covidseq"
