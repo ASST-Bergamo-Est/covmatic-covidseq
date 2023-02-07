@@ -2,9 +2,6 @@ from covmatic_robotstation.robot_station import RobotStationABC, instrument_load
 from abc import ABC
 
 
-ROBOTMANAGER_HOST = ""
-
-
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
         Covidseq is executed by two robot:
@@ -15,7 +12,10 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
         Note: this is an abstract class because each OT will have its own implementation.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(robot_manager_host=ROBOTMANAGER_HOST,
-                         robot_manager_port=ROBOTMANAGER_PORT,
+    def __init__(self,
+                 robot_manager_host: str,
+                 robot_manager_port: int,
+                 *args, **kwargs):
+        super().__init__(robot_manager_host=robot_manager_host,
+                         robot_manager_port=robot_manager_port,
                          *args, **kwargs)
