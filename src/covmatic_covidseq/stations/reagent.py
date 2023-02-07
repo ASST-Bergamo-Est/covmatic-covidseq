@@ -4,7 +4,7 @@ from ..station import CovidseqBaseStation, instrument_loader, labware_loader
 
 class ReagentStation(CovidseqBaseStation):
     def __init__(self,
-                 ot_name = "OT2",
+                 ot_name = "OT1",
                  tipracks300_slots: Tuple[str, ...] = ("9",),
                  tipracks1000_slots: Tuple[str, ...] = ("8",),
                  *args, **kwargs):
@@ -39,7 +39,8 @@ class ReagentStation(CovidseqBaseStation):
         }
 
     def body(self):
-        self.robot_pick_plate("TC", "REAGENT_PLATE")
+        self.robot_pick_plate("SLOT1", "REAGENT_PLATE")
+        self.robot_drop_plate("SLOT1", "REAGENT_PLATE")
 
 
 if __name__ == "__main__":

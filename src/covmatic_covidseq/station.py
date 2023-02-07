@@ -16,4 +16,6 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         Note: this is an abstract class because each OT will have its own implementation.
     """
     def __init__(self, *args, **kwargs):
-        super().__init__(robot_manager_host=ROBOTMANAGER_HOST, *args, **kwargs)
+        super().__init__(robot_manager_host=ROBOTMANAGER_HOST,
+                         robot_manager_port=ROBOTMANAGER_PORT,
+                         *args, **kwargs)
