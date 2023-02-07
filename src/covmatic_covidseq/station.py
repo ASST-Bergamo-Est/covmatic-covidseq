@@ -19,3 +19,13 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
                          *args, **kwargs)
+
+        self._recipes = []
+
+    def add_recipe(self, name, steps):
+        recipe = {
+            "name": name,
+            "steps": steps,
+            "vol_per_sample": sum(map(lambda x: x["vol"], steps))
+        }
+        self._recipes.append(recipe)
