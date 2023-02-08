@@ -1,7 +1,7 @@
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC
 
-from src.covmatic_covidseq.recipe import Recipe
+from .recipe import Recipe
 
 
 class CovidseqBaseStation(RobotStationABC, ABC):
