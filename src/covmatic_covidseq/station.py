@@ -1,6 +1,8 @@
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC
 
+from src.covmatic_covidseq.recipe import Recipe
+
 
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
@@ -22,10 +24,19 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
         self._recipes = []
 
-    def add_recipe(self, name, steps):
+    def add_recipe(self, name, recipe: Recipe):
         recipe = {
             "name": name,
-            "steps": steps,
-            "vol_per_sample": sum(map(lambda x: x["vol"], steps))
+            "recipe": recipe
         }
         self._recipes.append(recipe)
+
+    def get_recipe(self, name):
+        recipes_name = [r["name"] for r in self._recipes]
+        try:
+            index = recipes_name.index(name)
+            return self._recipes[index]["recipe"]
+        except ValueError as e:
+            self.logger.error("GetRecipe Value error for name {}: {}".format(name, e))
+            return None
+
