@@ -38,9 +38,12 @@ class ReagentStation(CovidseqBaseStation):
             '_tipracks1000': '_p1000'
         }
 
+    def prepare_EPH3(self):
+        recipe = self.get_recipe("EPH3")
+        print("GotRecipe {}".format(recipe))
+
     def body(self):
-        self.robot_pick_plate("SLOT1", "REAGENT_PLATE")
-        self.robot_drop_plate("SLOT1", "REAGENT_PLATE")
+        self.prepare_EPH3()
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from src.covmatic_covidseq.recipe import Recipe
 from src.covmatic_covidseq.station import CovidseqBaseStation
 
 RECIPE_1_NAME = "TEST RECIPE 1"
-RECIPE_1 = Recipe()
+RECIPE_1 = Recipe(RECIPE_1_NAME)
 
 
 class CovidseqTestStation(CovidseqBaseStation):
@@ -19,6 +19,7 @@ class BaseSetup(unittest.TestCase):
         self._s = CovidseqTestStation(robot_manager_host="FAKEHOST",
                                       robot_manager_port=1234,
                                       ot_name="TEST",
+                                      recipe_file=None,
                                       logger=logging.getLogger())
 
 
@@ -27,14 +28,24 @@ class TestRecipes(BaseSetup):
         self.assertEqual(0, len(self._s._recipes))
 
     def test_add_recipe_1_is_added(self):
-        self._s.add_recipe(RECIPE_1_NAME, RECIPE_1)
+        self._s.add_recipe(RECIPE_1)
         self.assertEqual(1, len(self._s._recipes))
 
     def test_get_recipe_1(self):
-        self._s.add_recipe(RECIPE_1_NAME, RECIPE_1)
+        self._s.add_recipe(RECIPE_1)
         self.assertTrue(self._s.get_recipe(RECIPE_1_NAME))
 
     def test_get_recipe_1_value(self):
-        self._s.add_recipe(RECIPE_1_NAME, RECIPE_1)
+        self._s.add_recipe(RECIPE_1)
         self.assertEqual(RECIPE_1, self._s.get_recipe(RECIPE_1_NAME))
 
+
+class TestWithLoadRecipes(unittest.TestCase):
+    def setUp(self):
+        self._s = CovidseqTestStation(robot_manager_host="FAKEHOST",
+                                      robot_manager_port=1234,
+                                      ot_name="TEST",
+                                      logger=logging.getLogger())
+
+    def test_recipes_load(self):
+        self.assertGreater(len(self._s._recipes), 0)

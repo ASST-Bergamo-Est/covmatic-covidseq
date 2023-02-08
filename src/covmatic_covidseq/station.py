@@ -1,3 +1,6 @@
+import json
+import os.path
+
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC
 
@@ -17,26 +20,36 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def __init__(self,
                  robot_manager_host: str,
                  robot_manager_port: int,
+                 recipe_file: str or None = "recipes.json",
                  *args, **kwargs):
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
                          *args, **kwargs)
-
         self._recipes = []
+        if recipe_file is not None:
+            self.load_recipes_from_json(recipe_file)
 
-    def add_recipe(self, name, recipe: Recipe):
-        recipe = {
-            "name": name,
-            "recipe": recipe
-        }
+    def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
 
     def get_recipe(self, name):
-        recipes_name = [r["name"] for r in self._recipes]
+        recipes_name = [r.name for r in self._recipes]
         try:
             index = recipes_name.index(name)
-            return self._recipes[index]["recipe"]
+            return self._recipes[index]
         except ValueError as e:
             self.logger.error("GetRecipe Value error for name {}: {}".format(name, e))
             return None
 
+    def load_recipes_from_json(self, file):
+        if not os.path.isabs(file):
+            current_folder = os.path.split(__file__)[0]
+            abspath = os.path.join(current_folder, file)
+        else:
+            abspath = file
+        self.logger.info("Loading recipes from {}".format(abspath))
+
+        with open(abspath, "r") as f:
+            data = json.load(f)
+            for d in data:
+                self.add_recipe(Recipe(**d))

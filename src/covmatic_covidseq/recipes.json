@@ -1,0 +1,31 @@
+[
+  {
+    "name": "EPH3",
+    "description": "Elution Prime Fragment 3HC Mix",
+    "steps": [
+      {
+        "name": "Distribute EPH3",
+        "reagent": "EPH3",
+        "vol": 10
+      }
+    ],
+    "volume_to_distribute": 8.5
+  },
+  {
+    "name": "FSM Mix",
+    "description": "First Strand cDNA Master Mix",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "FSM",
+        "vol": 9
+      },
+      {
+        "name": "",
+        "reagent": "RTV",
+        "vol": 1
+      }
+    ],
+    "volume_to_distribute": 8
+  }
+]

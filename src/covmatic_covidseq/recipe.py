@@ -4,9 +4,25 @@ class RecipeException(Exception):
 
 
 class Recipe:
-    def __init__(self, steps=None):
-        self._steps = steps or []
+    def __init__(self,
+                 name: str = "",
+                 description: str = "",
+                 steps=None,
+                 volume_to_distribute=None):
+        self._name = name
+        self._description = description
         self._vol = 0
+        self._steps = steps or []
+        if volume_to_distribute is not None:
+            self.volume_to_distribute = volume_to_distribute
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def description(self):
+        return self._description
 
     def add_steps(self, steps):
         self._steps += steps

@@ -44,6 +44,7 @@ class RecipeTest(RecipeBaseClass):
         with self.assertRaises(RecipeException):
             self._r.volume_to_distribute = VOLUME_TO_DISTRIBUTE_1
 
+
 class RecipeSteps1(RecipeBaseClass):
     def setUp(self) -> None:
         super().setUp()
