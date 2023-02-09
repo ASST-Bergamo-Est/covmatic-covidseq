@@ -16,6 +16,12 @@ class Recipe:
         if volume_to_distribute is not None:
             self.volume_to_distribute = volume_to_distribute
 
+    def __str__(self):
+        return "Recipe name: {}; vol: {}; steps: {}".format(
+            self._name,
+            self._vol,
+            "(" + "), (".join([", ".join([str(s[k]) for k in s.keys()]) for s in self._steps]) + ")")
+
     @property
     def name(self):
         return self._name
