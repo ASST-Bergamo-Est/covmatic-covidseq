@@ -1,4 +1,5 @@
 import json
+import math
 import os.path
 
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
@@ -32,7 +33,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
 
-    def get_recipe(self, name):
+    def get_recipe(self, name) -> Recipe:
         recipes_name = [r.name for r in self._recipes]
         try:
             index = recipes_name.index(name)
@@ -40,6 +41,10 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         except ValueError as e:
             self.logger.error("GetRecipe Value error for name {}: {}".format(name, e))
             return None
+
+    @property
+    def recipes(self) -> [Recipe]:
+        return self._recipes
 
     def load_recipes_from_json(self, file):
         if not os.path.isabs(file):

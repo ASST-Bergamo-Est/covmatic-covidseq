@@ -49,3 +49,4 @@ class TestWithLoadRecipes(unittest.TestCase):
 
     def test_recipes_load(self):
         self.assertGreater(len(self._s._recipes), 0)
+

@@ -54,6 +54,4 @@ class Recipe:
     @property
     def total_prepared_vol(self):
         """ Returns the sum of volume for each reagent in the recipe """
-        for s in self._steps:
-            print("Step: {}".format(s))
         return sum([s["vol"] for s in self._steps])

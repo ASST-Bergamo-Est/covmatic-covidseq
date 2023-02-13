@@ -44,7 +44,9 @@ no-cov = "cov --no-cov {args}"
 python = ["37", "38"]
 
 [tool.hatch.envs.simulate.scripts]
+upgrade_stations = "pip install covmatic-stations --upgrade"
 install = "pip install ."
+install_package = "pip install {args}"
 run = "opentrons_simulate {matrix:protocols} {args}"
 
 [[tool.hatch.envs.simulate.matrix]]
