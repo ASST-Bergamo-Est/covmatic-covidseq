@@ -6,9 +6,11 @@ from src.covmatic_covidseq.station import ReagentPlate, ReagentPlateException
 
 COLUMN_1 = ["A1", "B1", "C1", "D1", "E1", "F1", "G1"]
 COLUMN_2 = ["A2", "B2", "C2", "D2", "E2", "F2", "G2"]
+COLUMN_3 = ["A3", "B3", "C3", "D3", "E3", "F3", "G3"]
+COLUMN_4 = ["A4", "B4", "C4", "D4", "E4", "F4", "G4"]
 
 labware_mock = MagicMock()
-labware_mock.columns.return_value = [COLUMN_1, COLUMN_2]
+labware_mock.columns.return_value = [COLUMN_1, COLUMN_2, COLUMN_3, COLUMN_4]
 
 REAGENT1_NAME = "EPH3"
 REAGENT1_VOLUME = 10
@@ -19,6 +21,9 @@ REAGENT2_NAME = "EPH4"
 REAGENT2_VOLUME = 120
 REAGENT2_EXPECTED_USED_COLUMNS = [COLUMN_1, COLUMN_2]
 REAGENT2_EXPECTED_VOLUME_FOR_WELL = 60
+
+# Assigning both reagent 1 and 2
+REAGENT12_EXPECTED_USED_COLUMNS_FOR_REAGENT2 = [COLUMN_2, COLUMN_3]
 
 SAMPLES_PER_ROW = [1, 1, 1, 1, 1, 1, 1, 1]
 
@@ -62,9 +67,6 @@ class TestReagent1(BaseTestClass):
         self._expected_used_columns = REAGENT1_EXPECTED_USED_COLUMNS
         self._expected_wells_volume = list(repeat(REAGENT1_EXPECTED_VOLUME_FOR_WELL, sum([len(c) for c in self._expected_used_columns])))
 
-    def test_free_columns(self):
-        self.assertEqual(len(self._expected_used_columns), self._rp._next_free_column_index)
-
     def test_get_columns_for_reagent(self):
         self.assertEqual(self._expected_used_columns, self._rp.get_columns_for_reagent(self._reagent_name))
 
@@ -79,6 +81,33 @@ class TestReagent2(TestReagent1):
         self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
         self._expected_used_columns = REAGENT2_EXPECTED_USED_COLUMNS
         self._expected_wells_volume = list(repeat(REAGENT2_EXPECTED_VOLUME_FOR_WELL, sum([len(c) for c in self._expected_used_columns])))
+
+
+class TestReagent12(TestReagent1):
+    def setUpExpectations(self):
+        self._reagent_name = REAGENT2_NAME
+        self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
+        self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
+        self._expected_used_columns = REAGENT12_EXPECTED_USED_COLUMNS_FOR_REAGENT2
+        self._expected_wells_volume = list(repeat(REAGENT2_EXPECTED_VOLUME_FOR_WELL, sum([len(c) for c in self._expected_used_columns])))
+
+
+class TestFreeColumns(BaseTestClass):
+    def test_used_0_columns(self):
+        self.assertEqual(0, self._rp._next_free_column_index)
+
+    def test_used_1_columns(self):
+        self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
+        self.assertEqual(len(REAGENT1_EXPECTED_USED_COLUMNS), self._rp._next_free_column_index)
+
+    def test_used_2_columns(self):
+        self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
+        self.assertEqual(len(REAGENT2_EXPECTED_USED_COLUMNS), self._rp._next_free_column_index)
+
+    def test_used_3_columns(self):
+        self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
+        self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
+        self.assertEqual(len(REAGENT1_EXPECTED_USED_COLUMNS + REAGENT2_EXPECTED_USED_COLUMNS), self._rp._next_free_column_index)
 
 
 class TestInitializationArguments(unittest.TestCase):
