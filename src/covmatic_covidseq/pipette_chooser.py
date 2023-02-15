@@ -2,6 +2,10 @@ import logging
 import bisect
 
 
+class PipetteChooserException(Exception):
+    pass
+
+
 class PipetteChooser:
     def __init__(self, logger=logging.getLogger(__name__)):
         self._pipettes = []
@@ -22,3 +26,9 @@ class PipetteChooser:
                 break
         self._logger.info("Selected pipette {} for volume {}".format(selected["pipette"], volume))
         return selected["pipette"]
+
+    def get_max_volume(self, pipette):
+        for p in self._pipettes:
+            if p["pipette"] == pipette:
+                return p["max_volume"]
+        raise PipetteChooserException("No pipette found for {}".format(pipette))
