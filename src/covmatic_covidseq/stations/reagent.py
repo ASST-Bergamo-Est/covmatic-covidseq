@@ -117,10 +117,8 @@ class ReagentStation(CovidseqBaseStation):
                     self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
 
                     if isinstance(source, WellWithVolume):
-                        self.logger.info("WellWithVolume!!")
                         well = source.well
                         aspirate_height = source.extract_vol_and_get_height(total_remaining_volume)
-                        self.logger.info("Aspirating at height {}".format(aspirate_height))
                     else:
                         well = source
                         aspirate_height = 0.5
@@ -149,7 +147,7 @@ class ReagentStation(CovidseqBaseStation):
         recipe = self.get_recipe("EPH3")
         volume_to_transfer = self.get_volume_to_transfer(recipe)
         source_well = self.get_tube_for_recipe("EPH3")
-        self.fill_reagent_plate("EPH3", pipette=self._p300)
+        self.fill_reagent_plate("EPH3")
 
     def body(self):
         # self.sample_arranger()
