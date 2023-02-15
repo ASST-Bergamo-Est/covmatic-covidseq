@@ -2,7 +2,7 @@ import unittest
 from .common import logger
 from unittest.mock import MagicMock
 
-from src.covmatic_covidseq.station import ReagentPlate, ReagentPlateException
+from src.covmatic_covidseq.station import ReagentPlateHelper, ReagentPlateException
 
 COLUMN_1 = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
 COLUMN_2 = ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
@@ -25,8 +25,8 @@ REAGENT1_EXPECTED_VOLUME_FOR_WELL = [10, 10, 10, 10, 10, 10, 10, 10]
 REAGENT2_NAME = "EPH4"
 REAGENT2_VOLUME = 120
 REAGENT2_EXPECTED_USED_COLUMNS = [COLUMN_1, COLUMN_2]
-REAGENT2_EXPECTED_VOLUME_FOR_WELL = [100, 100, 100, 100, 100, 100, 100, 100,
-                                     20,  20,  20,  20,  20,  20,  20,  20]
+REAGENT2_EXPECTED_VOLUME_FOR_WELL = [60, 60, 60, 60, 60, 60, 60, 60,
+                                     60, 60, 60, 60, 60, 60, 60, 60]
 
 # Assigning both reagent 1 and 2
 REAGENT12_EXPECTED_USED_COLUMNS_FOR_REAGENT2 = [COLUMN_2, COLUMN_3]
@@ -37,14 +37,14 @@ NOT_8_MULTIPLE_REAGENT1_EXPECTED_USED_COLUMNS = [COLUMN_1]
 NOT_8_MULTIPLE_REAGENT1_EXPECTED_VOLUMES_FOR_WELL = [20, 20, 20, 10, 10, 10, 10, 10]
 
 NOT_8_MULTIPLE_REAGENT2_EXPECTED_USED_COLUMNS = [COLUMN_1]
-NOT_8_MULTIPLE_REAGENT2_EXPECTED_VOLUMES_FOR_WELL = [100, 100, 100, 100, 100, 100, 100, 100,
-                                                     100, 100, 100, 20,  20,  20,  20,  20,
-                                                     40, 40, 40]
+NOT_8_MULTIPLE_REAGENT2_EXPECTED_VOLUMES_FOR_WELL = [80, 80, 80, 80, 80, 80, 80, 80,
+                                                     80, 80, 80, 40, 40, 40, 40, 40,
+                                                     80, 80, 80]
 
 
 class BaseTestClass(unittest.TestCase):
     def setUp(self):
-        self._rp = ReagentPlate(labware_mock, SAMPLES_PER_ROW, logger=logger)
+        self._rp = ReagentPlateHelper(labware_mock, SAMPLES_PER_ROW, logger=logger)
 
 
 class TestReagentPlate(BaseTestClass):
@@ -88,6 +88,9 @@ class TestReagent1(BaseTestClass):
     def test_wells_not_empty(self):
         self.assertGreater(len(self._rp.get_wells_with_volume(self._reagent_name)), 0)
 
+    def test_wells_length(self):
+        self.assertEqual(len(self._expected_wells_volume), len(self._rp.get_wells_with_volume(self._reagent_name)))
+
 
 class TestReagent2(TestReagent1):
     def setUpExpectations(self):
@@ -126,7 +129,7 @@ class TestFreeColumns(BaseTestClass):
 
 class TestNotMultipleBy8(unittest.TestCase):
     def setUp(self):
-        self._rp = ReagentPlate(labware_mock, NOT_8_MULTIPLE_SAMPLES_PER_ROW, logger=logger)
+        self._rp = ReagentPlateHelper(labware_mock, NOT_8_MULTIPLE_SAMPLES_PER_ROW, logger=logger)
 
     def test_reagent_1_columns(self):
         self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
@@ -146,6 +149,10 @@ class TestNotMultipleBy8(unittest.TestCase):
         self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
         self.assertGreater(len(self._rp.get_wells_with_volume(REAGENT2_NAME)), 0)
 
+    def test_wells_length(self):
+        self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
+        self.assertEqual(len(NOT_8_MULTIPLE_REAGENT2_EXPECTED_VOLUMES_FOR_WELL), len(self._rp.get_wells_with_volume(REAGENT2_NAME)))
+
     def test_reagent_2_volumes(self):
         self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
         wells_with_volumes = self._rp.get_wells_with_volume(REAGENT2_NAME)
@@ -156,8 +163,8 @@ class TestNotMultipleBy8(unittest.TestCase):
 class TestInitializationArguments(unittest.TestCase):
     def test_wrong_samples_per_row_less(self):
         with self.assertRaises(ReagentPlateException):
-            ReagentPlate(labware_mock, SAMPLES_PER_ROW_LESS, logger=logger)
+            ReagentPlateHelper(labware_mock, SAMPLES_PER_ROW_LESS, logger=logger)
 
     def test_wrong_samples_per_row_more(self):
         with self.assertRaises(ReagentPlateException):
-            ReagentPlate(labware_mock, SAMPLES_PER_ROW_MORE, logger=logger)
+            ReagentPlateHelper(labware_mock, SAMPLES_PER_ROW_MORE, logger=logger)

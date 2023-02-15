@@ -55,3 +55,16 @@ class TestPipetteGet(TestBaseClass):
     def test_getpipette_2(self):
         for v in TEST_VOLS_PIPETTE_2:
             self.assertEqual(PIPETTE_2, self._pc.get_pipette(v), "Testing volume {}".format(v))
+
+
+class TestMaxVolume(TestBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._pc.register(PIPETTE_2, PIPETTE_2_VOL)
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+
+    def test_get_volume_pipette_1(self):
+        self.assertEqual(PIPETTE_1_VOL, self._pc.get_max_volume(PIPETTE_1))
+
+    def test_get_volume_pipette_2(self):
+        self.assertEqual(PIPETTE_2_VOL, self._pc.get_max_volume(PIPETTE_2))
