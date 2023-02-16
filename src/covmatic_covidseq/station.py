@@ -117,6 +117,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  recipe_file: str or None = "recipes.json",
                  reagent_plate_labware_name: str = "nest_96_wellplate_100ul_pcr_full_skirt",
                  reagent_plate_max_volume: float = 100,
+                 very_slow_vertical_speed: float = 5,
                  *args, **kwargs):
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
@@ -127,6 +128,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         if recipe_file is not None:
             self.load_recipes_from_json(recipe_file)
         self._reagent_plate_helper = None       # Initialized afterward
+        self._very_slow_vertical_speed = very_slow_vertical_speed
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)

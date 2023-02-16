@@ -19,15 +19,13 @@ class ReagentStation(CovidseqBaseStation):
                  ot_name = "OT1",
                  tipracks300_slots: Tuple[str, ...] = ("9",),
                  tipracks1000_slots: Tuple[str, ...] = ("8",),
-                 reagent_plate_slot = "1",
-                 very_slow_vertical_speed=5,
+                 reagent_plate_slot="1",
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
         self._tipracks1000_slots = tipracks1000_slots
         self._reagent_plate_slot = reagent_plate_slot
         self._pipette_chooser = PipetteChooser()
-        self._very_slow_vertical_speed = very_slow_vertical_speed
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
