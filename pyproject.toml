@@ -40,17 +40,27 @@ dependencies = [
 cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src.covmatic_covidseq {args}"
 no-cov = "cov --no-cov {args}"
 
-[[tool.hatch.envs.test.matrix]]
-python = ["37", "38"]
-
 [tool.hatch.envs.simulate.scripts]
 upgrade_stations = "pip install covmatic-stations --upgrade"
 install = "pip install ."
 install_package = "pip install {args}"
+run_reagent = "opentrons_simulate protocols/station_reagent.py {args}"
+run_library = "opentrons_simulate protocols/station_library.py {args}"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38"]
+
+[tool.hatch.envs.simulate_all]
+template = "simulate"
+
+[tool.hatch.envs.simulate_all.scripts]
 run = "opentrons_simulate {matrix:protocols} {args}"
 
-[[tool.hatch.envs.simulate.matrix]]
-protocols = ["protocols/station_reagent.py"]
+[[tool.hatch.envs.simulate_all.matrix]]
+protocols = [
+  "protocols/station_reagent.py",
+  "protocols/station_library.py"
+]
 
 [tool.coverage.run]
 branch = true

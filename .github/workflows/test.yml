@@ -64,7 +64,7 @@ jobs:
       - name: Build and install package
         run: pip install .
       - name: Simulate
-        run: hatch run simulate:run
+        run: hatch run simulate_all:run
 
   upload:
     if: ${{ startsWith( github.ref , 'refs/tags/' ) }}
