@@ -21,15 +21,18 @@ REAGENT1_NAME = "EPH3"
 REAGENT1_VOLUME = 10
 REAGENT1_EXPECTED_USED_COLUMNS = [COLUMN_1]
 REAGENT1_EXPECTED_VOLUME_FOR_WELL = [10, 10, 10, 10, 10, 10, 10, 10]
+REAGENT1_EXPECTED_FIRST_ROW_AND_VOLS = [("A1", 10)]
 
 REAGENT2_NAME = "EPH4"
 REAGENT2_VOLUME = 120
 REAGENT2_EXPECTED_USED_COLUMNS = [COLUMN_1, COLUMN_2]
 REAGENT2_EXPECTED_VOLUME_FOR_WELL = [60, 60, 60, 60, 60, 60, 60, 60,
                                      60, 60, 60, 60, 60, 60, 60, 60]
+REAGENT2_EXPECTED_FIRST_ROW_AND_VOLS = [("A1", 60), ("A2", 60)]
 
 # Assigning both reagent 1 and 2
 REAGENT12_EXPECTED_USED_COLUMNS_FOR_REAGENT2 = [COLUMN_2, COLUMN_3]
+REAGENT12_EXPECTED_FIRST_ROW_AND_VOLS = [("A2", 60), ("A3", 60)]
 
 # Simulating a number of samples not multiple by 8
 NOT_8_MULTIPLE_SAMPLES_PER_ROW = [2, 2, 2, 1, 1, 1, 1, 1]
@@ -77,6 +80,7 @@ class TestReagent1(BaseTestClass):
         self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
         self._expected_used_columns = REAGENT1_EXPECTED_USED_COLUMNS
         self._expected_wells_volume = REAGENT1_EXPECTED_VOLUME_FOR_WELL
+        self._expected_first_row_and_vols = REAGENT1_EXPECTED_FIRST_ROW_AND_VOLS
 
     def test_get_columns_for_reagent(self):
         self.assertEqual(self._expected_used_columns, self._rp.get_columns_for_reagent(self._reagent_name))
@@ -91,6 +95,8 @@ class TestReagent1(BaseTestClass):
     def test_wells_length(self):
         self.assertEqual(len(self._expected_wells_volume), len(self._rp.get_wells_with_volume(self._reagent_name)))
 
+    def test_first_row_and_vols(self):
+        self.assertEqual(self._expected_first_row_and_vols, self._rp.get_first_row_with_volume(self._reagent_name))
 
 class TestReagent2(TestReagent1):
     def setUpExpectations(self):
@@ -98,6 +104,7 @@ class TestReagent2(TestReagent1):
         self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
         self._expected_used_columns = REAGENT2_EXPECTED_USED_COLUMNS
         self._expected_wells_volume = REAGENT2_EXPECTED_VOLUME_FOR_WELL
+        self._expected_first_row_and_vols = REAGENT2_EXPECTED_FIRST_ROW_AND_VOLS
 
 
 class TestReagent12(TestReagent1):
@@ -107,6 +114,7 @@ class TestReagent12(TestReagent1):
         self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
         self._expected_used_columns = REAGENT12_EXPECTED_USED_COLUMNS_FOR_REAGENT2
         self._expected_wells_volume = REAGENT2_EXPECTED_VOLUME_FOR_WELL
+        self._expected_first_row_and_vols = REAGENT12_EXPECTED_FIRST_ROW_AND_VOLS
 
 
 class TestFreeColumns(BaseTestClass):
