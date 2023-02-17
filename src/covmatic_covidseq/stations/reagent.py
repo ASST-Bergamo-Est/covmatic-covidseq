@@ -81,7 +81,7 @@ class ReagentStation(CovidseqBaseStation):
         raise ReagentStationException("Recipe {} has no tube assigned".format(recipe))
 
     def get_volume_to_transfer(self, r: Recipe) -> float:
-        ret = (r.volume_to_distribute + r.total_prepared_vol) / 2
+        ret = r.volume_to_distribute
         self.logger.info("Volume to transfer to plate for recipe {} is {}".format(r.name, ret))
         return ret
 

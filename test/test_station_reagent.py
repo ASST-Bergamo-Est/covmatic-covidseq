@@ -4,10 +4,10 @@ from src.covmatic_covidseq.recipe import Recipe
 from src.covmatic_covidseq.stations.reagent import ReagentStation
 
 
-test_recipe_1 = Recipe("Test", volume_to_distribute=10, steps=[{'name': "", "reagent": "test", "vol": 20}])
+test_recipe_1 = Recipe("Test", volume_final=10, steps=[{'name': "", "reagent": "test", "vol": 20}])
 expected_vol_transferred_to_plate_1 = 15
 
-test_recipe_2 = Recipe("Test", volume_to_distribute=5, steps=[{'name': "", "reagent": "test", "vol": 7}, {'name': "", "reagent": "test", "vol": 13}])
+test_recipe_2 = Recipe("Test", volume_final=5, steps=[{'name': "", "reagent": "test", "vol": 7}, {'name': "", "reagent": "test", "vol": 13}])
 expected_vol_transferred_to_plate_2 = 12.5
 
 

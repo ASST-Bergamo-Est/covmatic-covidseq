@@ -8,13 +8,13 @@ class Recipe:
                  name: str = "",
                  description: str = "",
                  steps=None,
-                 volume_to_distribute=None):
+                 volume_final=None):
         self._name = name
         self._description = description
         self._vol = 0
         self._steps = steps or []
-        if volume_to_distribute is not None:
-            self.volume_to_distribute = volume_to_distribute
+        if volume_final is not None:
+            self.volume_final = volume_final
 
     def __str__(self):
         return "Recipe name: {}; vol: {}; steps: {}".format(
@@ -39,13 +39,21 @@ class Recipe:
 
     @property
     def volume_to_distribute(self):
+        """ The volume to distrubute for the first transfer from primary tube. Includes overhead."""
+        if self._vol > 0:
+            return (self._vol + self.total_prepared_vol) / 2
+        raise RecipeException("Total volume not set")
+
+    @property
+    def volume_final(self):
+        """ The volume to use for the final transfer to samples plate. Do not include overheads."""
         if self._vol > 0:
             return self._vol
         raise RecipeException("Total volume not set")
 
-    @volume_to_distribute.setter
-    def volume_to_distribute(self, v):
-        """ Sets the final volume of the recipe mix to be dispensed."""
+    @volume_final.setter
+    def volume_final(self, v):
+        """ The volume to use for the final transfer to samples plate. Do not include overheads."""
         if v <= self.total_prepared_vol:
             self._vol = v
         else:

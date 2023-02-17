@@ -9,7 +9,7 @@
         "vol": 10
       }
     ],
-    "volume_to_distribute": 8.5
+    "volume_final": 8.5
   },
   {
     "name": "FSM Mix",
@@ -26,6 +26,6 @@
         "vol": 1
       }
     ],
-    "volume_to_distribute": 8
+    "volume_final": 8
   }
 ]

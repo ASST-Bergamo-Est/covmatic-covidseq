@@ -16,7 +16,7 @@ class ReagentPlateException(Exception):
 
 class ReagentPlateHelper:
     """ Class to handle the shared plate between multiple robots.
-        :param labware_definition: the name of the labware to load
+        :param labware: the labware object assigned to the plate.
         :param samples_per_row: list of n. of samples in each row. Used to calculate where to dispense reagents
         :param well_volume_limit: [ul] maximum allowable volume in a well. Used to calculate where to dispense reagents
         :param logger: optional, a logger object
