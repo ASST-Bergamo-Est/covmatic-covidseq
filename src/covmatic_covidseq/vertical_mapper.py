@@ -3,6 +3,7 @@ import math
 
 COLUMN_HEIGHT = 8
 
+
 class VerticalMapper:
     def __init__(self, columns, logger=logging.getLogger(__name__)):
         self._logger = logger
@@ -12,6 +13,7 @@ class VerticalMapper:
         self._row_offset = self._calc_row_offset(COLUMN_HEIGHT)
         self._logger.info("Vertical mapper column length {}; row length: {}".format(self._available_column_length,
                                                                                     self._available_row_length))
+
     def get_map_for_samples(self, num_samples):
         """ Get map for vertical plate.
             :param start_well: first well in left-upper corner from which start mapping.
