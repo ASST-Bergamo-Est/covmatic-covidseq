@@ -94,3 +94,36 @@ class RecipeSteps2(RecipeSteps1):
         self.expected_vol = EXPECTED_VOL_STEPS_2
         self.vol_final = VOLUME_FINAL_2
         self.vol_to_distribute = VOLUME_TO_DISTRIBUTE_2
+
+
+HEADROOM_DEFAULT = 0.5
+HEADROOM_FRACTION_1 = 0.1
+REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_1 = 9.8
+
+HEADROOM_FRACTION_2 = 0.7
+REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_2 = 8.6
+
+class RecipeTestOverhead(RecipeBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._r.add_steps(EXAMPLE_STEPS_1)
+        self._r.volume_final = VOLUME_FINAL_1
+
+    def test_default_headroom(self):
+        self.assertEqual(HEADROOM_DEFAULT, self._r.headroom_fraction)
+
+    def test_fraction_1(self):
+        self._r.headroom_fraction = HEADROOM_FRACTION_1
+        self.assertEqual(REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_1, self._r.volume_to_distribute)
+
+    def test_fraction_2(self):
+        self._r.headroom_fraction = HEADROOM_FRACTION_2
+        self.assertEqual(REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_2, self._r.volume_to_distribute)
+
+    def test_fraction_limit_up(self):
+        with self.assertRaises(RecipeException):
+            self._r.headroom_fraction = 1.1
+
+    def test_fraction_limit_down(self):
+        with self.assertRaises(RecipeException):
+            self._r.headroom_fraction = -0.1

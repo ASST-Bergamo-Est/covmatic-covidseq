@@ -8,13 +8,15 @@ class Recipe:
                  name: str = "",
                  description: str = "",
                  steps=None,
-                 volume_final=None):
+                 volume_final=None,
+                 headroom_fraction=0.5):
         self._name = name
         self._description = description
         self._vol = 0
         self._steps = steps or []
         if volume_final is not None:
             self.volume_final = volume_final
+        self._headroom_fraction = headroom_fraction
 
     def __str__(self):
         return "Recipe name: {}; vol: {}; steps: {}".format(
@@ -38,10 +40,27 @@ class Recipe:
         return self._steps
 
     @property
+    def headroom_fraction(self):
+        return self._headroom_fraction
+
+    @headroom_fraction.setter
+    def headroom_fraction(self, f):
+        """ Fraction of headroom volume to be left in the first transfer.
+            The remaining if available for the second transfer
+            eg.  vol prepared ----------------- vol final
+                                |
+                               0.1  means that 10% of headroom remains in first tube, 90% is transferred to plate
+        """
+        if 0 <= f <= 1:
+            self._headroom_fraction = f
+        else:
+            raise RecipeException("Headroom fraction must be greater or equal than 0 and minor or equal 1")
+
+    @property
     def volume_to_distribute(self):
         """ The volume to distrubute for the first transfer from primary tube. Includes overhead."""
         if self._vol > 0:
-            return (self._vol + self.total_prepared_vol) / 2
+            return (1-self._headroom_fraction) * self.total_prepared_vol + self._headroom_fraction * self._vol
         raise RecipeException("Total volume not set")
 
     @property
