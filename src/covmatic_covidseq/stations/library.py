@@ -96,7 +96,7 @@ class LibraryStation(CovidseqBaseStation):
         recipe = self.get_recipe(recipe_name)
         pipette = self._pipette_chooser.get_pipette(recipe.volume_to_distribute)
 
-        source_wells = self.reagent_plate_helper.get_first_row_with_volume(recipe_name)
+        source_wells = self.reagent_plate_helper.get_first_row_dispensed_volume(recipe_name)
         self.logger.info("Source wells are: {}".format(source_wells))
 
         source = MultiTubeSource()

@@ -43,13 +43,16 @@ class ReagentPlateHelper:
             columns += c["columns"]
         return len(columns)
 
-    def assign_reagent(self, reagent_name: str, reagent_volume_per_sample: float):
-        self._logger.info("Assigning reagent {} with volume {}".format(reagent_name, reagent_volume_per_sample))
+    def assign_reagent(self, reagent_name: str, volume_with_overhead_per_sample: float, volume_available_per_sample: float = None):
+        self._logger.info("Assigning reagent {} with volume {}".format(reagent_name, volume_with_overhead_per_sample))
 
         if reagent_name in self._assigned_reagents:
             raise ReagentPlateException("Reagent {} already assigned.".format(reagent_name))
 
-        total_volumes = [s * reagent_volume_per_sample for s in self._samples_per_row]
+        if volume_available_per_sample is None:
+            volume_available_per_sample = volume_with_overhead_per_sample
+
+        total_volumes = [s * volume_with_overhead_per_sample for s in self._samples_per_row]
         self._logger.debug("Total volumes: {}".format(total_volumes))
 
         wells_needed = [math.ceil(t/self._well_volume_limit) for t in total_volumes]
@@ -71,15 +74,20 @@ class ReagentPlateHelper:
             rows.append(row)
 
         volumes = [v for r in zip(*rows) for v in r]
-
         self._logger.debug("Available wells: {}".format(available_wells))
         self._logger.debug("Dispensed vols: {}".format(volumes))
         wells_with_volume = [(w, v) for w, v in zip(available_wells, volumes) if v > 0]
 
+        volume_fraction = volume_available_per_sample / volume_with_overhead_per_sample
+        self._logger.info("Volume fraction is {}".format(volume_fraction))
+
+        wells_available_volume = [(w, v*volume_fraction) for w, v in wells_with_volume]
+
         self._assigned_columns.append({
             "name": reagent_name,
             "columns": columns,
-            "wells": wells_with_volume
+            "wells": wells_with_volume,
+            "wells_available_volume": wells_available_volume
         })
         self._logger.info("Assigned: {}".format(self._assigned_columns[-1]))
 
@@ -93,14 +101,19 @@ class ReagentPlateHelper:
             return self._assigned_columns[self._assigned_reagents.index(reagent_name)]["wells"]
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-    def get_first_row_with_volume(self, reagent_name: str):
+    def get_first_row_dispensed_volume(self, reagent_name: str):
         if reagent_name in self._assigned_reagents:
             data = self._assigned_columns[self._assigned_reagents.index(reagent_name)]
             first_row = [c[0] for c in data["columns"]]
             return list(filter(lambda x: x[0] in first_row, data["wells"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-
+    def get_first_row_available_volume(self, reagent_name: str):
+        if reagent_name in self._assigned_reagents:
+            data = self._assigned_columns[self._assigned_reagents.index(reagent_name)]
+            first_row = [c[0] for c in data["columns"]]
+            return list(filter(lambda x: x[0] in first_row, data["wells_available_volume"]))
+        raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
         Covidseq is executed by two robot:
@@ -164,7 +177,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         plate = self._ctx.load_labware(self._reagent_plate_labware_name, slot, "Shared reagent plate")
         self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
         for r in self.recipes:
-            self._reagent_plate_helper.assign_reagent(r.name, (r.volume_to_distribute + r.total_prepared_vol) / 2)
+            self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
         return plate
 
     @property
