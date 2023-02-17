@@ -46,6 +46,7 @@ install = "pip install ."
 install_package = "pip install {args}"
 run_reagent = "opentrons_simulate protocols/station_reagent.py {args}"
 run_library = "opentrons_simulate protocols/station_library.py {args}"
+run_library_manual = "opentrons_simulate protocols/station_library_manual.py {args}"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38"]
@@ -59,7 +60,8 @@ run = "opentrons_simulate {matrix:protocols} {args}"
 [[tool.hatch.envs.simulate_all.matrix]]
 protocols = [
   "protocols/station_reagent.py",
-  "protocols/station_library.py"
+  "protocols/station_library.py",
+  "protocols/station_library_manual.py"
 ]
 
 [tool.coverage.run]
