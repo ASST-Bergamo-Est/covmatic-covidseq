@@ -1,4 +1,8 @@
+import math
 from typing import Tuple
+
+from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
+
 from ..utils import get_labware_json_from_filename
 from ..pipette_chooser import PipetteChooser
 from ..station import CovidseqBaseStation, labware_loader, instrument_loader
@@ -71,43 +75,61 @@ class LibraryStation(CovidseqBaseStation):
     def samples_first_row_for_labware(self, labware):
         return [c[0] for c in labware.columns()][:self.num_cols]
 
-
     def _tipracks(self) -> dict:
         return {
             '_tipracks20': '_p20',
             '_tipracks300': '_p300'
         }
 
-
-    # def get_wells_for_reagent(self, recipe_name):
-    #     all_wells_and_vols = self._reagent_plate_helper.get_wells_with_volume(recipe_name)
-    #     columns = self._reagent_plate_helper.get_columns_for_reagent(recipe_name)
-    #
-    #     all_wells_all_vols = list(zip(*all_wells_and_vols))
-    #     wells_and_vols = []
-    #     for w in [c[0] for c in columns]:
-    #         wells_and_vols.append(all_wells_and_vols[all_wells_all_vols[0].index(w)])
-    #
-    #
-    #     print(wells_and_vols)
-        # first_wells_and_vols = [lambda x: wells_vols[] for f in first_wells]
-
-    def distribute(self, recipe_name, destination, change_tip=False):
+    def distribute(self, recipe_name, dest_labware, pipette=None, change_tip=False):
         recipe = self.get_recipe(recipe_name)
         pipette = self._pipette_chooser.get_pipette(recipe.volume_to_distribute)
 
-        source_wells = self.reagent_plate_helper.get_first_row_dispensed_volume(recipe_name)
+        source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
         self.logger.info("Source wells are: {}".format(source_wells))
 
         source = MultiTubeSource()
         for w, v in source_wells:
             source.append_tube_with_vol(w, v)
         self.logger.info("Now source is: {}".format(source))
-        # destinations =
+        destinations = self.samples_first_row_for_labware(dest_labware)
+        self.logger.info("Transferring to {}".format(destinations))
 
-        # self.pick_up(pipette)
-        # pipette.aspirate(recipe.volume_to_distribute, wells_vols[0][0])
-        # self.drop(pipette)
+        if pipette is None:
+            pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
+
+        self.pick_up(pipette)
+
+        for i, (dest_well) in enumerate(destinations):
+            volume = recipe.volume_final
+            num_transfers = math.ceil(volume / self._pipette_chooser.get_max_volume(pipette))
+            self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers,
+                                                                                 self._pipette_chooser.get_max_volume(
+                                                                                     pipette)))
+
+            dest_well_with_volume = WellWithVolume(dest_well, 0)
+
+            while volume > 0:
+                self.logger.debug("Remaining volume: {:1f}".format(volume))
+                volume_to_transfer = min(volume, self._pipette_chooser.get_max_volume(pipette))
+                self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+                if pipette.current_volume < volume_to_transfer:
+                    total_remaining_volume = min(self._pipette_chooser.get_max_volume(pipette),
+                                                 (len(destinations)-i) * recipe.volume_final) - pipette.current_volume
+                    self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+
+                    source.prepare_aspiration(total_remaining_volume)
+                    source.aspirate(pipette)
+
+                dest_well_with_volume.fill(volume_to_transfer)
+                with MoveWithSpeed(pipette,
+                                   from_point=dest_well.bottom(dest_well_with_volume.height + 5),
+                                   to_point=dest_well.bottom(dest_well_with_volume.height),
+                                   speed=self._very_slow_vertical_speed, move_close=False):
+                    pipette.dispense(volume_to_transfer)
+                volume -= volume_to_transfer
+
+        self.drop(pipette)
 
     def body(self):
         # self.pause("Load sample plate on slot {}".format(self._input_plate_slot))
