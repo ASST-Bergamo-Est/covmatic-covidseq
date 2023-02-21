@@ -88,7 +88,7 @@ class LibraryStation(CovidseqBaseStation):
         source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
         self.logger.info("Source wells are: {}".format(source_wells))
 
-        source = MultiTubeSource()
+        source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
         for w, v in source_wells:
             source.append_tube_with_vol(w, v)
         self.logger.info("Now source is: {}".format(source))
@@ -132,8 +132,8 @@ class LibraryStation(CovidseqBaseStation):
         self.drop(pipette)
 
     def body(self):
-        # self.pause("Load sample plate on slot {}".format(self._input_plate_slot))
-        # self.robot_drop_plate(6, "REAGENT")
+        self.pause("Load sample plate on slot {}".format(self._input_plate_slot))
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT")
         self.distribute("EPH3", self._work_plate)
 
 

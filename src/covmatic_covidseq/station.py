@@ -114,6 +114,8 @@ class ReagentPlateHelper:
             first_row = [c[0] for c in data["columns"]]
             return list(filter(lambda x: x[0] in first_row, data["wells_available_volume"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
+
+
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
         Covidseq is executed by two robot:
@@ -131,6 +133,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  reagent_plate_labware_name: str = "nest_96_wellplate_100ul_pcr_full_skirt",
                  reagent_plate_max_volume: float = 100,
                  very_slow_vertical_speed: float = 5,
+                 slow_vertical_speed: float = 10,
                  *args, **kwargs):
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
@@ -142,6 +145,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             self.load_recipes_from_json(recipe_file)
         self._reagent_plate_helper = None       # Initialized afterward
         self._very_slow_vertical_speed = very_slow_vertical_speed
+        self._slow_vertical_speed = slow_vertical_speed
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)

@@ -112,7 +112,7 @@ class ReagentStation(CovidseqBaseStation):
                 if pipette.current_volume < volume_to_transfer:
                     total_remaining_volume = min(self._pipette_chooser.get_max_volume(pipette),
                                            sum([v for (_, v) in remaining_wells_with_volume[i:]])) - pipette.current_volume
-                    self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+                    self.logger.debug("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
 
                     if isinstance(source, WellWithVolume):
                         well = source.well
@@ -124,14 +124,16 @@ class ReagentStation(CovidseqBaseStation):
                     with MoveWithSpeed(pipette,
                                        from_point=well.bottom(aspirate_height + 5),
                                        to_point=well.bottom(aspirate_height),
-                                       speed=self._very_slow_vertical_speed, move_close=False):
+                                       speed=self._slow_vertical_speed, move_close=False):
                         pipette.aspirate(total_remaining_volume)
 
                 dest_well_with_volume.fill(volume_to_transfer)
+                self.logger.info("Dispensing at {}".format(dest_well_with_volume.height))
+
                 with MoveWithSpeed(pipette,
-                                   from_point=dest_well.bottom(dest_well_with_volume.height + 5),
+                                   from_point=dest_well.bottom(dest_well_with_volume.height + 2.5),
                                    to_point=dest_well.bottom(dest_well_with_volume.height),
-                                   speed=self._very_slow_vertical_speed, move_close=False):
+                                   speed=self._slow_vertical_speed, move_close=False):
                     pipette.dispense(volume_to_transfer)
                 volume -= volume_to_transfer
 
@@ -142,17 +144,13 @@ class ReagentStation(CovidseqBaseStation):
         self.get_tube_for_recipe("EPH3").fill(self.get_volume_to_transfer(recipe) * self._num_samples)
 
     def distribute_EPH3(self):
-        recipe = self.get_recipe("EPH3")
-        volume_to_transfer = self.get_volume_to_transfer(recipe)
-        source_well = self.get_tube_for_recipe("EPH3")
-        self.fill_reagent_plate("EPH3")
+        self.fill_reagent_plate("EPH3", self._p300)
 
     def body(self):
         # self.sample_arranger()
         self.prepare_EPH3()
         self.distribute_EPH3()
         self.robot_pick_plate("SLOT1", "REAGENT")
-        self.robot_drop_plate("SLOT1", "REAGENT")
 
     def sample_arranger(self, num_samples):
         samples = list(range(0, num_samples))
