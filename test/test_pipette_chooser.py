@@ -3,12 +3,17 @@ import unittest
 
 PIPETTE_1 = "PIPETTE1"
 PIPETTE_1_VOL = 10
+EXPECTED_AIR_GAP_1 = 1
 
 PIPETTE_2 = "PIPETTE2"
 PIPETTE_2_VOL = 20
+EXPECTED_AIR_GAP_2 = 2
 
 TEST_VOLS_PIPETTE_1 = [1, 2, 3, 9, 10]
 TEST_VOLS_PIPETTE_2 = [11, 12, 20, 30]
+
+TEST_VOL_PIPETTE_1_W_AIRGAP = 8
+TEST_VOL_PIPETTE_2_W_AIRGAP = 9.9
 
 
 class TestBaseClass(unittest.TestCase):
@@ -68,3 +73,22 @@ class TestMaxVolume(TestBaseClass):
 
     def test_get_volume_pipette_2(self):
         self.assertEqual(PIPETTE_2_VOL, self._pc.get_max_volume(PIPETTE_2))
+
+
+class TestAirGap(TestBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._pc.register(PIPETTE_2, PIPETTE_2_VOL)
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+
+    def test_get_air_gap_pipette_1(self):
+        self.assertEqual(EXPECTED_AIR_GAP_1, self._pc.get_air_gap(PIPETTE_1))
+
+    def test_get_air_gap_pipette_2(self):
+        self.assertEqual(EXPECTED_AIR_GAP_2, self._pc.get_air_gap(PIPETTE_2))
+
+    def test_pipette_1_get_with_air_gap(self):
+        self.assertEqual(PIPETTE_1, self._pc.get_pipette(TEST_VOL_PIPETTE_1_W_AIRGAP, True))
+
+    def test_pipette_2_get_with_air_gap(self):
+        self.assertEqual(PIPETTE_2, self._pc.get_pipette(TEST_VOL_PIPETTE_2_W_AIRGAP, True))
