@@ -9,7 +9,8 @@
         "vol": 10
       }
     ],
-    "volume_final": 8.5
+    "volume_final": 8.5,
+    "headroom_fraction": 0.25
   },
   {
     "name": "FSM Mix",
