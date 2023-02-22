@@ -13,7 +13,7 @@
     "headroom_fraction": 0.25
   },
   {
-    "name": "FSM Mix",
+    "name": "FS Mix",
     "description": "First Strand cDNA Master Mix",
     "steps": [
       {
@@ -27,6 +27,8 @@
         "vol": 1
       }
     ],
-    "volume_final": 8
+    "volume_final": 8,
+    "headroom_fraction": 0.25
+
   }
 ]

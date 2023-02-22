@@ -212,11 +212,24 @@ class LibraryStation(CovidseqBaseStation):
 
             self.drop(pipette)
 
+    def anneal_rna(self):
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.distribute("EPH3", self._work_plate)
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=10, mix_volume=16)
+        self.thermal_cycle(self._work_plate, "ANNEAL")
+
+    def first_strand_cdna(self):
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.distribute("FS Mix", self._work_plate, change_tip=True)
+
+    def thermal_cycle(self, labware, cycle_name):
+        self.dual_pause("Transfer plate {} to the thermal cycler and execute cycle: {}".format(labware, cycle_name))
+
     def body(self):
         self.pause("Load sample plate on slot {}".format(self._input_plate_slot))
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT")
-        self.distribute("EPH3", self._work_plate)
-        self.transfer_samples(8.5, self._input_plate, self._work_plate, 10, 16)
+        self.anneal_rna()
+        self.first_strand_cdna()
 
 
 class LibraryManualStation(LibraryStation):

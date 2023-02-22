@@ -139,18 +139,30 @@ class ReagentStation(CovidseqBaseStation):
 
         self.drop(pipette)
 
-    def prepare_EPH3(self):
-        recipe = self.get_recipe("EPH3")
-        self.get_tube_for_recipe("EPH3").fill(self.get_volume_to_transfer(recipe) * self._num_samples)
+    def prepare(self, recipe_name):
+        recipe = self.get_recipe(recipe_name)
+        self.get_tube_for_recipe(recipe_name).fill(self.get_volume_to_transfer(recipe) * self._num_samples)
 
-    def distribute_EPH3(self):
-        self.fill_reagent_plate("EPH3", self._p300)
+    def distribute_reagent(self, recipe_name, pipette=None):
+        self.fill_reagent_plate(recipe_name, pipette)
+
+    def anneal_rna(self):
+        self.prepare("EPH3")
+        self.distribute_reagent("EPH3")
+        self.robot_pick_plate("SLOT1", "REAGENT_FULL")
+
+    def first_strand_cdna(self):
+        self.robot_drop_plate("SLOT1", "REAGENT_EMPTY")
+        self.prepare("FS Mix")
+        self.distribute_reagent("FS Mix")
+        self.robot_pick_plate("SLOT1", "REAGENT_FULL")
+
 
     def body(self):
         # self.sample_arranger()
-        self.prepare_EPH3()
-        self.distribute_EPH3()
-        self.robot_pick_plate("SLOT1", "REAGENT")
+        self.anneal_rna()
+        self.first_strand_cdna()
+
 
     def sample_arranger(self, num_samples):
         samples = list(range(0, num_samples))
