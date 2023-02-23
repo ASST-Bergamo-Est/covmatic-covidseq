@@ -92,3 +92,9 @@ class TestAirGap(TestBaseClass):
 
     def test_pipette_2_get_with_air_gap(self):
         self.assertEqual(PIPETTE_2, self._pc.get_pipette(TEST_VOL_PIPETTE_2_W_AIRGAP, True))
+
+    def test_pipette_1_get_max_vol_w_airgap(self):
+        self.assertEqual(PIPETTE_1_VOL-EXPECTED_AIR_GAP_1, self._pc.get_max_volume(PIPETTE_1, True))
+
+    def test_pipette_2_get_max_vol_w_airgap(self):
+        self.assertEqual(PIPETTE_2_VOL-EXPECTED_AIR_GAP_2, self._pc.get_max_volume(PIPETTE_2, True))

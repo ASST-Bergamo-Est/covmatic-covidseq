@@ -44,8 +44,9 @@ class PipetteChooser:
         self._logger.info("Selected pipette {} for volume {}".format(selected["pipette"], volume))
         return selected["pipette"]
 
-    def get_max_volume(self, pipette):
-        return self._find_pipette(pipette)["max_volume"]
+    def get_max_volume(self, pipette, consider_air_gap: bool=False):
+        p = self._find_pipette(pipette)
+        return p["max_volume"] - (p["air_gap"] if consider_air_gap else 0)
 
     def get_air_gap(self, pipette):
         return self._find_pipette(pipette)["air_gap"]
