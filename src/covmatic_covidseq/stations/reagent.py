@@ -141,7 +141,10 @@ class ReagentStation(CovidseqBaseStation):
 
     def prepare(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
-        self.get_tube_for_recipe(recipe_name).fill(self.get_volume_to_transfer(recipe) * self._num_samples)
+        tube = self.get_tube_for_recipe(recipe_name)
+        volume = self.get_volume_to_transfer(recipe) * self._num_samples
+        tube.fill(volume)
+        self.pause("Place tube {} in {} with volume {}".format(recipe_name, tube, volume))
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette)
@@ -157,9 +160,7 @@ class ReagentStation(CovidseqBaseStation):
         self.distribute_reagent("FS Mix")
         self.robot_pick_plate("SLOT1", "REAGENT_FULL")
 
-
     def body(self):
-        # self.sample_arranger()
         self.anneal_rna()
         self.first_strand_cdna()
 
