@@ -244,7 +244,6 @@ class LibraryStation(CovidseqBaseStation):
 
             self.drop(pipette)
 
-
     def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0):
         sources = self.samples_first_row_for_labware(source_labware)
         destinations = self.samples_first_row_for_labware(destination_labware)
