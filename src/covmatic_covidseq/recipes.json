@@ -10,7 +10,8 @@
       }
     ],
     "volume_final": 8.5,
-    "headroom_fraction": 0.25
+    "headroom_fraction": 0.25,
+    "use_reagent_plate": false
   },
   {
     "name": "FS Mix",
@@ -29,6 +30,51 @@
     ],
     "volume_final": 8,
     "headroom_fraction": 0.25
-
+  },
+   {
+    "name": "CPP1 Mix",
+    "description": "PCR 1 Master Mix",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "IPM",
+        "vol": 15
+      },
+      {
+        "name": "",
+        "reagent": "CPP1",
+        "vol": 4.3
+      },
+      {
+        "name": "",
+        "reagent": "WATER",
+        "vol": 4.7
+      }
+    ],
+    "volume_final": 20,
+    "headroom_fraction": 0.25
+  },
+  {
+    "name": "CPP2 Mix",
+    "description": "PCR 2 Master Mix",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "IPM",
+        "vol": 15
+      },
+      {
+        "name": "",
+        "reagent": "CPP2",
+        "vol": 4.3
+      },
+      {
+        "name": "",
+        "reagent": "WATER",
+        "vol": 4.7
+      }
+    ],
+    "volume_final": 20,
+    "headroom_fraction": 0.25
   }
 ]

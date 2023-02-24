@@ -180,7 +180,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         plate = self._ctx.load_labware(self._reagent_plate_labware_name, slot, "Shared reagent plate")
         self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
         for r in self.recipes:
-            self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
+            if r.use_reagent_plate:
+                self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
         return plate
 
     @property
