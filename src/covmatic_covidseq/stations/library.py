@@ -56,7 +56,7 @@ def mix_well(pipette,
         pipette.aspirate(volume)
         pipette.move_to(d, speed=travel_speed, publish=False)
         pipette.dispense(volume)
-    pipette.move_to(well.bottom(height_max))
+    pipette.move_to(well.bottom(height_max), speed=travel_speed, publish=False)
 
 
 class LibraryStation(CovidseqBaseStation):
@@ -321,10 +321,13 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle(self._work_plate, "FSS")
 
     def thermal_cycle(self, labware, cycle_name):
-        self.dual_pause("Transfer plate {} to the thermal cycler and execute cycle: {}".format(labware, cycle_name))
+        if self._run_stage:
+            self.dual_pause("Transfer plate {} to the thermal cycler and execute cycle: {}".format(labware, cycle_name))
+        else:
+            self.logger.info("Skipped thermal cycle {} because no previous step run.".format(cycle_name))
 
     def body(self):
-        self.pause("Load sample plate on slot {}".format(self._input_plate_slot))
+        self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
         self.anneal_rna()
         self.first_strand_cdna()
 
