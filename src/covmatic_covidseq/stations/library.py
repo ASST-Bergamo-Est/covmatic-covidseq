@@ -294,7 +294,7 @@ class LibraryStation(CovidseqBaseStation):
 
     def anneal_rna(self):
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.distribute_clean("EPH3", self._work_plate)
+        self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=10, mix_volume=16)
         self.thermal_cycle(self._work_plate, "ANNEAL")

@@ -60,6 +60,7 @@ run = "opentrons_simulate {matrix:protocols} {args}"
 [[tool.hatch.envs.simulate_all.matrix]]
 protocols = [
   "protocols/station_reagent.py",
+  "protocols/station_reagent_start_at.py",
   "protocols/station_library.py",
   "protocols/station_library_manual.py"
 ]

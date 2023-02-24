@@ -110,53 +110,62 @@ class ReagentStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
 
-        self.pick_up(pipette)
         for i, (dest_well, volume) in enumerate(remaining_wells_with_volume):
-            num_transfers = math.ceil(volume/pipette_available_volume)
-            self.logger.info("We need {} transfer with {:.1f}ul pipette".format(num_transfers, self._pipette_chooser.get_max_volume(pipette)))
+            if not self.run_stage("Distribute {} {}/{}".format(reagent_name, i+1, len(remaining_wells_with_volume))):
+                if isinstance(source, WellWithVolume):
+                    source.extract_vol_and_get_height(volume)
+            else:
+                num_transfers = math.ceil(volume/pipette_available_volume)
+                self.logger.info("We need {} transfer with {:.1f}ul pipette".format(num_transfers, self._pipette_chooser.get_max_volume(pipette)))
 
-            dest_well_with_volume = WellWithVolume(dest_well, 0)
+                dest_well_with_volume = WellWithVolume(dest_well, 0)
 
-            while volume > 0:
-                self.logger.info("Remaining volume: {:1f}".format(volume))
-                volume_to_transfer = min(volume, pipette_available_volume)
-                self.logger.info("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
-                if (pipette.current_volume - disposal_volume) < volume_to_transfer:
-                    total_remaining_volume = min(pipette_available_volume,
-                                           sum([v for (_, v) in remaining_wells_with_volume[i:]])) - (pipette.current_volume - disposal_volume)
-                    self.logger.info("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
+                if not pipette.has_tip:
+                    self.pick_up(pipette)
 
-                    if isinstance(source, WellWithVolume):
-                        well = source.well
-                        aspirate_height = source.extract_vol_and_get_height(total_remaining_volume)
-                    else:
-                        well = source
-                        aspirate_height = 0.5
+                while volume > 0:
+                    self.logger.info("Remaining volume: {:1f}".format(volume))
+                    volume_to_transfer = min(volume, pipette_available_volume)
+                    self.logger.info("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+                    if (pipette.current_volume - disposal_volume) < volume_to_transfer:
+                        total_remaining_volume = min(pipette_available_volume,
+                                               sum([v for (_, v) in remaining_wells_with_volume[i:]])) - (pipette.current_volume - disposal_volume)
+                        self.logger.info("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
+
+                        if isinstance(source, WellWithVolume):
+                            well = source.well
+                            aspirate_height = source.extract_vol_and_get_height(total_remaining_volume)
+                        else:
+                            well = source
+                            aspirate_height = 0.5
+
+                        with MoveWithSpeed(pipette,
+                                           from_point=well.bottom(aspirate_height + 5),
+                                           to_point=well.bottom(aspirate_height),
+                                           speed=self._slow_vertical_speed, move_close=False):
+                            pipette.aspirate(total_remaining_volume)
+
+                    dest_well_with_volume.fill(volume_to_transfer)
+                    self.logger.info("Dispensing at {}".format(dest_well_with_volume.height))
 
                     with MoveWithSpeed(pipette,
-                                       from_point=well.bottom(aspirate_height + 5),
-                                       to_point=well.bottom(aspirate_height),
+                                       from_point=dest_well.bottom(dest_well_with_volume.height + 2.5),
+                                       to_point=dest_well.bottom(dest_well_with_volume.height),
                                        speed=self._slow_vertical_speed, move_close=False):
-                        pipette.aspirate(total_remaining_volume)
+                        pipette.dispense(volume_to_transfer)
+                    volume -= volume_to_transfer
+                    self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
 
-                dest_well_with_volume.fill(volume_to_transfer)
-                self.logger.info("Dispensing at {}".format(dest_well_with_volume.height))
-
-                with MoveWithSpeed(pipette,
-                                   from_point=dest_well.bottom(dest_well_with_volume.height + 2.5),
-                                   to_point=dest_well.bottom(dest_well_with_volume.height),
-                                   speed=self._slow_vertical_speed, move_close=False):
-                    pipette.dispense(volume_to_transfer)
-                volume -= volume_to_transfer
-                self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
-        self.drop(pipette)
+        if pipette.has_tip:
+            self.drop(pipette)
 
     def prepare(self, recipe_name):
-        recipe = self.get_recipe(recipe_name)
-        tube = self.get_tube_for_recipe(recipe_name)
-        volume = self.get_volume_to_transfer(recipe) * self._num_samples
-        tube.fill(volume)
-        self.pause("Place tube {} in {} with volume {}".format(recipe_name, tube, volume))
+        if self.run_stage("Prepare {}".format(recipe_name)):
+            recipe = self.get_recipe(recipe_name)
+            tube = self.get_tube_for_recipe(recipe_name)
+            volume = self.get_volume_to_transfer(recipe) * self._num_samples
+            tube.fill(volume)
+            self.pause("Place tube {} in {} with volume {}".format(recipe_name, tube, volume), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette)
