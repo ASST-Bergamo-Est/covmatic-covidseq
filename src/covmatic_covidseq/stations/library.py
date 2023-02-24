@@ -255,11 +255,7 @@ class LibraryStation(CovidseqBaseStation):
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)
-                    with MoveWithSpeed(pipette,
-                                       from_point=dest_well.bottom(dest_well_with_volume.height + 5),
-                                       to_point=dest_well.bottom(dest_well_with_volume.height),
-                                       speed=self._very_slow_vertical_speed, move_close=False):
-                        pipette.dispense(volume_to_transfer)
+                    pipette.dispense(volume_to_transfer, dest_well.bottom(dest_well_with_volume.height))
                     volume -= volume_to_transfer
 
                 if mix_volume != 0 and mix_times != 0:
@@ -311,13 +307,13 @@ class LibraryStation(CovidseqBaseStation):
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
         self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=10, mix_volume=16)
+        self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=5, mix_volume=16)
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
     def first_strand_cdna(self):
         self.set_task_name("First Strand cDNA")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.distribute_dirty("FS Mix", self._work_plate, mix_times=10, mix_volume=20)
+        self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
         self.thermal_cycle(self._work_plate, "FSS")
 
     def thermal_cycle(self, labware, cycle_name):
