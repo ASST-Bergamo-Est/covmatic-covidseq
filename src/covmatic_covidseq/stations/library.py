@@ -79,6 +79,7 @@ class LibraryStation(CovidseqBaseStation):
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
+        self._task_name = ""
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -134,6 +135,12 @@ class LibraryStation(CovidseqBaseStation):
             '_tipracks300': '_p300'
         }
 
+    def set_task_name(self, task_name: str):
+        self._task_name = task_name
+
+    def build_stage(self, stage_name):
+        return "{} {}".format(self._task_name, stage_name)
+
     def distribute_clean(self, recipe_name, dest_labware, pipette=None, disposal_volume=None):
         """ Transfer from the passed recipe from the reagent plate.
            :param reagent_name: the recipe name to distribute
@@ -172,30 +179,33 @@ class LibraryStation(CovidseqBaseStation):
 
             dest_well_with_volume = WellWithVolume(dest_well, 0)
 
-            while volume > 0:
-                self.logger.debug("Remaining volume: {:1f}".format(volume))
-                volume_to_transfer = min(volume, pipette_available_volume)
-                self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+            if self.run_stage(self.build_stage("add {} {}/{}".format(recipe_name, i+1, len(destinations)))):
+                while volume > 0:
+                    self.logger.debug("Remaining volume: {:1f}".format(volume))
+                    volume_to_transfer = min(volume, pipette_available_volume)
+                    self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
 
-                if not pipette.has_tip:
-                    self.pick_up(pipette)
+                    if not pipette.has_tip:
+                        self.pick_up(pipette)
 
-                if (pipette.current_volume - disposal_volume) < volume_to_transfer:
-                    total_remaining_volume = min(pipette_available_volume,
-                                                 (len(destinations)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
-                    self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+                    if (pipette.current_volume - disposal_volume) < volume_to_transfer:
+                        total_remaining_volume = min(pipette_available_volume,
+                                                     (len(destinations)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
+                        self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
 
-                    source.prepare_aspiration(total_remaining_volume)
-                    source.aspirate(pipette)
+                        source.prepare_aspiration(total_remaining_volume)
+                        source.aspirate(pipette)
 
-                dest_well_with_volume.fill(volume_to_transfer)
-                with MoveWithSpeed(pipette,
-                                   from_point=dest_well.bottom(dest_well_with_volume.height + 5),
-                                   to_point=dest_well.bottom(dest_well_with_volume.height),
-                                   speed=self._very_slow_vertical_speed, move_close=False):
-                    pipette.dispense(volume_to_transfer)
-                volume -= volume_to_transfer
-            self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
+                    dest_well_with_volume.fill(volume_to_transfer)
+                    with MoveWithSpeed(pipette,
+                                       from_point=dest_well.bottom(dest_well_with_volume.height + 5),
+                                       to_point=dest_well.bottom(dest_well_with_volume.height),
+                                       speed=self._very_slow_vertical_speed, move_close=False):
+                        pipette.dispense(volume_to_transfer)
+                    volume -= volume_to_transfer
+                self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
+            else:
+                source.use_volume_only(volume)
 
         if pipette.has_tip:
             self.drop(pipette)
@@ -225,41 +235,44 @@ class LibraryStation(CovidseqBaseStation):
 
             dest_well_with_volume = WellWithVolume(dest_well, 0)
 
-            while volume > 0:
-                self.logger.debug("Remaining volume: {:1f}".format(volume))
-                volume_to_transfer = min(volume, pipette_available_volume)
-                self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+            if self.run_stage(self.build_stage("add {} {}/{}".format(recipe_name, i + 1, len(destinations)))):
+                while volume > 0:
+                    self.logger.debug("Remaining volume: {:1f}".format(volume))
+                    volume_to_transfer = min(volume, pipette_available_volume)
+                    self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
 
-                if pipette.has_tip:
-                    self.drop(pipette)                      # Multiple transfer needed, but change tip requested
+                    if pipette.has_tip:
+                        self.drop(pipette)                      # Multiple transfer needed, but change tip requested
 
-                if not pipette.has_tip:
-                    self.pick_up(pipette)
+                    if not pipette.has_tip:
+                        self.pick_up(pipette)
 
-                if pipette.current_volume < volume_to_transfer:
-                    total_remaining_volume = volume - pipette.current_volume
-                    self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+                    if pipette.current_volume < volume_to_transfer:
+                        total_remaining_volume = volume - pipette.current_volume
+                        self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
 
-                    source.prepare_aspiration(total_remaining_volume)
-                    source.aspirate(pipette)
+                        source.prepare_aspiration(total_remaining_volume)
+                        source.aspirate(pipette)
 
-                dest_well_with_volume.fill(volume_to_transfer)
-                with MoveWithSpeed(pipette,
-                                   from_point=dest_well.bottom(dest_well_with_volume.height + 5),
-                                   to_point=dest_well.bottom(dest_well_with_volume.height),
-                                   speed=self._very_slow_vertical_speed, move_close=False):
-                    pipette.dispense(volume_to_transfer)
-                volume -= volume_to_transfer
+                    dest_well_with_volume.fill(volume_to_transfer)
+                    with MoveWithSpeed(pipette,
+                                       from_point=dest_well.bottom(dest_well_with_volume.height + 5),
+                                       to_point=dest_well.bottom(dest_well_with_volume.height),
+                                       speed=self._very_slow_vertical_speed, move_close=False):
+                        pipette.dispense(volume_to_transfer)
+                    volume -= volume_to_transfer
 
-            if mix_volume != 0 and mix_times != 0:
-                mix_well(pipette, dest_well, mix_volume, mix_times)
+                if mix_volume != 0 and mix_times != 0:
+                    mix_well(pipette, dest_well, mix_volume, mix_times)
 
-            pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
-            pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+                pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
+                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
 
-            self.drop(pipette)
+                self.drop(pipette)
+            else:
+                source.use_volume_only(volume)
 
-    def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0):
+    def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
         sources = self.samples_first_row_for_labware(source_labware)
         destinations = self.samples_first_row_for_labware(destination_labware)
 
@@ -270,30 +283,31 @@ class LibraryStation(CovidseqBaseStation):
 
         self.logger.info("We need {} transfers of {}ul for each sample".format(num_transfers_per_sample, vol_per_transfer))
 
-        for s, d in zip(sources, destinations):
-            self.pick_up(pipette)
+        for i, (s, d) in enumerate(zip(sources, destinations)):
+            if self.run_stage(self.build_stage("{} {}/{}".format(stage_name, i + 1, len(destinations)))):
+                self.pick_up(pipette)
+                for _ in range(num_transfers_per_sample):
+                    with MoveWithSpeed(pipette,
+                                       from_point=s.bottom(self._pcr_plate_bottom_height + 2.5),
+                                       to_point=s.bottom(self._pcr_plate_bottom_height),
+                                       speed=self._slow_vertical_speed, move_close=False):
+                        pipette.aspirate(vol_per_transfer)
 
-            for _ in range(num_transfers_per_sample):
-                with MoveWithSpeed(pipette,
-                                   from_point=s.bottom(self._pcr_plate_bottom_height + 2.5),
-                                   to_point=s.bottom(self._pcr_plate_bottom_height),
-                                   speed=self._slow_vertical_speed, move_close=False):
-                    pipette.aspirate(vol_per_transfer)
+                    pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+                    pipette.dispense(self._pipette_chooser.get_air_gap(pipette), d.top())
 
-                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
-                pipette.dispense(self._pipette_chooser.get_air_gap(pipette), d.top())
+                    pipette.dispense(vol_per_transfer, d.bottom(self._pcr_plate_bottom_height))
 
-                pipette.dispense(vol_per_transfer, d.bottom(self._pcr_plate_bottom_height))
+                    if mix_volume != 0 and mix_times != 0:
+                        mix_well(pipette, d, mix_volume, mix_times)
 
-                if mix_volume != 0 and mix_times != 0:
-                    mix_well(pipette, d, mix_volume, mix_times)
+                    pipette.move_to(d.top(), speed=self._slow_vertical_speed, publish=False)
+                    pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
 
-                pipette.move_to(d.top(), speed=self._slow_vertical_speed, publish=False)
-                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
-
-            self.drop(pipette)
+                self.drop(pipette)
 
     def anneal_rna(self):
+        self.set_task_name("Anneal RNA")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
         self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
@@ -301,6 +315,7 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
     def first_strand_cdna(self):
+        self.set_task_name("First Strand cDNA")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
         self.distribute_dirty("FS Mix", self._work_plate, mix_times=10, mix_volume=20)
         self.thermal_cycle(self._work_plate, "FSS")
