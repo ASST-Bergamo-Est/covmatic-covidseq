@@ -56,6 +56,7 @@ def mix_well(pipette,
         pipette.aspirate(volume)
         pipette.move_to(d, speed=travel_speed, publish=False)
         pipette.dispense(volume)
+    pipette.move_to(well.bottom(height_max))
 
 
 class LibraryStation(CovidseqBaseStation):
