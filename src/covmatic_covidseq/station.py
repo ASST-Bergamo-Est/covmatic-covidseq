@@ -5,6 +5,7 @@ import os.path
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC
 
+from opentrons.protocol_api.labware import Labware
 
 from .recipe import Recipe
 
@@ -189,3 +190,6 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         if self._reagent_plate_helper is None:
             raise Exception("You must call load_reagents_plate before using reagent_plate_helper")
         return self._reagent_plate_helper
+
+    def get_samples_wells_for_labware(self, labware: Labware):
+        return labware.wells()[:self._num_samples]

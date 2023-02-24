@@ -42,30 +42,19 @@ class BaseSetup(unittest.TestCase):
                                       logger=logging.getLogger())
 
 
-class TestRecipes(BaseSetup):
-    def test_recipe_is_empty(self):
-        self.assertEqual(0, len(self._s._recipes))
+class TestGetSamples(BaseSetup):
+    def test_get_samples_1(self):
+        self._s._num_samples = 1
+        self.assertEqual(EXPECTED_WELLS_1, self._s.get_samples_wells_for_labware(mock_labware))
 
-    def test_add_recipe_1_is_added(self):
-        self._s.add_recipe(RECIPE_1)
-        self.assertEqual(1, len(self._s._recipes))
+    def test_get_samples_2(self):
+        self._s._num_samples = 2
+        self.assertEqual(EXPECTED_WELLS_2, self._s.get_samples_wells_for_labware(mock_labware))
 
-    def test_get_recipe_1(self):
-        self._s.add_recipe(RECIPE_1)
-        self.assertTrue(self._s.get_recipe(RECIPE_1_NAME))
+    def test_get_samples_8(self):
+        self._s._num_samples = 8
+        self.assertEqual(EXPECTED_WELLS_8, self._s.get_samples_wells_for_labware(mock_labware))
 
-    def test_get_recipe_1_value(self):
-        self._s.add_recipe(RECIPE_1)
-        self.assertEqual(RECIPE_1, self._s.get_recipe(RECIPE_1_NAME))
-
-
-class TestWithLoadRecipes(unittest.TestCase):
-    def setUp(self):
-        self._s = CovidseqTestStation(robot_manager_host="FAKEHOST",
-                                      robot_manager_port=1234,
-                                      ot_name="TEST",
-                                      logger=logging.getLogger())
-
-    def test_recipes_load(self):
-        self.assertGreater(len(self._s._recipes), 0)
-
+    def test_get_samples_96(self):
+        self._s._num_samples = 96
+        self.assertEqual(EXPECTED_WELLS_96, self._s.get_samples_wells_for_labware(mock_labware))
