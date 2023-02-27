@@ -304,9 +304,9 @@ class LibraryStation(CovidseqBaseStation):
 
     def anneal_rna(self):
         self.set_task_name("Anneal RNA")
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "CDNA1_FULL")
+        # self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
+        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=5, mix_volume=16)
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
@@ -314,6 +314,7 @@ class LibraryStation(CovidseqBaseStation):
         self.set_task_name("First Strand cDNA")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
         self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.thermal_cycle(self._work_plate, "FSS")
 
     def thermal_cycle(self, labware, cycle_name):
