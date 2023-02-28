@@ -126,9 +126,6 @@ class LibraryStation(CovidseqBaseStation):
                                                    self._input_plate_slot,
                                                    "Sample input plate")
 
-    def samples_first_row_for_labware(self, labware):
-        return [c[0] for c in labware.columns()][:self.num_cols]
-
     def _tipracks(self) -> dict:
         return {
             '_tipracks20': '_p20',
@@ -169,7 +166,7 @@ class LibraryStation(CovidseqBaseStation):
             source.append_tube_with_vol(w, v + disposal_volume)
         self.logger.info("Now source is: {}".format(source))
         
-        destinations = self.samples_first_row_for_labware(dest_labware)
+        destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
         for i, (dest_well) in enumerate(destinations):
@@ -220,7 +217,7 @@ class LibraryStation(CovidseqBaseStation):
         for w, v in source_wells:
             source.append_tube_with_vol(w, v)
         self.logger.info("Now source is: {}".format(source))
-        destinations = self.samples_first_row_for_labware(dest_labware)
+        destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
         if pipette is None:
@@ -269,8 +266,8 @@ class LibraryStation(CovidseqBaseStation):
                 source.use_volume_only(volume)
 
     def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
-        sources = self.samples_first_row_for_labware(source_labware)
-        destinations = self.samples_first_row_for_labware(destination_labware)
+        sources = self.get_samples_first_row_for_labware(source_labware)
+        destinations = self.get_samples_first_row_for_labware(destination_labware)
 
         pipette = self._pipette_chooser.get_pipette(volume, consider_air_gap=True)
 

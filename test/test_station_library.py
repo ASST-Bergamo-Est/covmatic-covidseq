@@ -37,24 +37,24 @@ class TestLibrary(unittest.TestCase):
 
     def test_get_samples_first_row_1(self):
         self._s._num_samples = 1
-        self.assertEqual(EXPECTED_SAMPLES_ROW_1, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_1, self._s.get_samples_first_row_for_labware(mock_labware))
 
     def test_get_samples_first_row_2(self):
         self._s._num_samples = 2
-        self.assertEqual(EXPECTED_SAMPLES_ROW_2, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_2, self._s.get_samples_first_row_for_labware(mock_labware))
 
     def test_get_samples_first_row_8(self):
         self._s._num_samples = 8
-        self.assertEqual(EXPECTED_SAMPLES_ROW_8, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_8, self._s.get_samples_first_row_for_labware(mock_labware))
 
     def test_get_samples_first_row_9(self):
         self._s._num_samples = 9
-        self.assertEqual(EXPECTED_SAMPLES_ROW_9, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_9, self._s.get_samples_first_row_for_labware(mock_labware))
 
     def test_get_samples_first_row_64(self):
         self._s._num_samples = 64
-        self.assertEqual(EXPECTED_SAMPLES_ROW_64, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_64, self._s.get_samples_first_row_for_labware(mock_labware))
 
     def test_get_samples_first_row_96(self):
         self._s._num_samples = 96
-        self.assertEqual(EXPECTED_SAMPLES_ROW_96, self._s.samples_first_row_for_labware(mock_labware))
+        self.assertEqual(EXPECTED_SAMPLES_ROW_96, self._s.get_samples_first_row_for_labware(mock_labware))

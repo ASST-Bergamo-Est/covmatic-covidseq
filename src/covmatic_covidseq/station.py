@@ -134,6 +134,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  reagent_plate_max_volume: float = 100,
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
+                 column_offset_cov2: int = 6,
                  *args, **kwargs):
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
@@ -146,6 +147,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._reagent_plate_helper = None       # Initialized afterward
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
+        self._column_offset_cov2 = column_offset_cov2
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
@@ -191,5 +193,20 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             raise Exception("You must call load_reagents_plate before using reagent_plate_helper")
         return self._reagent_plate_helper
 
+    def get_columns_for_samples(self, labware, column_offset=0):
+        return labware.columns()[column_offset:column_offset+self.num_cols]
+
     def get_samples_wells_for_labware(self, labware: Labware):
-        return labware.wells()[:self._num_samples]
+        return [w for c in self.get_columns_for_samples(labware) for w in c][:self._num_samples]
+
+    def get_samples_COV1_for_labware(self, labware):
+        return self.get_samples_wells_for_labware(labware)
+
+    def get_samples_COV2_for_labware(self, labware):
+        return [w for c in self.get_columns_for_samples(labware, self._column_offset_cov2) for w in c][:self._num_samples]
+
+    def get_samples_first_row_for_labware(self, labware):
+        return [c[0] for c in self.get_columns_for_samples(labware)]
+
+    def get_samples_first_row_COV2_for_labware(self, labware):
+        return [c[0] for c in self.get_columns_for_samples(labware, self._column_offset_cov2)]
