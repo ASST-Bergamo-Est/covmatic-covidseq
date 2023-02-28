@@ -21,13 +21,16 @@ class ReagentStation(CovidseqBaseStation):
                  tipracks1000_slots: Tuple[str, ...] = ("8",),
                  reagent_plate_slot="1",
                  cdna1_plate_slot="2",
+                 cov12_plate_slot="3",
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
         self._tipracks1000_slots = tipracks1000_slots
         self._reagent_plate_slot = reagent_plate_slot
         self._cdna1_plate_slot = cdna1_plate_slot
+        self._cov12_plate_slot = cov12_plate_slot
         self._pipette_chooser = PipetteChooser()
+        self._empty_tube_list = []
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -57,8 +60,7 @@ class ReagentStation(CovidseqBaseStation):
 
     @labware_loader(1, '_empty_tubes_list')
     def load_empty_tubes(self):
-        available_tubes = [self._empty_tube_racks.wells_by_name()['D6']] * len(self.recipes)
-        self._empty_tube_list = []
+        available_tubes = self._empty_tube_racks.wells()
         for r, t in zip(self.recipes, available_tubes):
             self.logger.info("Recipe {} assigned to tube: {}".format(r.name, t))
             self._empty_tube_list.append({"recipe": r.name, "tube": WellWithVolume(t, 0)})
@@ -70,7 +72,12 @@ class ReagentStation(CovidseqBaseStation):
     @labware_loader(3, '_cdna1_plate')
     def load_cdna1_plate(self):
         self._cdna1_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
-                                                   self._cdna1_plate_slot, 'empty tubes rack')
+                                                   self._cdna1_plate_slot, 'empty plate for CDNA1')
+
+    @labware_loader(4, '_cov12_plate')
+    def load_cov12_plate(self):
+        self._cov12_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
+                                                   self._cov12_plate_slot, 'empty plate for COV1 COV2')
 
     def _tipracks(self) -> dict:
         return {
@@ -190,7 +197,6 @@ class ReagentStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
         self.logger.info("Pipette available volume: {}".format(pipette_available_volume))
-        self.logger.info("Pipette max volume: {}".format(self._pipette_chooser.get_max_volume(pipette)))
 
         for i, dest_well in enumerate(wells):
             volume = recipe.volume_final
@@ -217,9 +223,6 @@ class ReagentStation(CovidseqBaseStation):
                         total_remaining_volume = min(pipette_available_volume,
                                                      (len(wells)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
                         self.logger.info("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
-                        self.logger.info("Pipette available volume: {}".format(pipette_available_volume))
-                        self.logger.info("REmaining samples: {}".format(len(wells)-i))
-                        self.logger.info("pipette current volume: {}; disposal volume: {}".format(pipette.current_volume, disposal_volume))
 
                         if isinstance(source, WellWithVolume):
                             well = source.well
@@ -270,32 +273,22 @@ class ReagentStation(CovidseqBaseStation):
     def first_strand_cdna(self):
         self.prepare("FS Mix")
         self.distribute_reagent("FS Mix", self._p300)
-        self.robot_pick_plate("SLOT1", "REAGENT_FULL")
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
     def amplify_cdna(self):
-        self.robot_drop_plate("SLOT1", "REAGENT_EMPTY")
+        self.prepare("CPP1 Mix")
+        self.prepare("CPP2 Mix")
+        self.distribute("CPP1 Mix", self.get_samples_COV1_for_labware(self._cov12_plate), self._p300)
+        self.distribute("CPP2 Mix", self.get_samples_COV2_for_labware(self._cov12_plate), self._p300)
+        self.robot_pick_plate("SLOT{}".format(self._cov12_plate_slot), "COV12_FULL")
 
     def body(self):
         self.anneal_rna()
         self.first_strand_cdna()
         self.amplify_cdna()
 
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
 
-    def sample_arranger(self, num_samples):
-        samples = list(range(0, num_samples))
-        print("Samples test: {}".format(samples[1::8]))
-        # num_cols = math.ceil(self._num_samples/8)
-        # print(samples)
-        # print("num cols: {}".format(num_cols))
-        # for i in range(num_cols):
-        #     start_index = i*8
-        #     end_index = min(num_samples - 1, i*8 + 8)
-        #     print("Start index: {}".format(start_index))
-        #     print("end_index: {}".format(end_index))
-        #     print(samples[start_index:end_index])
-
-        # samples_8 = [samples[i*8:min(self._num_samples, (i*8+8))] for i in range(math.ceil(self._num_samples/8))]
-        # print("samples8: {}".format(samples_8))
 
 if __name__ == "__main__":
     ReagentStation(num_samples=96, metadata={'apiLevel': '2.7'}).simulate()
