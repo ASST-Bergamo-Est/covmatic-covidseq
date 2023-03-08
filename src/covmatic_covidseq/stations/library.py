@@ -330,10 +330,10 @@ class LibraryManualStation(LibraryStation):
     def __init__(self,
                  tipracks20_slots: Tuple[str, ...] = ("9", "6", "3"),
                  tipracks300_slots: Tuple[str, ...] = ("2",),
-                 input_plate_slot=4,
+                 input_plate_slot=10,
                  reagent_plate_slot=1,
-                 work_plate_slot=7,
-                 magdeck_slot=10,
+                 work_plate_slot=4,
+                 magdeck_slot=7,
                  *args, **kwargs):
         super().__init__(
             tipracks20_slots=tipracks20_slots,
