@@ -132,7 +132,7 @@ class ReagentStation(CovidseqBaseStation):
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
 
         for i, (dest_well, volume) in enumerate(remaining_wells_with_volume):
-            if not self.run_stage(self.build_stage("Distribute {} {}/{}".format(reagent_name, i+1, len(remaining_wells_with_volume)))):
+            if not self.run_stage(self.build_stage("Distr. {} {}/{}".format(reagent_name, i+1, len(remaining_wells_with_volume)))):
                 if isinstance(source, WellWithVolume):
                     source.extract_vol_and_get_height(volume)
             else:
@@ -208,7 +208,7 @@ class ReagentStation(CovidseqBaseStation):
         for i, dest_well in enumerate(wells):
             volume = recipe.volume_final
 
-            if not self.run_stage(self.build_stage("Distribute {} {}/{}".format(reagent_name, i + 1, len(wells)))):
+            if not self.run_stage(self.build_stage("Distr. {} {}/{}".format(reagent_name, i + 1, len(wells)))):
                 if isinstance(source, WellWithVolume):
                     source.extract_vol_and_get_height(volume)
             else:
@@ -259,7 +259,7 @@ class ReagentStation(CovidseqBaseStation):
             self.drop(pipette)
 
     def prepare(self, recipe_name):
-        if self.run_stage(self.build_stage("Prepare {}".format(recipe_name))):
+        if self.run_stage(self.build_stage("Prep. {}".format(recipe_name))):
             recipe = self.get_recipe(recipe_name)
             tube = self.get_tube_for_recipe(recipe_name)
             volume = self.get_volume_to_transfer(recipe) * self._num_samples
