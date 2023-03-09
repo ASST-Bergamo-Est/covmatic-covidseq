@@ -274,6 +274,7 @@ class ReagentStation(CovidseqBaseStation):
         self.prepare("FS Mix")
         self.distribute_reagent("FS Mix", self._p300)
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
 
     def amplify_cdna(self):
         self.prepare("CPP1 Mix")
@@ -287,7 +288,7 @@ class ReagentStation(CovidseqBaseStation):
         self.first_strand_cdna()
         self.amplify_cdna()
 
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+
 
 
 if __name__ == "__main__":

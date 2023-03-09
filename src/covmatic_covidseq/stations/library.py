@@ -268,13 +268,19 @@ class LibraryStation(CovidseqBaseStation):
     def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
         sources = self.get_samples_first_row_for_labware(source_labware)
         destinations = self.get_samples_first_row_for_labware(destination_labware)
+        self.transfer_dirty(sources, destinations, volume, mix_times=mix_times, mix_volume=mix_volume, stage_name=stage_name)
 
-        pipette = self._pipette_chooser.get_pipette(volume, consider_air_gap=True)
+    def transfer_dirty(self, sources, destinations, volume, pipette=None, mix_times=0, mix_volume=0, stage_name="transfer"):
+        self.logger.info("Transferring samples stage {}".format(stage_name))
 
-        num_transfers_per_sample = math.ceil(volume/self._pipette_chooser.get_max_volume(pipette))
-        vol_per_transfer = volume/num_transfers_per_sample
+        if pipette is None:
+            pipette = self._pipette_chooser.get_pipette(volume, consider_air_gap=True)
 
-        self.logger.info("We need {} transfers of {}ul for each sample".format(num_transfers_per_sample, vol_per_transfer))
+        num_transfers_per_sample = math.ceil(volume / self._pipette_chooser.get_max_volume(pipette))
+        vol_per_transfer = volume / num_transfers_per_sample
+
+        self.logger.info(
+            "We need {} transfers of {}ul for each sample".format(num_transfers_per_sample, vol_per_transfer))
 
         for i, (s, d) in enumerate(zip(sources, destinations)):
             if self.run_stage(self.build_stage("{} {}/{}".format(stage_name, i + 1, len(destinations)))):
@@ -314,6 +320,19 @@ class LibraryStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.thermal_cycle(self._work_plate, "FSS")
 
+    def amplify_cdna(self):
+        self.set_task_name("Amplify cDNA")
+        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_FULL")
+        sources = self.get_samples_first_row_for_labware(self._work_plate)
+        destinations_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
+        destinations_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
+        self.transfer_dirty(sources, destinations_cov1, volume=5, mix_times=5, mix_volume=20, stage_name="COV1")
+        self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
+
+        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
+
+        self.thermal_cycle(self._mag_plate, "PCR")
+
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
             self.dual_pause("Transfer plate {} to the thermal cycler and execute cycle: {}".format(labware, cycle_name))
@@ -324,6 +343,7 @@ class LibraryStation(CovidseqBaseStation):
         self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
         self.anneal_rna()
         self.first_strand_cdna()
+        self.amplify_cdna()
 
 
 class LibraryManualStation(LibraryStation):
