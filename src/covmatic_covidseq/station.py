@@ -3,7 +3,7 @@ import logging
 import math
 import os.path
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from opentrons.protocol_api.labware import Labware
 
@@ -148,6 +148,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
         self._column_offset_cov2 = column_offset_cov2
+        self._task_name = ""
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
@@ -164,6 +165,13 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     @property
     def recipes(self) -> [Recipe]:
         return self._recipes
+
+    def set_task_name(self, task_name: str):
+        self._task_name = task_name
+        self.run_stage(task_name)
+
+    def build_stage(self, stage_name):
+        return "{} {}".format(self._task_name, stage_name)
 
     def load_recipes_from_json(self, file):
         if not os.path.isabs(file):
@@ -210,3 +218,32 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
     def get_samples_first_row_COV2_for_labware(self, labware):
         return [c[0] for c in self.get_columns_for_samples(labware, self._column_offset_cov2)]
+
+    @abstractmethod
+    def anneal_rna(self):
+        pass
+
+    @abstractmethod
+    def first_strand_cdna(self):
+        pass
+
+    @abstractmethod
+    def amplify_cdna(self):
+        pass
+
+    @abstractmethod
+    def tagment_pcr_amplicons(self):
+        pass
+
+    def body(self):
+        self.set_task_name("Anneal RNA")
+        self.anneal_rna()
+
+        self.set_task_name("FS CDNA")
+        self.first_strand_cdna()
+
+        self.set_task_name("Amplify CDNA")
+        self.amplify_cdna()
+
+        self.set_task_name("TAG PCR Amplicons")
+        self.tagment_pcr_amplicons()

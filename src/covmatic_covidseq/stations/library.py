@@ -79,7 +79,6 @@ class LibraryStation(CovidseqBaseStation):
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
-        self._task_name = ""
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -131,12 +130,6 @@ class LibraryStation(CovidseqBaseStation):
             '_tipracks20': '_p20',
             '_tipracks300': '_p300'
         }
-
-    def set_task_name(self, task_name: str):
-        self._task_name = task_name
-
-    def build_stage(self, stage_name):
-        return "{} {}".format(self._task_name, stage_name)
 
     def distribute_clean(self, recipe_name, dest_labware, pipette=None, disposal_volume=None):
         """ Transfer from the passed recipe from the reagent plate.
@@ -306,7 +299,6 @@ class LibraryStation(CovidseqBaseStation):
                 self.drop(pipette)
 
     def anneal_rna(self):
-        self.set_task_name("Anneal RNA")
         self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "CDNA1_FULL")
         # self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
         # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
@@ -314,14 +306,12 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
     def first_strand_cdna(self):
-        self.set_task_name("First Strand cDNA")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
         self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.thermal_cycle(self._work_plate, "FSS")
 
     def amplify_cdna(self):
-        self.set_task_name("Amplify cDNA")
         self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_FULL")
         sources = self.get_samples_first_row_for_labware(self._work_plate)
         destinations_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
