@@ -330,8 +330,12 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
 
         self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
+        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_THERMAL")
+        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
+        self.thermal_cycle(self._work_plate, "PCR")
 
-        self.thermal_cycle(self._mag_plate, "PCR")
+    def tagment_pcr_amplicons(self):
+        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_FULL")
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
@@ -344,6 +348,7 @@ class LibraryStation(CovidseqBaseStation):
         self.anneal_rna()
         self.first_strand_cdna()
         self.amplify_cdna()
+        self.tagment_pcr_amplicons()
 
 
 class LibraryManualStation(LibraryStation):

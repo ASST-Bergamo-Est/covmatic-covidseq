@@ -22,6 +22,7 @@ class ReagentStation(CovidseqBaseStation):
                  reagent_plate_slot="1",
                  cdna1_plate_slot="2",
                  cov12_plate_slot="3",
+                 tag1_plate_slot="4",
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
@@ -29,6 +30,7 @@ class ReagentStation(CovidseqBaseStation):
         self._reagent_plate_slot = reagent_plate_slot
         self._cdna1_plate_slot = cdna1_plate_slot
         self._cov12_plate_slot = cov12_plate_slot
+        self._tag1_plate_slot = tag1_plate_slot
         self._pipette_chooser = PipetteChooser()
         self._empty_tube_list = []
 
@@ -78,6 +80,11 @@ class ReagentStation(CovidseqBaseStation):
     def load_cov12_plate(self):
         self._cov12_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
                                                    self._cov12_plate_slot, 'empty plate for COV1 COV2')
+
+    @labware_loader(5, '_tag1_plate')
+    def load_tag1_plate(self):
+        self._tag1_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
+                                                   self._tag1_plate_slot, 'empty plate for TAG1')
 
     def _tipracks(self) -> dict:
         return {
@@ -283,12 +290,10 @@ class ReagentStation(CovidseqBaseStation):
         self.distribute("CPP2 Mix", self.get_samples_COV2_for_labware(self._cov12_plate), self._p300)
         self.robot_pick_plate("SLOT{}".format(self._cov12_plate_slot), "COV12_FULL")
 
-    def body(self):
-        self.anneal_rna()
-        self.first_strand_cdna()
-        self.amplify_cdna()
-
-
+    def tagment_pcr_amplicons(self):
+        self.prepare("TAG Mix")
+        self.distribute("TAG Mix", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
+        self.robot_pick_plate("SLOT{}".format(self._tag1_plate_slot), "TAG1_FULL")
 
 
 if __name__ == "__main__":

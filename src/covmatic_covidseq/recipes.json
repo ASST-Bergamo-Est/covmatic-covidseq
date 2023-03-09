@@ -76,5 +76,29 @@
     ],
     "volume_final": 20,
     "headroom_fraction": 0.25
+  },
+  {
+    "name": "TAG Mix",
+    "description": "Tagmentation Master Mix",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "TB1",
+        "vol": 12
+      },
+      {
+        "name": "",
+        "reagent": "EBLTS",
+        "vol": 4
+      },
+      {
+        "name": "",
+        "reagent": "WATER",
+        "vol": 20
+      }
+    ],
+    "volume_final": 30,
+    "headroom_fraction": 0.25
   }
+
 ]
