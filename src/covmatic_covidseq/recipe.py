@@ -10,6 +10,7 @@ class Recipe:
                  steps=None,
                  volume_final=None,
                  use_reagent_plate=True,
+                 use_wash_plate=False,
                  headroom_fraction=0.5):
         self._name = name
         self._description = description
@@ -17,7 +18,8 @@ class Recipe:
         self._steps = steps or []
         if volume_final is not None:
             self.volume_final = volume_final
-        self._use_reagent_plate = use_reagent_plate
+        self._use_reagent_plate = False if use_wash_plate else use_reagent_plate
+        self._use_wash_plate = use_wash_plate
         self._headroom_fraction = headroom_fraction
 
     def __str__(self):
@@ -44,6 +46,10 @@ class Recipe:
     @property
     def use_reagent_plate(self):
         return self._use_reagent_plate
+
+    @property
+    def use_wash_plate(self):
+        return self._use_wash_plate
 
     @property
     def headroom_fraction(self):

@@ -127,3 +127,17 @@ class RecipeTestOverhead(RecipeBaseClass):
     def test_fraction_limit_down(self):
         with self.assertRaises(RecipeException):
             self._r.headroom_fraction = -0.1
+
+
+class TestRecipeWashPlate(unittest.TestCase):
+    def test_nothing_specified(self):
+        r = Recipe()
+        self.assertFalse(r.use_wash_plate)
+
+    def test_washplate_sets(self):
+        r = Recipe(use_wash_plate=True)
+        self.assertTrue(r.use_wash_plate)
+
+    def test_washplate_unsets_reagent(self):
+        r = Recipe(use_wash_plate=True)
+        self.assertFalse(r.use_reagent_plate)
