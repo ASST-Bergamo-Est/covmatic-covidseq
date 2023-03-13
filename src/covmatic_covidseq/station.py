@@ -132,6 +132,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  recipe_file: str or None = "recipes.json",
                  reagent_plate_labware_name: str = "nest_96_wellplate_100ul_pcr_full_skirt",
                  reagent_plate_max_volume: float = 100,
+                 wash_plate_labware_name: str = "nest_12_reservoir_15ml",
+                 wash_plate_max_volume: float = 10000,
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
                  column_offset_cov2: int = 6,
@@ -141,10 +143,13 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                          *args, **kwargs)
         self._reagent_plate_labware_name = reagent_plate_labware_name
         self._reagent_plate_max_volume = reagent_plate_max_volume
+        self._wash_plate_labware_name = wash_plate_labware_name
+        self._wash_plate_max_volume = wash_plate_max_volume
         self._recipes = []
         if recipe_file is not None:
             self.load_recipes_from_json(recipe_file)
         self._reagent_plate_helper = None       # Initialized afterward
+        self._wash_plate_helper = None          # Initialized afterward
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
         self._column_offset_cov2 = column_offset_cov2
@@ -195,11 +200,26 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                 self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
         return plate
 
+    def load_wash_plate(self, slot):
+        self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
+        plate = self._ctx.load_labware(self._wash_plate_labware_name, slot, "Shared wash plate")
+        self._wash_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._wash_plate_max_volume)
+        for r in self.recipes:
+            if r.use_wash_plate:
+                self._wash_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
+        return plate
+
     @property
     def reagent_plate_helper(self) -> ReagentPlateHelper:
         if self._reagent_plate_helper is None:
             raise Exception("You must call load_reagents_plate before using reagent_plate_helper")
         return self._reagent_plate_helper
+
+    @property
+    def wash_plate_helper(self) -> ReagentPlateHelper:
+        if self._wash_plate_helper is None:
+            raise Exception("You must call load_wash_plate before using wash_plate_helper")
+        return self._wash_plate_helper
 
     def get_columns_for_samples(self, labware, column_offset=0):
         return labware.columns()[column_offset:column_offset+self.num_cols]

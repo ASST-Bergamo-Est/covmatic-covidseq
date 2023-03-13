@@ -99,6 +99,32 @@
     ],
     "volume_final": 30,
     "headroom_fraction": 0.25
+  },
+  {
+    "name": "ST2",
+    "description": "Stop Tagmentation buffer 2",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "ST2",
+        "vol": 12
+      }
+    ],
+    "volume_final": 10,
+    "headroom_fraction": 0.25
+  },
+  {
+    "name": "TWB",
+    "description": "Tagmentation Wash Buffer",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "TWB",
+        "vol": 210
+      }
+    ],
+    "volume_final": 100,
+    "use_wash_plate": true
   }
 
 ]
