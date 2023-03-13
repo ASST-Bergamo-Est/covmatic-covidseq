@@ -331,6 +331,19 @@ class LibraryStation(CovidseqBaseStation):
 
     def tagment_pcr_amplicons(self):
         self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_FULL")
+        sources_cov1 = self.get_samples_first_row_for_labware(self._work_plate)
+        sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._work_plate)
+        destinations = self.get_samples_first_row_for_labware(self._mag_plate)
+        self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
+        self.transfer_dirty(sources_cov2, destinations, volume=10, mix_times=5, mix_volume=20, stage_name="COV2")
+
+        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT2", "COV12_TRASH")
+
+        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_THERMAL")
+        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
+
+        self.thermal_cycle(self._work_plate, "TAG")
+
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
