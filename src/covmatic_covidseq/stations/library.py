@@ -69,6 +69,7 @@ class LibraryStation(CovidseqBaseStation):
                  work_plate_slot=5,
                  magdeck_slot=11,
                  pcr_plate_bottom_height=0.5,
+                 skip_mix: bool = False,
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._pipette_chooser = PipetteChooser()
@@ -77,6 +78,7 @@ class LibraryStation(CovidseqBaseStation):
         self._work_plate_slot = work_plate_slot
         self._magdeck_slot = magdeck_slot
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
+        self._skip_mix = skip_mix
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
 
@@ -130,6 +132,9 @@ class LibraryStation(CovidseqBaseStation):
             '_tipracks20': '_p20',
             '_tipracks300': '_p300'
         }
+
+    def get_mix_times(self, requested_mix_times):
+        return 1 if self._skip_mix else requested_mix_times
 
     def distribute_clean(self, recipe_name, dest_labware, pipette=None, disposal_volume=None):
         """ Transfer from the passed recipe from the reagent plate.
@@ -249,7 +254,7 @@ class LibraryStation(CovidseqBaseStation):
                     volume -= volume_to_transfer
 
                 if mix_volume != 0 and mix_times != 0:
-                    mix_well(pipette, dest_well, mix_volume, mix_times)
+                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times))
 
                 pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
                 pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
@@ -291,7 +296,7 @@ class LibraryStation(CovidseqBaseStation):
                     pipette.dispense(vol_per_transfer, d.bottom(self._pcr_plate_bottom_height))
 
                     if mix_volume != 0 and mix_times != 0:
-                        mix_well(pipette, d, mix_volume, mix_times)
+                        mix_well(pipette, d, mix_volume, self.get_mix_times(mix_times))
 
                     pipette.move_to(d.top(), speed=self._slow_vertical_speed, publish=False)
                     pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
