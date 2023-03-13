@@ -344,6 +344,8 @@ class LibraryStation(CovidseqBaseStation):
 
         self.thermal_cycle(self._work_plate, "TAG")
 
+    def post_tagmentation_cleanup(self):
+        pass
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:

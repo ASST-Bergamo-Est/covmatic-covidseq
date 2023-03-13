@@ -2,8 +2,7 @@ import logging
 import unittest
 from unittest import mock
 
-from src.covmatic_covidseq.recipe import Recipe
-from src.covmatic_covidseq.station import CovidseqBaseStation
+from .common import CovidseqTestStation
 
 ALL_COLUMNS = [["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"],
                ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"],
@@ -46,11 +45,6 @@ EXPECTED_FIRST_ROW_9 = ["A1", "A2"]
 EXPECTED_FIRST_ROW_1_COV2 = ["A7"]
 EXPECTED_FIRST_ROW_8_COV2 = ["A7"]
 EXPECTED_FIRST_ROW_9_COV2 = ["A7", "A8"]
-
-
-class CovidseqTestStation(CovidseqBaseStation):
-    def _tipracks(self):
-        pass
 
 
 class BaseSetup(unittest.TestCase):

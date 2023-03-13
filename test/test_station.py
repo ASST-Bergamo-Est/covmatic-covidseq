@@ -2,15 +2,10 @@ import logging
 import unittest
 
 from src.covmatic_covidseq.recipe import Recipe
-from src.covmatic_covidseq.station import CovidseqBaseStation
+from .common import CovidseqTestStation
 
 RECIPE_1_NAME = "TEST RECIPE 1"
 RECIPE_1 = Recipe(RECIPE_1_NAME)
-
-
-class CovidseqTestStation(CovidseqBaseStation):
-    def _tipracks(self):
-        pass
 
 
 class BaseSetup(unittest.TestCase):

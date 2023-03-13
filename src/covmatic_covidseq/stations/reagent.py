@@ -295,6 +295,15 @@ class ReagentStation(CovidseqBaseStation):
         self.distribute("TAG Mix", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
         self.robot_pick_plate("SLOT{}".format(self._tag1_plate_slot), "TAG1_FULL")
 
+    def post_tagmentation_cleanup(self):
+        self.prepare("ST2")
+        self.prepare("TWB")
+        self.distribute_reagent("ST2", self._p300)
+        self.distribute_reagent("TWB")
+
+        # self.distribute("ST2", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
+        # self.robot_pick_plate("SLOT{}".format(self._tag1_plate_slot), "TAG1_FULL")
+
 
 if __name__ == "__main__":
     ReagentStation(num_samples=96, metadata={'apiLevel': '2.7'}).simulate()
