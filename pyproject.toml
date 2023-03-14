@@ -43,7 +43,7 @@ no-cov = "cov --no-cov {args}"
 [tool.hatch.envs.simulate.scripts]
 upgrade_stations = "pip install covmatic-stations --upgrade"
 install = "pip install ."
-install_package = "pip install {args}"
+install_package = "pip install {args} --force-reinstall --no-deps"
 run_reagent = "opentrons_simulate protocols/station_reagent.py {args}"
 run_library = "opentrons_simulate protocols/station_library.py {args}"
 run_library_manual = "opentrons_simulate protocols/station_library_manual.py {args}"
