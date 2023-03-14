@@ -119,7 +119,7 @@ class LibraryStation(CovidseqBaseStation):
 
     @labware_loader(4, '_reagent_plate')
     def load_reagent_plate(self):
-        self._reagent_plate = self.load_reagents_plate(self._reagent_plate_slot)
+        self._reagent_plate = self.load_reagent_plate_in_slot(self._reagent_plate_slot)
 
     @labware_loader(5, '_input_plate')
     def load_input_plate(self):

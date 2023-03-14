@@ -1,12 +1,14 @@
 import bisect
+import json
 import logging
 import math
+import os
 from typing import Tuple
 
 from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
 
 from ..recipe import Recipe
-from ..station import CovidseqBaseStation, instrument_loader, labware_loader
+from ..station import CovidseqBaseStation, instrument_loader, labware_loader, ReagentPlateException
 from ..pipette_chooser import PipetteChooser
 
 
@@ -23,6 +25,10 @@ class ReagentStation(CovidseqBaseStation):
                  cdna1_plate_slot="2",
                  cov12_plate_slot="3",
                  tag1_plate_slot="4",
+                 wash_plate_slot="5",
+                 reagents_tempdeck_slot="10",
+                 reagent_chilled_tubes_json="reagents_chilled_tubes.json",
+                 reagents_15ml_slot="11",
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
@@ -31,8 +37,24 @@ class ReagentStation(CovidseqBaseStation):
         self._cdna1_plate_slot = cdna1_plate_slot
         self._cov12_plate_slot = cov12_plate_slot
         self._tag1_plate_slot = tag1_plate_slot
+        self._wash_plate_slot = wash_plate_slot
+        self._reagents_tempdeck_slot = reagents_tempdeck_slot
+        self._reagents_15ml_slot = reagents_15ml_slot
         self._pipette_chooser = PipetteChooser()
-        self._empty_tube_list = []
+        self._tubes_list = []
+        self._reagents_chilled_tubes = []
+        self.load_reagents_chilled_tubes_json(reagent_chilled_tubes_json)
+
+    def load_reagents_chilled_tubes_json(self, filename):
+        if not os.path.isabs(filename):
+            current_folder = os.path.split(__file__)[0]
+            abspath = os.path.join(current_folder, filename)
+        else:
+            abspath = filename
+        self.logger.info("Loading reagents chilled tubes from {}".format(abspath))
+
+        with open(abspath, "r") as f:
+            self._reagents_chilled_tubes = json.load(f)
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -63,13 +85,46 @@ class ReagentStation(CovidseqBaseStation):
     @labware_loader(1, '_empty_tubes_list')
     def load_empty_tubes(self):
         available_tubes = self._empty_tube_racks.wells()
-        for r, t in zip(self.recipes, available_tubes):
-            self.logger.info("Recipe {} assigned to tube: {}".format(r.name, t))
-            self._empty_tube_list.append({"recipe": r.name, "tube": WellWithVolume(t, 0)})
+        for r, t in zip(filter(lambda x: x.needs_empty_tube, self.recipes), available_tubes):
+            self.append_tube_for_recipe(r.name, t, 0)
+
+    @labware_loader(1, '_reagents_tempdeck')
+    def load_reagents_tempdeck(self):
+        self._reagents_tempdeck = self._ctx.load_module('temperature module gen2', self._reagents_tempdeck_slot)
+
+    def append_tube_for_recipe(self, recipe_name, well, volume=None):
+        r = self.get_recipe(recipe_name)
+
+        if volume is None:
+            volume = self.get_volume_to_transfer(r) * self._num_samples
+
+        self.logger.info("Recipe {} assigned to tube: {}; volume: {}".format(r.name, well, volume))
+        self._tubes_list.append({"recipe": recipe_name, "tube": WellWithVolume(well, volume)})
+
+    @labware_loader(1, '_reagents_tubes')
+    def load_reagents_tubes(self):
+        self._reagents_chilled = self._reagents_tempdeck.load_labware('opentrons_24_aluminumblock_generic_2ml_screwcap',
+                                                                    'Reagents tube')
+
+        for rct in self._reagents_chilled_tubes:
+            recipe = self.get_recipe(rct["name"])
+            if not recipe.needs_empty_tube:
+                self.append_tube_for_recipe(recipe.name, self._reagents_chilled.wells_by_name()[rct["well"]])
+
+    @labware_loader(1, '_reagents_15ml_tubes')
+    def load_reagents_15ml_tubes(self):
+        self._reagents_15ml = self._ctx.load_labware('opentrons_15_tuberack_falcon_15ml_conical',
+                                                     self._reagents_15ml_slot,
+                                                     '15ml reagents tubes')
+        self.append_tube_for_recipe("TWB", self._reagents_15ml.wells_by_name()['A1'])
 
     @labware_loader(2, '_reagent_plate')
     def load_reagent_plate(self):
-        self._reagent_plate = self.load_reagents_plate(self._reagent_plate_slot)
+        self._reagent_plate = self.load_reagent_plate_in_slot(self._reagent_plate_slot)
+
+    @labware_loader(2, '_wash_plate')
+    def load_wash_plate(self):
+        self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
 
     @labware_loader(3, '_cdna1_plate')
     def load_cdna1_plate(self):
@@ -95,7 +150,7 @@ class ReagentStation(CovidseqBaseStation):
     def get_tube_for_recipe(self, recipe):
         """ Get reagent for prepared mix """
         self.logger.info("Getting tube for recipe {}".format(recipe))
-        for e in self._empty_tube_list:
+        for e in self._tubes_list:
             if e["recipe"] == recipe:
                 self.logger.info("Found {}".format(e["tube"]))
                 return e["tube"]
@@ -113,16 +168,25 @@ class ReagentStation(CovidseqBaseStation):
             :param disposal_volume: the volume to be kept in pipette to have an equal volume in each well.
                                     If None it is set to the half of the pipette minimum volume
         """
-        self.logger.info("Filling reagent plate with {}".format(reagent_name))
         source = self.get_tube_for_recipe(reagent_name)
+        dest_wells_with_volume = self.reagent_plate_helper.get_wells_with_volume(reagent_name)
 
-        remaining_wells_with_volume = self.reagent_plate_helper.get_wells_with_volume(reagent_name)
+        self.logger.info("Filling reagent plate with {}".format(reagent_name))
+        self.fill_shared_plate(reagent_name, source, dest_wells_with_volume, pipette, disposal_volume)
 
-        total_volume_to_aspirate = sum([v for (_, v) in remaining_wells_with_volume])
-        self.logger.info("Total volume for {} samples is {}".format(self._num_samples, total_volume_to_aspirate))
+    def fill_wash_plate(self, reagent_name, pipette=None, disposal_volume=None):
+        source = self.get_tube_for_recipe(reagent_name)
+        dest_wells_with_volume = self.wash_plate_helper.get_wells_with_volume(reagent_name)
 
+        self.logger.info("Filling wash plate with {}".format(reagent_name))
+        self.fill_shared_plate(reagent_name, source, dest_wells_with_volume, pipette, disposal_volume)
+
+    def fill_shared_plate(self, reagent_name, source, dest_wells_with_volume, pipette=None, disposal_volume=None):
+        remaining_volume_to_aspirate = sum([v for (_, v) in dest_wells_with_volume])
+        self.logger.info("Total volume for {} samples is {}".format(self._num_samples, remaining_volume_to_aspirate))
+        self.logger.info("Destinations received: {}".format(dest_wells_with_volume))
         if pipette is None:
-            pipette = self._pipette_chooser.get_pipette(total_volume_to_aspirate)
+            pipette = self._pipette_chooser.get_pipette(remaining_volume_to_aspirate)
 
         if disposal_volume is None:
             disposal_volume = pipette.min_volume / 2
@@ -131,13 +195,16 @@ class ReagentStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
 
-        for i, (dest_well, volume) in enumerate(remaining_wells_with_volume):
-            if not self.run_stage(self.build_stage("Dist. {} {}/{}".format(reagent_name, i+1, len(remaining_wells_with_volume)))):
+        for i, (dest_well, volume) in enumerate(dest_wells_with_volume):
+            if not self.run_stage(
+                    self.build_stage("Dist. {} {}/{}".format(reagent_name, i + 1, len(dest_wells_with_volume)))):
                 if isinstance(source, WellWithVolume):
                     source.extract_vol_and_get_height(volume)
             else:
-                num_transfers = math.ceil(volume/pipette_available_volume)
-                self.logger.info("We need {} transfer with {:.1f}ul pipette".format(num_transfers, self._pipette_chooser.get_max_volume(pipette)))
+                num_transfers = math.ceil(volume / pipette_available_volume)
+                self.logger.info("We need {} transfer with {:.1f}ul pipette".format(num_transfers,
+                                                                                    self._pipette_chooser.get_max_volume(
+                                                                                        pipette)))
 
                 dest_well_with_volume = WellWithVolume(dest_well, 0)
 
@@ -150,7 +217,8 @@ class ReagentStation(CovidseqBaseStation):
                     self.logger.info("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
                     if (pipette.current_volume - disposal_volume) < volume_to_transfer:
                         total_remaining_volume = min(pipette_available_volume,
-                                               sum([v for (_, v) in remaining_wells_with_volume[i:]])) - (pipette.current_volume - disposal_volume)
+                                                     remaining_volume_to_aspirate) - (
+                                                             pipette.current_volume - disposal_volume)
                         self.logger.info("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
 
                         if isinstance(source, WellWithVolume):
@@ -175,10 +243,13 @@ class ReagentStation(CovidseqBaseStation):
                                        speed=self._slow_vertical_speed, move_close=False):
                         pipette.dispense(volume_to_transfer)
                     volume -= volume_to_transfer
+                    remaining_volume_to_aspirate -= volume_to_transfer
+
                     self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
 
         if pipette.has_tip:
             self.drop(pipette)
+
 
     def fill_wells(self, reagent_name, wells, pipette=None, disposal_volume=None):
         """ Distribute reagent prepared for recipe passed to wells.
@@ -299,10 +370,12 @@ class ReagentStation(CovidseqBaseStation):
         self.prepare("ST2")
         self.prepare("TWB")
         self.distribute_reagent("ST2", self._p300)
-        self.distribute_reagent("TWB")
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
-        # self.distribute("ST2", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
-        # self.robot_pick_plate("SLOT{}".format(self._tag1_plate_slot), "TAG1_FULL")
+        self.fill_wash_plate("TWB")
+        self.robot_pick_plate("SLOT{}".format(self._wash_plate_slot), "WASH_FULL")
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+
 
 
 if __name__ == "__main__":

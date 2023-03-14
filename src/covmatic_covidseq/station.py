@@ -197,7 +197,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             for d in data:
                 self.add_recipe(Recipe(**d))
 
-    def load_reagents_plate(self, slot):
+    def load_reagent_plate_in_slot(self, slot):
         self.logger.info("Initializing Reagent plate helper on slot {}".format(slot))
         plate = self._ctx.load_labware(self._reagent_plate_labware_name, slot, "Shared reagent plate")
         self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
@@ -206,7 +206,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                 self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
         return plate
 
-    def load_wash_plate(self, slot):
+    def load_wash_plate_in_slot(self, slot):
         self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
         plate = self._ctx.load_labware(self._wash_plate_labware_name, slot, "Shared wash plate")
         self._wash_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._wash_plate_max_volume)
