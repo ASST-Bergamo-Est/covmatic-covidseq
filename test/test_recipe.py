@@ -10,7 +10,8 @@ EXAMPLE_STEPS_1 = [
     }]
 EXPECTED_VOL_STEPS_1 = 10
 VOLUME_FINAL_1 = 8
-VOLUME_TO_DISTRIBUTE_1 = 9
+VOLUME_TO_DISTRIBUTE_1 = 10
+NEEDS_EMPTY_TUBE_1 = False
 
 RECIPE_2_NAME = "TEST RECIPE 2"
 EXAMPLE_STEPS_2 = [
@@ -27,6 +28,7 @@ EXAMPLE_STEPS_2 = [
 EXPECTED_VOL_STEPS_2 = 21
 VOLUME_FINAL_2 = 19
 VOLUME_TO_DISTRIBUTE_2 = 20
+NEEDS_EMPTY_TUBE_2 = True
 
 
 class RecipeBaseClass(unittest.TestCase):
@@ -58,6 +60,7 @@ class RecipeSteps1(RecipeBaseClass):
         self.expected_vol = EXPECTED_VOL_STEPS_1
         self.vol_final = VOLUME_FINAL_1
         self.vol_to_distribute = VOLUME_TO_DISTRIBUTE_1
+        self.needs_empty_tube = NEEDS_EMPTY_TUBE_1
 
     def test_get_steps_are_equal(self):
         self.assertEqual(self.steps_added, self._r.steps)
@@ -83,6 +86,9 @@ class RecipeSteps1(RecipeBaseClass):
         with self.assertRaises(RecipeException):
             v = self._r.volume_final
 
+    def test_use_empty_tube(self):
+        self.assertEqual(self.needs_empty_tube, self._r.needs_empty_tube)
+
 
 class RecipeSteps2(RecipeSteps1):
     """ Since this class inherits from RecipeSteps1
@@ -94,31 +100,42 @@ class RecipeSteps2(RecipeSteps1):
         self.expected_vol = EXPECTED_VOL_STEPS_2
         self.vol_final = VOLUME_FINAL_2
         self.vol_to_distribute = VOLUME_TO_DISTRIBUTE_2
+        self.needs_empty_tube = NEEDS_EMPTY_TUBE_2
 
 
-HEADROOM_DEFAULT = 0.5
-HEADROOM_FRACTION_1 = 0.1
-REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_1 = 9.8
-
-HEADROOM_FRACTION_2 = 0.7
-REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_2 = 8.6
-
-class RecipeTestOverhead(RecipeBaseClass):
+class RecipeTestOverheadSingleStep(RecipeBaseClass):
     def setUp(self) -> None:
         super().setUp()
         self._r.add_steps(EXAMPLE_STEPS_1)
         self._r.volume_final = VOLUME_FINAL_1
+
+    def test_single_step_no_overhead(self):
+        self.assertEqual(VOLUME_TO_DISTRIBUTE_1, self._r.volume_to_distribute)
+
+HEADROOM_DEFAULT = 0.5
+HEADROOM_FRACTION_1 = 0.1
+REAGENT_2_VOLUME_TO_DISTRIBUTE_FRACTION_1 = 20.8
+
+HEADROOM_FRACTION_2 = 0.7
+REAGENT_2_VOLUME_TO_DISTRIBUTE_FRACTION_2 = 19.6
+
+
+class RecipeTestOverhead(RecipeBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._r.add_steps(EXAMPLE_STEPS_2)
+        self._r.volume_final = VOLUME_FINAL_2
 
     def test_default_headroom(self):
         self.assertEqual(HEADROOM_DEFAULT, self._r.headroom_fraction)
 
     def test_fraction_1(self):
         self._r.headroom_fraction = HEADROOM_FRACTION_1
-        self.assertEqual(REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_1, self._r.volume_to_distribute)
+        self.assertEqual(REAGENT_2_VOLUME_TO_DISTRIBUTE_FRACTION_1, self._r.volume_to_distribute)
 
     def test_fraction_2(self):
         self._r.headroom_fraction = HEADROOM_FRACTION_2
-        self.assertEqual(REAGENT_1_VOLUME_TO_DISTRIBUTE_FRACTION_2, self._r.volume_to_distribute)
+        self.assertEqual(REAGENT_2_VOLUME_TO_DISTRIBUTE_FRACTION_2, self._r.volume_to_distribute)
 
     def test_fraction_limit_up(self):
         with self.assertRaises(RecipeException):
@@ -127,6 +144,7 @@ class RecipeTestOverhead(RecipeBaseClass):
     def test_fraction_limit_down(self):
         with self.assertRaises(RecipeException):
             self._r.headroom_fraction = -0.1
+
 
 
 class TestRecipeWashPlate(unittest.TestCase):

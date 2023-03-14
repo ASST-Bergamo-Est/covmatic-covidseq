@@ -52,7 +52,13 @@ class ReagentPlateHelper:
         if volume_available_per_sample is None:
             volume_available_per_sample = volume_with_overhead_per_sample
 
-        total_volumes = [s * volume_with_overhead_per_sample for s in self._samples_per_row]
+        self._logger.info("Labware {} has {} rows".format(self._labware, len(self._labware.rows())))
+
+        if len(self._labware.rows()) == 1:              # 1-well reservoirs
+            total_volumes = [volume_with_overhead_per_sample * sum(self._samples_per_row)]
+        else:                                           # 8-well reservoirs
+            total_volumes = [s * volume_with_overhead_per_sample for s in self._samples_per_row]
+
         self._logger.debug("Total volumes: {}".format(total_volumes))
 
         wells_needed = [math.ceil(t/self._well_volume_limit) for t in total_volumes]

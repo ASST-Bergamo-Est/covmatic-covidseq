@@ -52,6 +52,10 @@ class Recipe:
         return self._use_wash_plate
 
     @property
+    def needs_empty_tube(self) -> bool:
+        return len(self._steps) > 1
+
+    @property
     def headroom_fraction(self):
         return self._headroom_fraction
 
@@ -72,7 +76,10 @@ class Recipe:
     def volume_to_distribute(self):
         """ The volume to distrubute for the first transfer from primary tube. Includes overhead."""
         if self._vol > 0:
-            return (1-self._headroom_fraction) * self.total_prepared_vol + self._headroom_fraction * self._vol
+            if self.needs_empty_tube:
+                return (1-self._headroom_fraction) * self.total_prepared_vol + self._headroom_fraction * self._vol
+            else:
+                return self.total_prepared_vol
         raise RecipeException("Total volume not set")
 
     @property
