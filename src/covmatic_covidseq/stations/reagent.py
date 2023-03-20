@@ -28,7 +28,7 @@ class ReagentStation(CovidseqBaseStation):
                  wash_plate_slot="5",
                  reagents_tempdeck_slot="10",
                  reagent_chilled_tubes_json="reagents_chilled_tubes.json",
-                 reagents_15ml_slot="11",
+                 reagents_wash_slot="11",
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
@@ -39,7 +39,7 @@ class ReagentStation(CovidseqBaseStation):
         self._tag1_plate_slot = tag1_plate_slot
         self._wash_plate_slot = wash_plate_slot
         self._reagents_tempdeck_slot = reagents_tempdeck_slot
-        self._reagents_15ml_slot = reagents_15ml_slot
+        self._reagents_wash_slot = reagents_wash_slot
         self._pipette_chooser = PipetteChooser()
         self._tubes_list = []
         self._reagents_chilled_tubes = []
@@ -111,12 +111,12 @@ class ReagentStation(CovidseqBaseStation):
             if not recipe.needs_empty_tube:
                 self.append_tube_for_recipe(recipe.name, self._reagents_chilled.wells_by_name()[rct["well"]])
 
-    @labware_loader(1, '_reagents_15ml_tubes')
-    def load_reagents_15ml_tubes(self):
-        self._reagents_15ml = self._ctx.load_labware('opentrons_15_tuberack_falcon_15ml_conical',
-                                                     self._reagents_15ml_slot,
-                                                     '15ml reagents tubes')
-        self.append_tube_for_recipe("TWB", self._reagents_15ml.wells_by_name()['A1'])
+    @labware_loader(1, '_reagents_wash_tubes')
+    def load_reagents_wash_tubes(self):
+        self._reagents_wash = self._ctx.load_labware('opentrons_6_tuberack_falcon_50ml_conical',
+                                                     self._reagents_wash_slot,
+                                                     'wash reagents tubes')
+        self.append_tube_for_recipe("TWB", self._reagents_wash.wells_by_name()['A1'])
 
     @labware_loader(2, '_reagent_plate')
     def load_reagent_plate(self):
@@ -373,7 +373,7 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
         self.fill_wash_plate("TWB")
-        self.robot_pick_plate("SLOT{}".format(self._wash_plate_slot), "WASH_FULL")
+        self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
 
 
