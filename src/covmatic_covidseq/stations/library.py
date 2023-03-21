@@ -66,21 +66,25 @@ class LibraryStation(CovidseqBaseStation):
                  tipracks300_slots: Tuple[str, ...] = ("4",),
                  input_plate_slot=9,
                  reagent_plate_slot=6,
+                 wash_plate_slot=7,
                  work_plate_slot=5,
                  magdeck_slot=11,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
+                 mag_height=14,
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._pipette_chooser = PipetteChooser()
         self._input_plate_slot = input_plate_slot
         self._reagent_plate_slot = reagent_plate_slot
+        self._wash_plate_slot = wash_plate_slot
         self._work_plate_slot = work_plate_slot
         self._magdeck_slot = magdeck_slot
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._skip_mix = skip_mix
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
+        self._mag_height = mag_height
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -120,6 +124,10 @@ class LibraryStation(CovidseqBaseStation):
     @labware_loader(4, '_reagent_plate')
     def load_reagent_plate(self):
         self._reagent_plate = self.load_reagent_plate_in_slot(self._reagent_plate_slot)
+
+    @labware_loader(4, '_wash_plate')
+    def load_wash_plate(self):
+        self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
 
     @labware_loader(5, '_input_plate')
     def load_input_plate(self):
@@ -208,7 +216,10 @@ class LibraryStation(CovidseqBaseStation):
     def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0):
         recipe = self.get_recipe(recipe_name)
 
-        source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
+        if recipe.use_wash_plate:
+            source_wells = self.wash_plate_helper.get_first_row_available_volume(recipe_name)
+        else:
+            source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
         self.logger.info("Source wells are: {}".format(source_wells))
 
         source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
@@ -303,10 +314,90 @@ class LibraryStation(CovidseqBaseStation):
 
                 self.drop(pipette)
 
+    def remove_supernatant(self,
+                           labware,
+                           waste,
+                           volume,
+                           pipette=None,
+                           min_steps=3,
+                           last_steps=3,
+                           last_steps_min_height=0.1,
+                           last_transfer_volume_ratio=0.1):
+        self.logger.info("Removing supernatant from labware {} volume {}".format(labware, volume))
+
+        if pipette is None:
+            pipette = self._pipette_chooser.get_pipette(volume, consider_air_gap=True)
+
+        available_volume = self._pipette_chooser.get_max_volume(pipette, consider_air_gap=True)
+
+        first_phase_volume = volume * (1-last_transfer_volume_ratio)
+        self.logger.info("First phase volume is: {}".format(first_phase_volume))
+
+        first_phase_steps = max(min_steps, math.ceil(first_phase_volume/available_volume))
+        self.logger.info("First phase needs {} steps".format(first_phase_steps))
+
+        sources = self.get_samples_first_row_for_labware(labware)
+
+        def discard_liquid(pip, source_well):
+            pip.move_to(source_well.top(), speed=self._slow_vertical_speed)
+            pip.air_gap(self._pipette_chooser.get_air_gap(pip))
+            pip.dispense(pip.current_volume, waste.top())
+            pip.air_gap(self._pipette_chooser.get_air_gap(pip))
+
+        for s in sources:
+            remaining_volume = first_phase_volume
+            source_with_volume = WellWithVolume(s, volume, headroom_height=0)
+
+            aspirate_volume = first_phase_volume / first_phase_steps
+            self.logger.info("Aspirating {} volume per time".format(aspirate_volume))
+
+            if not pipette.has_tip:
+                self.pick_up(pipette)
+
+            while remaining_volume > 0:
+                pipette.move_to(s.bottom(source_with_volume.height))
+
+                current_height = source_with_volume.extract_vol_and_get_height(aspirate_volume)
+                current_volume = min(aspirate_volume,
+                                   available_volume - pipette.current_volume - self._pipette_chooser.get_air_gap(pipette))
+
+                self.logger.info("Aspirating at {:.1f} volume {:.1f}".format(current_height, current_volume))
+
+                pipette.move_to(s.bottom(current_height), speed=self._slow_vertical_speed)
+                pipette.aspirate(current_volume)
+                remaining_volume -= current_volume
+
+                if pipette.current_volume == available_volume:
+                    discard_liquid(pipette, s)
+
+            last_phase_total_volume = min(available_volume, volume * last_transfer_volume_ratio * last_steps)
+            last_phase_volume_per_step = last_phase_total_volume / last_steps
+            self.logger.info("Last phase volume per step: {}".format(last_phase_volume_per_step))
+
+            if (available_volume - pipette.current_volume) < last_phase_total_volume:
+                discard_liquid(pipette, s)
+
+            start_height = source_with_volume.height
+            heights = [last_steps_min_height + (start_height-last_steps_min_height) / last_steps * i for i in range(last_steps)]
+
+            self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
+            for h in reversed(heights):
+                self.logger.info("Aspirating at {}".format(h))
+                pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+                pipette.aspirate(last_phase_volume_per_step)
+
+            for h in heights:
+                self.logger.info("Moving to {}".format(h))
+                pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+
+            discard_liquid(pipette, s)
+
+            self.drop(pipette)
+
     def anneal_rna(self):
+        self.logger.info("Calibrated offset: {}".format(self._work_plate.calibrated_offset))
+        self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
         self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "CDNA1_FULL")
-        # self.distribute_clean("EPH3", self._work_plate, disposal_volume=0)
-        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=5, mix_volume=16)
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
@@ -345,7 +436,34 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle(self._work_plate, "TAG")
 
     def post_tagmentation_cleanup(self):
-        pass
+        self.disengage_magnets()
+
+        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.robot_pick_plate("SLOT{}".format(self._work_plate_slot), "TAG1_CLEANUP")
+        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
+        self.distribute_dirty("ST2", self._mag_plate, mix_times=10, mix_volume=20)
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+
+        self.engage_magnets()
+        self.delay_start_count()
+
+        self.robot_drop_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
+        self.delay_wait_to_elapse(minutes=3)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 50)
+        self.disengage_magnets()
+
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80)
+        self.engage_magnets()
+        self.delay_wait_to_elapse(minutes=3)
+
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100)
+        self.disengage_magnets()
+
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80)
+
+        # for now make plate available for user interaction now.
+        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_COMPLETED")
+        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
@@ -353,13 +471,11 @@ class LibraryStation(CovidseqBaseStation):
         else:
             self.logger.info("Skipped thermal cycle {} because no previous step run.".format(cycle_name))
 
-    def body(self):
-        self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
-        self.anneal_rna()
-        self.first_strand_cdna()
-        self.amplify_cdna()
-        self.tagment_pcr_amplicons()
+    def engage_magnets(self, height=None):
+        self._magdeck.engage(height or self._mag_height)
 
+    def disengage_magnets(self):
+        self._magdeck.disengage()
 
 class LibraryManualStation(LibraryStation):
     def __init__(self,
@@ -367,6 +483,7 @@ class LibraryManualStation(LibraryStation):
                  tipracks300_slots: Tuple[str, ...] = ("2",),
                  input_plate_slot=10,
                  reagent_plate_slot=1,
+                 wash_plate_slot=5,
                  work_plate_slot=4,
                  magdeck_slot=7,
                  *args, **kwargs):
@@ -375,6 +492,7 @@ class LibraryManualStation(LibraryStation):
             tipracks300_slots=tipracks300_slots,
             input_plate_slot=input_plate_slot,
             reagent_plate_slot=reagent_plate_slot,
+            wash_plate_slot=wash_plate_slot,
             work_plate_slot=work_plate_slot,
             magdeck_slot=magdeck_slot,
             *args, **kwargs)

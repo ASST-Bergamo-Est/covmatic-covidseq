@@ -333,9 +333,8 @@ class ReagentStation(CovidseqBaseStation):
         if self.run_stage(self.build_stage("Prep. {}".format(recipe_name))):
             recipe = self.get_recipe(recipe_name)
             tube = self.get_tube_for_recipe(recipe_name)
-            volume = self.get_volume_to_transfer(recipe) * self._num_samples
-            tube.fill(volume)
-            self.pause("Place tube {} in {} with volume {}".format(recipe_name, tube, volume), home=False)
+            tube.fill(recipe.total_prepared_vol)
+            self.pause("Place tube {} in {}".format(recipe_name, tube), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette)
