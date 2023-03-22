@@ -84,3 +84,6 @@ exclude = [
   "/.github",
   "/.idea",
 ]
+
+[project.scripts]
+covmatic-covidseq-genoffset = "covmatic_covidseq.utils:parse_v6_log_and_create_labware_offsets_json"

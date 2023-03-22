@@ -1,0 +1,4766 @@
+{
+    "id": "35cad43b-c7f8-48c7-9adc-486e8ed57b9a",
+    "createdAt": "2023-03-20T14:31:26.786083+00:00",
+    "status": "stopped",
+    "current": false,
+    "actions": [
+        {
+            "id": "e516f1a9-92c3-4f07-8b68-a625a2ea8653",
+            "createdAt": "2023-03-20T17:17:42.186410+00:00",
+            "actionType": "stop"
+        }
+    ],
+    "errors": [],
+    "pipettes": [
+        {
+            "id": "pipette-0",
+            "pipetteName": "p1000_single_gen2",
+            "mount": "left"
+        },
+        {
+            "id": "pipette-1",
+            "pipetteName": "p300_single_gen2",
+            "mount": "right"
+        }
+    ],
+    "modules": [
+        {
+            "id": "module-0",
+            "model": "temperatureModuleV2",
+            "location": {
+                "slotName": "10"
+            },
+            "serialNumber": "TDV20P20200428B02"
+        }
+    ],
+    "labware": [
+        {
+            "id": "fixedTrash",
+            "loadName": "opentrons_1_trash_1100ml_fixed",
+            "definitionUri": "opentrons/opentrons_1_trash_1100ml_fixed/1",
+            "location": {
+                "slotName": "12"
+            }
+        },
+        {
+            "id": "labware-0",
+            "loadName": "opentrons_24_tuberack_generic_2ml_screwcap",
+            "definitionUri": "opentrons/opentrons_24_tuberack_generic_2ml_screwcap/1",
+            "location": {
+                "slotName": "6"
+            },
+            "offsetId": "d0480a98-2aef-4146-9ac1-984d9fd3d8e7",
+            "displayName": "empty tubes rack"
+        },
+        {
+            "id": "labware-1",
+            "loadName": "opentrons_96_filtertiprack_1000ul",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_1000ul/1",
+            "location": {
+                "slotName": "8"
+            },
+            "offsetId": "e7f229e4-1bc7-4350-a787-4a1147b81a48",
+            "displayName": "1000ul filter tiprack"
+        },
+        {
+            "id": "labware-2",
+            "loadName": "opentrons_96_filtertiprack_200ul",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_200ul/1",
+            "location": {
+                "slotName": "9"
+            },
+            "offsetId": "eb1070c6-906a-48df-8819-9476fc9282a2",
+            "displayName": "200ul filter tiprack"
+        },
+        {
+            "id": "labware-3",
+            "loadName": "opentrons_24_aluminumblock_generic_2ml_screwcap",
+            "definitionUri": "opentrons/opentrons_24_aluminumblock_generic_2ml_screwcap/1",
+            "location": {
+                "moduleId": "module-0"
+            },
+            "offsetId": "054ab502-3dd2-4a81-977a-be56f02db0d4",
+            "displayName": "Reagents tube"
+        },
+        {
+            "id": "labware-4",
+            "loadName": "opentrons_6_tuberack_falcon_50ml_conical",
+            "definitionUri": "opentrons/opentrons_6_tuberack_falcon_50ml_conical/1",
+            "location": {
+                "slotName": "11"
+            },
+            "offsetId": "e9b9ce57-2955-4e3c-8b58-5075cc332303",
+            "displayName": "wash reagents tubes"
+        },
+        {
+            "id": "labware-5",
+            "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "1"
+            },
+            "offsetId": "f4d66d77-f6e5-4a4e-8bae-ff97c2441e9e",
+            "displayName": "Shared reagent plate"
+        },
+        {
+            "id": "labware-6",
+            "loadName": "nest_12_reservoir_15ml",
+            "definitionUri": "opentrons/nest_12_reservoir_15ml/1",
+            "location": {
+                "slotName": "5"
+            },
+            "offsetId": "740e346c-a1b6-4c32-bc2b-89429e9a0cc4",
+            "displayName": "Shared wash plate"
+        },
+        {
+            "id": "labware-7",
+            "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "2"
+            },
+            "offsetId": "3e4a000d-ae44-4959-9937-8524e8e07e3f",
+            "displayName": "empty plate for CDNA1"
+        },
+        {
+            "id": "labware-8",
+            "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "3"
+            },
+            "offsetId": "25f63ec3-a661-4b12-8790-45c722d92472",
+            "displayName": "empty plate for COV1 COV2"
+        },
+        {
+            "id": "labware-9",
+            "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "4"
+            },
+            "offsetId": "abecc0a2-50a9-4b2a-93de-485ae3b7aeea",
+            "displayName": "empty plate for TAG1"
+        }
+    ],
+    "liquids": [],
+    "labwareOffsets": [
+        {
+            "id": "eb1070c6-906a-48df-8819-9476fc9282a2",
+            "createdAt": "2023-03-20T14:39:24.974311+00:00",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_200ul/1",
+            "location": {
+                "slotName": "9"
+            },
+            "vector": {
+                "x": 0.6000000000001364,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "3e4a000d-ae44-4959-9937-8524e8e07e3f",
+            "createdAt": "2023-03-20T14:39:24.983897+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "2"
+            },
+            "vector": {
+                "x": 0.4999999999999716,
+                "y": 0.19999999999998863,
+                "z": 7
+            }
+        },
+        {
+            "id": "e9b9ce57-2955-4e3c-8b58-5075cc332303",
+            "createdAt": "2023-03-20T14:39:24.993041+00:00",
+            "definitionUri": "opentrons/opentrons_6_tuberack_falcon_50ml_conical/1",
+            "location": {
+                "slotName": "11"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "f4d66d77-f6e5-4a4e-8bae-ff97c2441e9e",
+            "createdAt": "2023-03-20T14:39:25.003661+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "1"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0.29999999999998295,
+                "z": 6.200000000000088
+            }
+        },
+        {
+            "id": "054ab502-3dd2-4a81-977a-be56f02db0d4",
+            "createdAt": "2023-03-20T14:39:25.012888+00:00",
+            "definitionUri": "opentrons/opentrons_24_aluminumblock_generic_2ml_screwcap/1",
+            "location": {
+                "slotName": "10",
+                "moduleModel": "temperatureModuleV2"
+            },
+            "vector": {
+                "x": 0.5000000000000071,
+                "y": 1.1000000000002501,
+                "z": -0.4999999999999716
+            }
+        },
+        {
+            "id": "e7f229e4-1bc7-4350-a787-4a1147b81a48",
+            "createdAt": "2023-03-20T14:39:25.028766+00:00",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_1000ul/1",
+            "location": {
+                "slotName": "8"
+            },
+            "vector": {
+                "x": 0,
+                "y": 1.6000000000003922,
+                "z": 0
+            }
+        },
+        {
+            "id": "25f63ec3-a661-4b12-8790-45c722d92472",
+            "createdAt": "2023-03-20T14:39:25.143846+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "3"
+            },
+            "vector": {
+                "x": 0.20000000000004547,
+                "y": 0,
+                "z": 5.899999999999999
+            }
+        },
+        {
+            "id": "abecc0a2-50a9-4b2a-93de-485ae3b7aeea",
+            "createdAt": "2023-03-20T14:39:25.166386+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "4"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "740e346c-a1b6-4c32-bc2b-89429e9a0cc4",
+            "createdAt": "2023-03-20T14:39:25.175646+00:00",
+            "definitionUri": "opentrons/nest_12_reservoir_15ml/1",
+            "location": {
+                "slotName": "5"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0,
+                "z": 5.600000000000012
+            }
+        },
+        {
+            "id": "d0480a98-2aef-4146-9ac1-984d9fd3d8e7",
+            "createdAt": "2023-03-20T14:39:25.184839+00:00",
+            "definitionUri": "opentrons/opentrons_24_tuberack_generic_2ml_screwcap/1",
+            "location": {
+                "slotName": "6"
+            },
+            "vector": {
+                "x": 0.20000000000004547,
+                "y": 0,
+                "z": 0.6999999999999602
+            }
+        },
+        {
+            "id": "31e77338-69f6-4edb-95b9-315b8ddfac8f",
+            "createdAt": "2023-03-20T14:42:10.240444+00:00",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_1000ul/1",
+            "location": {
+                "slotName": "8"
+            },
+            "vector": {
+                "x": 0,
+                "y": 1.6000000000003922,
+                "z": 0
+            }
+        },
+        {
+            "id": "a877fc99-1de0-455a-b3d6-276a829a262c",
+            "createdAt": "2023-03-20T14:42:10.249030+00:00",
+            "definitionUri": "opentrons/opentrons_96_filtertiprack_200ul/1",
+            "location": {
+                "slotName": "9"
+            },
+            "vector": {
+                "x": 0.6000000000001364,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "804729e6-589d-412f-b67c-5bd7adbb7d48",
+            "createdAt": "2023-03-20T14:42:10.257342+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "1"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0.29999999999998295,
+                "z": 6.200000000000088
+            }
+        },
+        {
+            "id": "5f516988-2298-46d7-917e-52edf7e7fcec",
+            "createdAt": "2023-03-20T14:42:10.265829+00:00",
+            "definitionUri": "opentrons/opentrons_24_aluminumblock_generic_2ml_screwcap/1",
+            "location": {
+                "slotName": "10",
+                "moduleModel": "temperatureModuleV2"
+            },
+            "vector": {
+                "x": 0.5000000000000071,
+                "y": 1.1000000000002501,
+                "z": -0.4999999999999716
+            }
+        },
+        {
+            "id": "a982c2be-ce37-4572-93ad-e95ccd9ae49a",
+            "createdAt": "2023-03-20T14:42:10.274155+00:00",
+            "definitionUri": "opentrons/opentrons_6_tuberack_falcon_50ml_conical/1",
+            "location": {
+                "slotName": "11"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "d100da9a-0af5-4110-aa87-d0c1cb6e3eaa",
+            "createdAt": "2023-03-20T14:42:10.286234+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "2"
+            },
+            "vector": {
+                "x": 0.4999999999999716,
+                "y": 0.19999999999998863,
+                "z": 7
+            }
+        },
+        {
+            "id": "7ab96cad-e570-4aaa-bdcd-465195c87cca",
+            "createdAt": "2023-03-20T14:42:10.432343+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "3"
+            },
+            "vector": {
+                "x": 0.20000000000004547,
+                "y": 0,
+                "z": 5.899999999999999
+            }
+        },
+        {
+            "id": "8bad335a-86d8-4da0-9bac-f1d809115371",
+            "createdAt": "2023-03-20T14:42:10.441868+00:00",
+            "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+            "location": {
+                "slotName": "4"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0.700000000000017,
+                "z": 5.899999999999999
+            }
+        },
+        {
+            "id": "4963621d-156f-4a1c-851f-436c1b815188",
+            "createdAt": "2023-03-20T14:42:10.453902+00:00",
+            "definitionUri": "opentrons/nest_12_reservoir_15ml/1",
+            "location": {
+                "slotName": "5"
+            },
+            "vector": {
+                "x": 0,
+                "y": 0,
+                "z": 5.600000000000012
+            }
+        },
+        {
+            "id": "5bf9ed7c-e34f-4c23-86fe-02a6394a5d29",
+            "createdAt": "2023-03-20T14:42:10.463455+00:00",
+            "definitionUri": "opentrons/opentrons_24_tuberack_generic_2ml_screwcap/1",
+            "location": {
+                "slotName": "6"
+            },
+            "vector": {
+                "x": 0.20000000000004547,
+                "y": 0,
+                "z": 0.6999999999999602
+            }
+        }
+    ],
+    "protocolId": "573ee774-867e-4c5e-a428-85129b26aa95",
+    "completedAt": "2023-03-20T17:17:49.883226+00:00",
+    "commands": [
+        {
+            "id": "79047529-5009-4a3b-804e-347335dcbf18",
+            "key": "79047529-5009-4a3b-804e-347335dcbf18",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.382064+00:00",
+            "startedAt": "2023-03-20T14:32:35.472046+00:00",
+            "completedAt": "2023-03-20T14:32:35.611326+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "6"
+                },
+                "loadName": "opentrons_24_tuberack_generic_2ml_screwcap",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-0",
+                "displayName": "empty tubes rack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f8467e65-b021-4251-ac18-16aefbb99456",
+            "key": "f8467e65-b021-4251-ac18-16aefbb99456",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.399554+00:00",
+            "startedAt": "2023-03-20T14:32:35.619378+00:00",
+            "completedAt": "2023-03-20T14:32:35.864357+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "8"
+                },
+                "loadName": "opentrons_96_filtertiprack_1000ul",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-1",
+                "displayName": "1000ul filter tiprack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "452c00c5-06db-4d61-ac2a-60dcd4920e86",
+            "key": "452c00c5-06db-4d61-ac2a-60dcd4920e86",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.416448+00:00",
+            "startedAt": "2023-03-20T14:32:35.874336+00:00",
+            "completedAt": "2023-03-20T14:32:36.159422+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "9"
+                },
+                "loadName": "opentrons_96_filtertiprack_200ul",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-2",
+                "displayName": "200ul filter tiprack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e891ba61-ab27-4ec4-9349-1de36e65b4cb",
+            "key": "commands.LOAD_MODULE-0",
+            "commandType": "loadModule",
+            "createdAt": "2023-03-20T14:32:35.435629+00:00",
+            "startedAt": "2023-03-20T14:32:36.163373+00:00",
+            "completedAt": "2023-03-20T14:32:36.174977+00:00",
+            "status": "succeeded",
+            "params": {
+                "model": "temperatureModuleV2",
+                "location": {
+                    "slotName": "10"
+                },
+                "moduleId": "module-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e8d7b916-5ba0-44d1-a1df-201b1f3b17c2",
+            "key": "e8d7b916-5ba0-44d1-a1df-201b1f3b17c2",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.452875+00:00",
+            "startedAt": "2023-03-20T14:32:36.194693+00:00",
+            "completedAt": "2023-03-20T14:32:36.301292+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "moduleId": "module-0"
+                },
+                "loadName": "opentrons_24_aluminumblock_generic_2ml_screwcap",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-3",
+                "displayName": "Reagents tube"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "96f3943a-5e44-468b-8113-4a776a820406",
+            "key": "96f3943a-5e44-468b-8113-4a776a820406",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.470286+00:00",
+            "startedAt": "2023-03-20T14:32:36.305578+00:00",
+            "completedAt": "2023-03-20T14:32:36.357353+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "11"
+                },
+                "loadName": "opentrons_6_tuberack_falcon_50ml_conical",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-4",
+                "displayName": "wash reagents tubes"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3d8eee8d-88cc-4cb1-90b1-42e7854a6e4a",
+            "key": "3d8eee8d-88cc-4cb1-90b1-42e7854a6e4a",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.658180+00:00",
+            "startedAt": "2023-03-20T14:32:36.359860+00:00",
+            "completedAt": "2023-03-20T14:32:36.522120+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "1"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-5",
+                "displayName": "Shared reagent plate"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "93dc8b10-3fd1-48f0-b6d7-ef4b1eb9b479",
+            "key": "93dc8b10-3fd1-48f0-b6d7-ef4b1eb9b479",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.691953+00:00",
+            "startedAt": "2023-03-20T14:32:36.525183+00:00",
+            "completedAt": "2023-03-20T14:32:36.604315+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "5"
+                },
+                "loadName": "nest_12_reservoir_15ml",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-6",
+                "displayName": "Shared wash plate"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c126dd8a-9965-4c18-9e49-cfb04292b464",
+            "key": "c126dd8a-9965-4c18-9e49-cfb04292b464",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.726575+00:00",
+            "startedAt": "2023-03-20T14:32:36.606668+00:00",
+            "completedAt": "2023-03-20T14:32:36.610691+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "2"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-7",
+                "displayName": "empty plate for CDNA1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6a8ecfc9-71a8-4743-8d29-d50974c7900f",
+            "key": "6a8ecfc9-71a8-4743-8d29-d50974c7900f",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.766767+00:00",
+            "startedAt": "2023-03-20T14:32:36.612820+00:00",
+            "completedAt": "2023-03-20T14:32:36.616701+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "3"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-8",
+                "displayName": "empty plate for COV1 COV2"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "877e0182-3438-46b5-be73-68028030760e",
+            "key": "877e0182-3438-46b5-be73-68028030760e",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:32:35.802971+00:00",
+            "startedAt": "2023-03-20T14:32:36.618786+00:00",
+            "completedAt": "2023-03-20T14:32:36.622774+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "4"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-9",
+                "displayName": "empty plate for TAG1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "da8605f8-de01-4175-a1b3-bc463f65a8fe",
+            "key": "commands.LOAD_PIPETTE-0",
+            "commandType": "loadPipette",
+            "createdAt": "2023-03-20T14:32:35.841002+00:00",
+            "startedAt": "2023-03-20T14:32:36.625261+00:00",
+            "completedAt": "2023-03-20T14:32:38.520328+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteName": "p1000_single_gen2",
+                "mount": "left",
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "913f0279-a542-4e2b-87d7-44358b3cd39f",
+            "key": "commands.LOAD_PIPETTE-1",
+            "commandType": "loadPipette",
+            "createdAt": "2023-03-20T14:32:36.024701+00:00",
+            "startedAt": "2023-03-20T14:32:38.522320+00:00",
+            "completedAt": "2023-03-20T14:32:40.472073+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteName": "p300_single_gen2",
+                "mount": "right",
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "067e27a2-b81f-460d-86ec-bfa96352a07e",
+            "key": "067e27a2-b81f-460d-86ec-bfa96352a07e",
+            "commandType": "home",
+            "createdAt": "2023-03-20T14:32:36.049183+00:00",
+            "startedAt": "2023-03-20T14:32:40.474695+00:00",
+            "completedAt": "2023-03-20T14:32:59.699248+00:00",
+            "status": "succeeded",
+            "params": {},
+            "intent": "setup"
+        },
+        {
+            "id": "133c9ef3-da83-4180-8ea9-8f314f41d038",
+            "key": "133c9ef3-da83-4180-8ea9-8f314f41d038",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:32:36.083101+00:00",
+            "startedAt": "2023-03-20T14:32:59.703459+00:00",
+            "completedAt": "2023-03-20T14:33:01.726736+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-1",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3cea9aa9-5895-4f44-b90c-0c1bb2b0db3d",
+            "key": "3cea9aa9-5895-4f44-b90c-0c1bb2b0db3d",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:32:36.334212+00:00",
+            "startedAt": "2023-03-20T14:33:01.730532+00:00",
+            "completedAt": "2023-03-20T14:33:01.742912+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ef88da57-7708-42af-9ff8-1ea88577d599",
+            "key": "ef88da57-7708-42af-9ff8-1ea88577d599",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:19.576794+00:00",
+            "startedAt": "2023-03-20T14:33:19.579027+00:00",
+            "completedAt": "2023-03-20T14:33:19.693830+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d03b2894-b1c2-437a-a1b4-6e2bbe3fc1ac",
+            "key": "d03b2894-b1c2-437a-a1b4-6e2bbe3fc1ac",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:19.976603+00:00",
+            "startedAt": "2023-03-20T14:33:19.978516+00:00",
+            "completedAt": "2023-03-20T14:33:20.095771+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "1e0f0c50-2901-47a8-b618-1a6c54aeaf86",
+            "key": "1e0f0c50-2901-47a8-b618-1a6c54aeaf86",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:20.296254+00:00",
+            "startedAt": "2023-03-20T14:33:20.298065+00:00",
+            "completedAt": "2023-03-20T14:33:20.432718+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3edb1a8c-74bd-4a76-a192-af4f8c19cf3a",
+            "key": "3edb1a8c-74bd-4a76-a192-af4f8c19cf3a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:20.624858+00:00",
+            "startedAt": "2023-03-20T14:33:20.627164+00:00",
+            "completedAt": "2023-03-20T14:33:20.746044+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ca61940a-de5b-4e7c-89d4-ea327498f2a2",
+            "key": "ca61940a-de5b-4e7c-89d4-ea327498f2a2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:21.032951+00:00",
+            "startedAt": "2023-03-20T14:33:21.034827+00:00",
+            "completedAt": "2023-03-20T14:33:21.147648+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "84b94be4-d80e-4620-92d9-d0ccbff9dc10",
+            "key": "84b94be4-d80e-4620-92d9-d0ccbff9dc10",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:21.327047+00:00",
+            "startedAt": "2023-03-20T14:33:21.329229+00:00",
+            "completedAt": "2023-03-20T14:33:21.474036+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7b737aee-9391-4d79-a06c-79e7541d359b",
+            "key": "7b737aee-9391-4d79-a06c-79e7541d359b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:21.743312+00:00",
+            "startedAt": "2023-03-20T14:33:21.745228+00:00",
+            "completedAt": "2023-03-20T14:33:21.858743+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "862c39f2-63e8-41ba-9db6-56e89049b477",
+            "key": "862c39f2-63e8-41ba-9db6-56e89049b477",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:22.060404+00:00",
+            "startedAt": "2023-03-20T14:33:22.076911+00:00",
+            "completedAt": "2023-03-20T14:33:22.185469+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "47e6a203-f2cf-4d23-8989-27de080efbfc",
+            "key": "47e6a203-f2cf-4d23-8989-27de080efbfc",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:22.425918+00:00",
+            "startedAt": "2023-03-20T14:33:22.427780+00:00",
+            "completedAt": "2023-03-20T14:33:22.537795+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ded252b3-90dd-46a8-b7df-5ef9e5a5001c",
+            "key": "ded252b3-90dd-46a8-b7df-5ef9e5a5001c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:22.730379+00:00",
+            "startedAt": "2023-03-20T14:33:22.732370+00:00",
+            "completedAt": "2023-03-20T14:33:22.833902+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3a98f821-94ea-4023-ac14-990ddf213704",
+            "key": "3a98f821-94ea-4023-ac14-990ddf213704",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:23.021956+00:00",
+            "startedAt": "2023-03-20T14:33:23.023930+00:00",
+            "completedAt": "2023-03-20T14:33:23.125967+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7f7ffdc6-1173-4657-ae71-ec685aec3fc0",
+            "key": "7f7ffdc6-1173-4657-ae71-ec685aec3fc0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:23.308914+00:00",
+            "startedAt": "2023-03-20T14:33:23.310956+00:00",
+            "completedAt": "2023-03-20T14:33:23.415994+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8eac9f25-b00d-42fc-9a4c-d7efa15ede5a",
+            "key": "8eac9f25-b00d-42fc-9a4c-d7efa15ede5a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:23.634004+00:00",
+            "startedAt": "2023-03-20T14:33:23.635823+00:00",
+            "completedAt": "2023-03-20T14:33:23.744868+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "047cd8e8-8319-4026-8281-348c6a4cbb41",
+            "key": "047cd8e8-8319-4026-8281-348c6a4cbb41",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:23.929567+00:00",
+            "startedAt": "2023-03-20T14:33:23.931538+00:00",
+            "completedAt": "2023-03-20T14:33:24.033876+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7521dc5c-a9ea-4090-91b9-232bf5a19f1d",
+            "key": "7521dc5c-a9ea-4090-91b9-232bf5a19f1d",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:24.227713+00:00",
+            "startedAt": "2023-03-20T14:33:24.229875+00:00",
+            "completedAt": "2023-03-20T14:33:24.333891+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5b8acac6-0504-4928-b0f9-49420952d9ad",
+            "key": "5b8acac6-0504-4928-b0f9-49420952d9ad",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:25.014995+00:00",
+            "startedAt": "2023-03-20T14:33:25.017621+00:00",
+            "completedAt": "2023-03-20T14:33:25.158339+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b0976fab-9929-493c-a01f-242668eb37d6",
+            "key": "b0976fab-9929-493c-a01f-242668eb37d6",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:25.501205+00:00",
+            "startedAt": "2023-03-20T14:33:25.503059+00:00",
+            "completedAt": "2023-03-20T14:33:25.617588+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0a83f4f5-6d0a-46ae-8c7d-ff0a848f8486",
+            "key": "0a83f4f5-6d0a-46ae-8c7d-ff0a848f8486",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:27.065884+00:00",
+            "startedAt": "2023-03-20T14:33:27.067753+00:00",
+            "completedAt": "2023-03-20T14:33:27.195992+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d74ec1fb-80b9-4b38-879e-e33abc08a132",
+            "key": "d74ec1fb-80b9-4b38-879e-e33abc08a132",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:27.535407+00:00",
+            "startedAt": "2023-03-20T14:33:27.537273+00:00",
+            "completedAt": "2023-03-20T14:33:27.647344+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e9056541-f9ef-45e0-a189-1429d3705439",
+            "key": "e9056541-f9ef-45e0-a189-1429d3705439",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:33.892582+00:00",
+            "startedAt": "2023-03-20T14:33:33.894659+00:00",
+            "completedAt": "2023-03-20T14:33:34.073722+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "87658b77-4e0c-4ea3-82d5-0ae7774dd3af",
+            "key": "87658b77-4e0c-4ea3-82d5-0ae7774dd3af",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:34.405621+00:00",
+            "startedAt": "2023-03-20T14:33:34.408526+00:00",
+            "completedAt": "2023-03-20T14:33:34.621323+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d2472972-31cb-4f01-994e-c3e3843a7749",
+            "key": "d2472972-31cb-4f01-994e-c3e3843a7749",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:35.348986+00:00",
+            "startedAt": "2023-03-20T14:33:35.350929+00:00",
+            "completedAt": "2023-03-20T14:33:35.454991+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "591120bb-875e-430d-946a-5b299262e1bb",
+            "key": "591120bb-875e-430d-946a-5b299262e1bb",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:33:38.829880+00:00",
+            "startedAt": "2023-03-20T14:33:38.831740+00:00",
+            "completedAt": "2023-03-20T14:33:38.854287+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ad05e483-12e7-435d-bcb5-9b036d9a33bb",
+            "key": "ad05e483-12e7-435d-bcb5-9b036d9a33bb",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:33:39.000833+00:00",
+            "startedAt": "2023-03-20T14:33:39.002950+00:00",
+            "completedAt": "2023-03-20T14:33:43.486017+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4c652395-13a6-4a77-ad79-e779f2426296",
+            "key": "4c652395-13a6-4a77-ad79-e779f2426296",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:33:39.306878+00:00",
+            "startedAt": "2023-03-20T14:33:43.488273+00:00",
+            "completedAt": "2023-03-20T14:33:43.502589+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6e1a6579-46b3-4d4a-af40-e7db157fe260",
+            "key": "6e1a6579-46b3-4d4a-af40-e7db157fe260",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:53.465738+00:00",
+            "startedAt": "2023-03-20T14:33:53.467874+00:00",
+            "completedAt": "2023-03-20T14:33:53.588373+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "1783996e-1f29-4d21-8b33-89b112e818fe",
+            "key": "1783996e-1f29-4d21-8b33-89b112e818fe",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:53.884010+00:00",
+            "startedAt": "2023-03-20T14:33:53.885957+00:00",
+            "completedAt": "2023-03-20T14:33:53.994276+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "11b77815-3dce-4a1a-8449-8150c77ade6c",
+            "key": "11b77815-3dce-4a1a-8449-8150c77ade6c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:54.189699+00:00",
+            "startedAt": "2023-03-20T14:33:54.191674+00:00",
+            "completedAt": "2023-03-20T14:33:54.447512+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "92ff798a-61bb-44ff-ae18-b9e97a8bcfce",
+            "key": "92ff798a-61bb-44ff-ae18-b9e97a8bcfce",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:54.676024+00:00",
+            "startedAt": "2023-03-20T14:33:54.678134+00:00",
+            "completedAt": "2023-03-20T14:33:54.794383+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "16349510-5f42-45fa-8751-4121f5abd5f2",
+            "key": "16349510-5f42-45fa-8751-4121f5abd5f2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:55.108033+00:00",
+            "startedAt": "2023-03-20T14:33:55.110503+00:00",
+            "completedAt": "2023-03-20T14:33:55.214962+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "770234e6-8d99-4d76-8f5a-7f9d90b39c97",
+            "key": "770234e6-8d99-4d76-8f5a-7f9d90b39c97",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:55.418379+00:00",
+            "startedAt": "2023-03-20T14:33:55.420451+00:00",
+            "completedAt": "2023-03-20T14:33:55.535038+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5df151b7-1ca1-419a-8064-e4fb04ae5dc2",
+            "key": "5df151b7-1ca1-419a-8064-e4fb04ae5dc2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:55.746082+00:00",
+            "startedAt": "2023-03-20T14:33:55.748118+00:00",
+            "completedAt": "2023-03-20T14:33:55.876008+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "277317bd-a68c-47f3-aa8b-fe9c6712ae9b",
+            "key": "277317bd-a68c-47f3-aa8b-fe9c6712ae9b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:56.377375+00:00",
+            "startedAt": "2023-03-20T14:33:56.379266+00:00",
+            "completedAt": "2023-03-20T14:33:56.485913+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ed10e3d9-9321-4e35-9f18-6610cec85df7",
+            "key": "ed10e3d9-9321-4e35-9f18-6610cec85df7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:56.672717+00:00",
+            "startedAt": "2023-03-20T14:33:56.674898+00:00",
+            "completedAt": "2023-03-20T14:33:56.794936+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "00ee1792-69b0-499e-b39c-11aef9cdd6a6",
+            "key": "00ee1792-69b0-499e-b39c-11aef9cdd6a6",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:57.011003+00:00",
+            "startedAt": "2023-03-20T14:33:57.013712+00:00",
+            "completedAt": "2023-03-20T14:33:57.108897+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5dd2cb2f-a618-401f-b8f3-995ce9ce469f",
+            "key": "5dd2cb2f-a618-401f-b8f3-995ce9ce469f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:57.303404+00:00",
+            "startedAt": "2023-03-20T14:33:57.305698+00:00",
+            "completedAt": "2023-03-20T14:33:57.416309+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4b151e11-90a1-4553-8a48-7e2f15114f75",
+            "key": "4b151e11-90a1-4553-8a48-7e2f15114f75",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:57.717999+00:00",
+            "startedAt": "2023-03-20T14:33:57.735372+00:00",
+            "completedAt": "2023-03-20T14:33:57.874920+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a91ecf8b-73d4-4151-ae7e-204cf63b3f92",
+            "key": "a91ecf8b-73d4-4151-ae7e-204cf63b3f92",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:58.067797+00:00",
+            "startedAt": "2023-03-20T14:33:58.069845+00:00",
+            "completedAt": "2023-03-20T14:33:58.175365+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ca030436-9264-4a6b-a4f6-60075c0593e9",
+            "key": "ca030436-9264-4a6b-a4f6-60075c0593e9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:58.364545+00:00",
+            "startedAt": "2023-03-20T14:33:58.366572+00:00",
+            "completedAt": "2023-03-20T14:33:58.476979+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "33ea90fd-c58b-47fb-84db-7680610dfbd3",
+            "key": "33ea90fd-c58b-47fb-84db-7680610dfbd3",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:58.739694+00:00",
+            "startedAt": "2023-03-20T14:33:58.741585+00:00",
+            "completedAt": "2023-03-20T14:33:58.856236+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "56d98771-ac75-41ab-a8c3-3a510879aadc",
+            "key": "56d98771-ac75-41ab-a8c3-3a510879aadc",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:33:59.128015+00:00",
+            "startedAt": "2023-03-20T14:33:59.129970+00:00",
+            "completedAt": "2023-03-20T14:33:59.390639+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4d6cc147-9e64-442e-9609-31b4edac2b39",
+            "key": "4d6cc147-9e64-442e-9609-31b4edac2b39",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:34:04.578848+00:00",
+            "startedAt": "2023-03-20T14:34:04.580920+00:00",
+            "completedAt": "2023-03-20T14:34:04.614518+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "df6d7253-246f-47d9-a766-cefbaebd68dd",
+            "key": "df6d7253-246f-47d9-a766-cefbaebd68dd",
+            "commandType": "pickUpTip",
+            "createdAt": "2023-03-20T14:34:04.828675+00:00",
+            "startedAt": "2023-03-20T14:34:04.830592+00:00",
+            "completedAt": "2023-03-20T14:34:09.974972+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0.6000000000001364,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9f7fabd5-74a0-4aab-a204-9b0370376e2b",
+            "key": "9f7fabd5-74a0-4aab-a204-9b0370376e2b",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:34:13.584883+00:00",
+            "startedAt": "2023-03-20T14:34:13.586749+00:00",
+            "completedAt": "2023-03-20T14:34:13.607723+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "65cdb836-b409-4c26-88b2-9ee8902c6ffc",
+            "key": "65cdb836-b409-4c26-88b2-9ee8902c6ffc",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:34:13.759543+00:00",
+            "startedAt": "2023-03-20T14:34:13.766768+00:00",
+            "completedAt": "2023-03-20T14:34:16.080727+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-5",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "460e7568-ae7c-4947-b7fe-7aed762d0751",
+            "key": "460e7568-ae7c-4947-b7fe-7aed762d0751",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:34:14.046432+00:00",
+            "startedAt": "2023-03-20T14:34:16.082462+00:00",
+            "completedAt": "2023-03-20T14:34:16.095689+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0ccad288-14cf-4162-9a89-25da70feddd9",
+            "key": "0ccad288-14cf-4162-9a89-25da70feddd9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:54.406590+00:00",
+            "startedAt": "2023-03-20T14:34:54.408788+00:00",
+            "completedAt": "2023-03-20T14:34:54.542252+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5b059eb1-fce7-49bc-9020-457f717ca6be",
+            "key": "5b059eb1-fce7-49bc-9020-457f717ca6be",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:54.743288+00:00",
+            "startedAt": "2023-03-20T14:34:54.745943+00:00",
+            "completedAt": "2023-03-20T14:34:54.855039+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d36cae0c-81d9-46ca-8e38-0077cf389542",
+            "key": "d36cae0c-81d9-46ca-8e38-0077cf389542",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:55.047721+00:00",
+            "startedAt": "2023-03-20T14:34:55.049904+00:00",
+            "completedAt": "2023-03-20T14:34:55.163906+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a364f344-e8a7-4ba7-a5d0-27cb9c2a64d8",
+            "key": "a364f344-e8a7-4ba7-a5d0-27cb9c2a64d8",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:55.444319+00:00",
+            "startedAt": "2023-03-20T14:34:55.446669+00:00",
+            "completedAt": "2023-03-20T14:34:55.574411+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e0ed118b-720b-4930-8007-b94608748688",
+            "key": "e0ed118b-720b-4930-8007-b94608748688",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:55.862338+00:00",
+            "startedAt": "2023-03-20T14:34:55.864721+00:00",
+            "completedAt": "2023-03-20T14:34:55.976780+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "03c310cb-56b0-42bf-81a3-4b779aa640b2",
+            "key": "03c310cb-56b0-42bf-81a3-4b779aa640b2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:56.184463+00:00",
+            "startedAt": "2023-03-20T14:34:56.186572+00:00",
+            "completedAt": "2023-03-20T14:34:56.307167+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b509f4b3-34e0-41ce-bece-d2379cc2415f",
+            "key": "b509f4b3-34e0-41ce-bece-d2379cc2415f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:56.485309+00:00",
+            "startedAt": "2023-03-20T14:34:56.487225+00:00",
+            "completedAt": "2023-03-20T14:34:56.597484+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d91d50bf-3cbc-43c1-9ccb-59bf6a5f3ef1",
+            "key": "d91d50bf-3cbc-43c1-9ccb-59bf6a5f3ef1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:56.792223+00:00",
+            "startedAt": "2023-03-20T14:34:56.794144+00:00",
+            "completedAt": "2023-03-20T14:34:56.906013+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "44078391-b96b-4a7d-88be-6ea6851c3c2c",
+            "key": "44078391-b96b-4a7d-88be-6ea6851c3c2c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:57.093124+00:00",
+            "startedAt": "2023-03-20T14:34:57.094935+00:00",
+            "completedAt": "2023-03-20T14:34:57.219976+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f90a3bc3-c8c6-4011-9ccd-7e0494ddf632",
+            "key": "f90a3bc3-c8c6-4011-9ccd-7e0494ddf632",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:57.440904+00:00",
+            "startedAt": "2023-03-20T14:34:57.443214+00:00",
+            "completedAt": "2023-03-20T14:34:57.555653+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "07bfe207-e8d2-4c5d-8aed-2f1861cc2d5a",
+            "key": "07bfe207-e8d2-4c5d-8aed-2f1861cc2d5a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:57.828169+00:00",
+            "startedAt": "2023-03-20T14:34:57.830157+00:00",
+            "completedAt": "2023-03-20T14:34:57.933900+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "fb4dd776-02e8-4715-9395-cb6f0448c468",
+            "key": "fb4dd776-02e8-4715-9395-cb6f0448c468",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:58.132504+00:00",
+            "startedAt": "2023-03-20T14:34:58.134867+00:00",
+            "completedAt": "2023-03-20T14:34:58.289353+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a72e06db-9822-4d8b-a6cf-529045689c93",
+            "key": "a72e06db-9822-4d8b-a6cf-529045689c93",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:58.557498+00:00",
+            "startedAt": "2023-03-20T14:34:58.559392+00:00",
+            "completedAt": "2023-03-20T14:34:58.685968+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "45b82744-6438-4b58-bc89-de3d991f12a9",
+            "key": "45b82744-6438-4b58-bc89-de3d991f12a9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:58.904595+00:00",
+            "startedAt": "2023-03-20T14:34:58.906507+00:00",
+            "completedAt": "2023-03-20T14:34:59.026704+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "92839eaa-a63d-4e43-9e34-67a2dd74e968",
+            "key": "92839eaa-a63d-4e43-9e34-67a2dd74e968",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:59.210060+00:00",
+            "startedAt": "2023-03-20T14:34:59.212023+00:00",
+            "completedAt": "2023-03-20T14:34:59.491201+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6caf6e80-b02d-4b9f-a70b-98bd3178b299",
+            "key": "6caf6e80-b02d-4b9f-a70b-98bd3178b299",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:34:59.790597+00:00",
+            "startedAt": "2023-03-20T14:34:59.792502+00:00",
+            "completedAt": "2023-03-20T14:34:59.906988+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b45923b4-dcd8-4b0f-b1d8-aefa52870c4d",
+            "key": "b45923b4-dcd8-4b0f-b1d8-aefa52870c4d",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:00.193888+00:00",
+            "startedAt": "2023-03-20T14:35:00.195870+00:00",
+            "completedAt": "2023-03-20T14:35:00.304064+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8bea7d45-0a5c-436d-a069-f39bc87bf875",
+            "key": "8bea7d45-0a5c-436d-a069-f39bc87bf875",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:00.510529+00:00",
+            "startedAt": "2023-03-20T14:35:00.512796+00:00",
+            "completedAt": "2023-03-20T14:35:00.625074+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "568eefed-d52a-4197-8363-a7acaa331044",
+            "key": "568eefed-d52a-4197-8363-a7acaa331044",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:00.878793+00:00",
+            "startedAt": "2023-03-20T14:35:00.880775+00:00",
+            "completedAt": "2023-03-20T14:35:00.983895+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4c58c5a6-d5ea-400f-881f-1be86ae9df93",
+            "key": "4c58c5a6-d5ea-400f-881f-1be86ae9df93",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:01.189425+00:00",
+            "startedAt": "2023-03-20T14:35:01.196279+00:00",
+            "completedAt": "2023-03-20T14:35:01.316036+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c64150c4-ca01-4f79-99b6-e0eadcfeecdd",
+            "key": "c64150c4-ca01-4f79-99b6-e0eadcfeecdd",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:01.571557+00:00",
+            "startedAt": "2023-03-20T14:35:01.573377+00:00",
+            "completedAt": "2023-03-20T14:35:01.684982+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "283d1660-e177-4c87-bda8-884b5e1b71a0",
+            "key": "283d1660-e177-4c87-bda8-884b5e1b71a0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:01.978418+00:00",
+            "startedAt": "2023-03-20T14:35:01.980314+00:00",
+            "completedAt": "2023-03-20T14:35:02.094822+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "fabae495-fc3e-4dec-bb1b-7466e5efbc31",
+            "key": "fabae495-fc3e-4dec-bb1b-7466e5efbc31",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:02.293400+00:00",
+            "startedAt": "2023-03-20T14:35:02.295952+00:00",
+            "completedAt": "2023-03-20T14:35:02.406524+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c19e9dc6-a0a9-414f-88b8-8a0aca66b90d",
+            "key": "c19e9dc6-a0a9-414f-88b8-8a0aca66b90d",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:02.612057+00:00",
+            "startedAt": "2023-03-20T14:35:02.614593+00:00",
+            "completedAt": "2023-03-20T14:35:02.714071+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2e356346-a8e7-4aed-b46a-f6f0d588e381",
+            "key": "2e356346-a8e7-4aed-b46a-f6f0d588e381",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:03.042292+00:00",
+            "startedAt": "2023-03-20T14:35:03.044188+00:00",
+            "completedAt": "2023-03-20T14:35:03.156322+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2a2c865e-9c87-4b08-9065-c050eb93ce4f",
+            "key": "2a2c865e-9c87-4b08-9065-c050eb93ce4f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:03.361441+00:00",
+            "startedAt": "2023-03-20T14:35:03.364978+00:00",
+            "completedAt": "2023-03-20T14:35:03.494691+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a0bf2b40-7c8c-440e-a3ea-5bb74e68dfd7",
+            "key": "a0bf2b40-7c8c-440e-a3ea-5bb74e68dfd7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:03.770396+00:00",
+            "startedAt": "2023-03-20T14:35:03.772307+00:00",
+            "completedAt": "2023-03-20T14:35:03.886364+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c2164793-b37e-49e2-bb09-9d57825da8bc",
+            "key": "c2164793-b37e-49e2-bb09-9d57825da8bc",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:04.122302+00:00",
+            "startedAt": "2023-03-20T14:35:04.124334+00:00",
+            "completedAt": "2023-03-20T14:35:04.385298+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "af8a525c-0d3e-427f-9f23-256a12c2c39b",
+            "key": "af8a525c-0d3e-427f-9f23-256a12c2c39b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:04.638672+00:00",
+            "startedAt": "2023-03-20T14:35:04.640887+00:00",
+            "completedAt": "2023-03-20T14:35:04.763981+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "218e9183-3417-4ed4-ba31-6bc35563b2fe",
+            "key": "218e9183-3417-4ed4-ba31-6bc35563b2fe",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:04.960454+00:00",
+            "startedAt": "2023-03-20T14:35:04.962733+00:00",
+            "completedAt": "2023-03-20T14:35:05.076092+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "badcc71d-b1b1-4463-a43a-7e347f9c2fb7",
+            "key": "badcc71d-b1b1-4463-a43a-7e347f9c2fb7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:05.304003+00:00",
+            "startedAt": "2023-03-20T14:35:05.306036+00:00",
+            "completedAt": "2023-03-20T14:35:05.421081+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ef2a2dd2-ad2c-4951-9fbc-6aeae8a1f3ef",
+            "key": "ef2a2dd2-ad2c-4951-9fbc-6aeae8a1f3ef",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:05.729521+00:00",
+            "startedAt": "2023-03-20T14:35:05.731340+00:00",
+            "completedAt": "2023-03-20T14:35:05.844990+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0d8b9971-3f77-4925-ab9b-474485667b60",
+            "key": "0d8b9971-3f77-4925-ab9b-474485667b60",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:06.031533+00:00",
+            "startedAt": "2023-03-20T14:35:06.033539+00:00",
+            "completedAt": "2023-03-20T14:35:06.135032+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2dfa123b-1029-416c-992b-9a5c147b0bad",
+            "key": "2dfa123b-1029-416c-992b-9a5c147b0bad",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:06.421813+00:00",
+            "startedAt": "2023-03-20T14:35:06.423721+00:00",
+            "completedAt": "2023-03-20T14:35:06.534893+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "162fd19f-6de3-440e-9988-da658ff1cd1c",
+            "key": "162fd19f-6de3-440e-9988-da658ff1cd1c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:06.728206+00:00",
+            "startedAt": "2023-03-20T14:35:06.730182+00:00",
+            "completedAt": "2023-03-20T14:35:06.830998+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "73ff8cd5-6af5-411f-bc14-c35d89100511",
+            "key": "73ff8cd5-6af5-411f-bc14-c35d89100511",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:07.136945+00:00",
+            "startedAt": "2023-03-20T14:35:07.138951+00:00",
+            "completedAt": "2023-03-20T14:35:07.246688+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "928aebcb-8414-49a7-adf5-f3d190c2e5f1",
+            "key": "928aebcb-8414-49a7-adf5-f3d190c2e5f1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:07.452881+00:00",
+            "startedAt": "2023-03-20T14:35:07.455251+00:00",
+            "completedAt": "2023-03-20T14:35:07.575110+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "cfd5df61-9e1b-4e96-a736-f45ea91b09a5",
+            "key": "cfd5df61-9e1b-4e96-a736-f45ea91b09a5",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:07.857850+00:00",
+            "startedAt": "2023-03-20T14:35:07.859838+00:00",
+            "completedAt": "2023-03-20T14:35:07.963873+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b23d83c0-ea2e-48ac-9513-7ecd54721420",
+            "key": "b23d83c0-ea2e-48ac-9513-7ecd54721420",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:08.157745+00:00",
+            "startedAt": "2023-03-20T14:35:08.159791+00:00",
+            "completedAt": "2023-03-20T14:35:08.276904+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8718f83b-2f3b-420c-8497-17a75b341d74",
+            "key": "8718f83b-2f3b-420c-8497-17a75b341d74",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:08.592145+00:00",
+            "startedAt": "2023-03-20T14:35:08.594615+00:00",
+            "completedAt": "2023-03-20T14:35:08.746500+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "bdfdfadd-fd31-4b90-90fb-a8f84c48686f",
+            "key": "bdfdfadd-fd31-4b90-90fb-a8f84c48686f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:08.989553+00:00",
+            "startedAt": "2023-03-20T14:35:08.991385+00:00",
+            "completedAt": "2023-03-20T14:35:09.107973+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "88b206a6-91d8-4d34-8939-139d6a53f342",
+            "key": "88b206a6-91d8-4d34-8939-139d6a53f342",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:09.374749+00:00",
+            "startedAt": "2023-03-20T14:35:09.449569+00:00",
+            "completedAt": "2023-03-20T14:35:09.632467+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c048b52c-7844-400b-a14c-8e4a35486ed3",
+            "key": "c048b52c-7844-400b-a14c-8e4a35486ed3",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:09.888484+00:00",
+            "startedAt": "2023-03-20T14:35:09.890454+00:00",
+            "completedAt": "2023-03-20T14:35:10.004922+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "cf97f9da-b5f9-49ba-9535-5ade88ce1bc2",
+            "key": "cf97f9da-b5f9-49ba-9535-5ade88ce1bc2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:10.255665+00:00",
+            "startedAt": "2023-03-20T14:35:10.257482+00:00",
+            "completedAt": "2023-03-20T14:35:10.363785+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4be9d90f-7eff-40e6-a5cd-a42860626673",
+            "key": "4be9d90f-7eff-40e6-a5cd-a42860626673",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:10.654892+00:00",
+            "startedAt": "2023-03-20T14:35:10.657236+00:00",
+            "completedAt": "2023-03-20T14:35:10.774386+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "be96c938-df6e-4f95-9967-4d21cedd388f",
+            "key": "be96c938-df6e-4f95-9967-4d21cedd388f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:11.052213+00:00",
+            "startedAt": "2023-03-20T14:35:11.054121+00:00",
+            "completedAt": "2023-03-20T14:35:11.165732+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "632e09bf-9d68-484e-88c5-a23fce1d32aa",
+            "key": "632e09bf-9d68-484e-88c5-a23fce1d32aa",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:11.352589+00:00",
+            "startedAt": "2023-03-20T14:35:11.354989+00:00",
+            "completedAt": "2023-03-20T14:35:11.465054+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "396aa675-d620-46fb-a250-998e20120625",
+            "key": "396aa675-d620-46fb-a250-998e20120625",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:11.650943+00:00",
+            "startedAt": "2023-03-20T14:35:11.653406+00:00",
+            "completedAt": "2023-03-20T14:35:11.770244+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e481b470-2a45-4ec0-9a14-00a54f8d9191",
+            "key": "e481b470-2a45-4ec0-9a14-00a54f8d9191",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:12.036166+00:00",
+            "startedAt": "2023-03-20T14:35:12.038300+00:00",
+            "completedAt": "2023-03-20T14:35:12.155124+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "309f01c2-f3b5-47fe-9aae-bd343febe793",
+            "key": "309f01c2-f3b5-47fe-9aae-bd343febe793",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:12.359178+00:00",
+            "startedAt": "2023-03-20T14:35:12.361309+00:00",
+            "completedAt": "2023-03-20T14:35:12.465088+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f009d97a-0a2f-478b-a58f-fa74f08c6878",
+            "key": "f009d97a-0a2f-478b-a58f-fa74f08c6878",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:12.650488+00:00",
+            "startedAt": "2023-03-20T14:35:12.652432+00:00",
+            "completedAt": "2023-03-20T14:35:12.755850+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ac4f639f-1c38-4e4f-86c4-6f9cdb594e36",
+            "key": "ac4f639f-1c38-4e4f-86c4-6f9cdb594e36",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:13.077988+00:00",
+            "startedAt": "2023-03-20T14:35:13.080083+00:00",
+            "completedAt": "2023-03-20T14:35:13.195482+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5297d732-a38a-4d39-9675-eb06f0d70b45",
+            "key": "5297d732-a38a-4d39-9675-eb06f0d70b45",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:13.385603+00:00",
+            "startedAt": "2023-03-20T14:35:13.387580+00:00",
+            "completedAt": "2023-03-20T14:35:13.494350+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e2db4378-71d3-4922-8816-bc7e2e3bdbf3",
+            "key": "e2db4378-71d3-4922-8816-bc7e2e3bdbf3",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:13.690302+00:00",
+            "startedAt": "2023-03-20T14:35:13.692707+00:00",
+            "completedAt": "2023-03-20T14:35:13.810351+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f130561f-b21c-4eb7-adf0-d1ad6971d34c",
+            "key": "f130561f-b21c-4eb7-adf0-d1ad6971d34c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:14.500690+00:00",
+            "startedAt": "2023-03-20T14:35:14.503059+00:00",
+            "completedAt": "2023-03-20T14:35:14.753341+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "61059d5b-c2fe-4d8c-8976-5cb3408f5c7a",
+            "key": "61059d5b-c2fe-4d8c-8976-5cb3408f5c7a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:15.253183+00:00",
+            "startedAt": "2023-03-20T14:35:15.255271+00:00",
+            "completedAt": "2023-03-20T14:35:15.374311+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "43835132-f7d5-4f31-b976-c1d40b10cda8",
+            "key": "43835132-f7d5-4f31-b976-c1d40b10cda8",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:15.686841+00:00",
+            "startedAt": "2023-03-20T14:35:15.688700+00:00",
+            "completedAt": "2023-03-20T14:35:15.795435+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "58b43086-d07a-40a3-aee9-4cf22094b916",
+            "key": "58b43086-d07a-40a3-aee9-4cf22094b916",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:15.983656+00:00",
+            "startedAt": "2023-03-20T14:35:15.985609+00:00",
+            "completedAt": "2023-03-20T14:35:16.095815+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "734cccea-c55e-4173-a56f-049143ac9bc7",
+            "key": "734cccea-c55e-4173-a56f-049143ac9bc7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:16.296744+00:00",
+            "startedAt": "2023-03-20T14:35:16.298795+00:00",
+            "completedAt": "2023-03-20T14:35:16.417437+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "15f4e421-54f7-4f4e-942d-a61fc6e153fe",
+            "key": "15f4e421-54f7-4f4e-942d-a61fc6e153fe",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:16.607368+00:00",
+            "startedAt": "2023-03-20T14:35:16.609297+00:00",
+            "completedAt": "2023-03-20T14:35:16.715123+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7fc1b8c6-c2ee-4255-b833-1768abeada3f",
+            "key": "7fc1b8c6-c2ee-4255-b833-1768abeada3f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:16.912223+00:00",
+            "startedAt": "2023-03-20T14:35:16.914169+00:00",
+            "completedAt": "2023-03-20T14:35:17.025031+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5c97d0c9-b7fb-4d71-8808-c05b32323ad1",
+            "key": "5c97d0c9-b7fb-4d71-8808-c05b32323ad1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:17.233278+00:00",
+            "startedAt": "2023-03-20T14:35:17.235246+00:00",
+            "completedAt": "2023-03-20T14:35:17.337529+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8db2845b-3d38-4b6a-ad7a-c866cb4eb795",
+            "key": "8db2845b-3d38-4b6a-ad7a-c866cb4eb795",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:20.440100+00:00",
+            "startedAt": "2023-03-20T14:35:20.441980+00:00",
+            "completedAt": "2023-03-20T14:35:20.554504+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a27d8a2d-7326-4acb-9d29-5c2818d7590a",
+            "key": "a27d8a2d-7326-4acb-9d29-5c2818d7590a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:20.937932+00:00",
+            "startedAt": "2023-03-20T14:35:20.940044+00:00",
+            "completedAt": "2023-03-20T14:35:21.054645+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "58f8a364-8b8a-43bb-bece-d38d06f99cb9",
+            "key": "58f8a364-8b8a-43bb-bece-d38d06f99cb9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:21.842086+00:00",
+            "startedAt": "2023-03-20T14:35:21.844042+00:00",
+            "completedAt": "2023-03-20T14:35:21.955129+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "71d994c2-caa7-4f8d-be3f-c522bc337f25",
+            "key": "71d994c2-caa7-4f8d-be3f-c522bc337f25",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:35:26.187053+00:00",
+            "startedAt": "2023-03-20T14:35:26.189209+00:00",
+            "completedAt": "2023-03-20T14:35:26.212301+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "816273f3-76f7-4ca2-82b0-cc7523ef1252",
+            "key": "816273f3-76f7-4ca2-82b0-cc7523ef1252",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:35:26.372444+00:00",
+            "startedAt": "2023-03-20T14:35:26.379247+00:00",
+            "completedAt": "2023-03-20T14:35:28.703041+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-3",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a1bb10c5-0b3d-489a-8083-63cd3d9e4784",
+            "key": "a1bb10c5-0b3d-489a-8083-63cd3d9e4784",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:35:26.646695+00:00",
+            "startedAt": "2023-03-20T14:35:28.704868+00:00",
+            "completedAt": "2023-03-20T14:35:28.724555+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ffbe5d13-e802-432c-8e10-203c043649e9",
+            "key": "ffbe5d13-e802-432c-8e10-203c043649e9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:38.209436+00:00",
+            "startedAt": "2023-03-20T14:35:38.211401+00:00",
+            "completedAt": "2023-03-20T14:35:38.324166+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5db74c01-a7d4-48f6-a15c-f06dcd5c18f1",
+            "key": "5db74c01-a7d4-48f6-a15c-f06dcd5c18f1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:38.633248+00:00",
+            "startedAt": "2023-03-20T14:35:38.635105+00:00",
+            "completedAt": "2023-03-20T14:35:38.766474+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c9aff1cd-92fa-498e-8712-c4e3fe6d960c",
+            "key": "c9aff1cd-92fa-498e-8712-c4e3fe6d960c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:38.963923+00:00",
+            "startedAt": "2023-03-20T14:35:38.970150+00:00",
+            "completedAt": "2023-03-20T14:35:39.096682+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f1239030-cbf2-4bd7-bb9a-35884cff2cf6",
+            "key": "f1239030-cbf2-4bd7-bb9a-35884cff2cf6",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:39.313540+00:00",
+            "startedAt": "2023-03-20T14:35:39.468683+00:00",
+            "completedAt": "2023-03-20T14:35:39.585117+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8be7f1cf-4b2f-4305-af12-acdb8cad22d2",
+            "key": "8be7f1cf-4b2f-4305-af12-acdb8cad22d2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:39.871846+00:00",
+            "startedAt": "2023-03-20T14:35:39.873747+00:00",
+            "completedAt": "2023-03-20T14:35:39.987117+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "163f5d04-105d-4e20-a4d6-2967ef69f69c",
+            "key": "163f5d04-105d-4e20-a4d6-2967ef69f69c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:40.289348+00:00",
+            "startedAt": "2023-03-20T14:35:40.291339+00:00",
+            "completedAt": "2023-03-20T14:35:40.406420+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "dd61c8d0-3392-43a0-8e6a-0a79a50a5268",
+            "key": "dd61c8d0-3392-43a0-8e6a-0a79a50a5268",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:40.871052+00:00",
+            "startedAt": "2023-03-20T14:35:40.873399+00:00",
+            "completedAt": "2023-03-20T14:35:40.987476+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "608b0b69-ab3d-47ac-be27-fb076f71640b",
+            "key": "608b0b69-ab3d-47ac-be27-fb076f71640b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:41.290436+00:00",
+            "startedAt": "2023-03-20T14:35:41.292348+00:00",
+            "completedAt": "2023-03-20T14:35:41.404304+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e9dfe76a-72f4-43d4-af2b-baff963e622c",
+            "key": "e9dfe76a-72f4-43d4-af2b-baff963e622c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:41.594079+00:00",
+            "startedAt": "2023-03-20T14:35:41.595928+00:00",
+            "completedAt": "2023-03-20T14:35:41.716277+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "53950260-c3f0-44e9-b021-29121ad1d259",
+            "key": "53950260-c3f0-44e9-b021-29121ad1d259",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:41.994798+00:00",
+            "startedAt": "2023-03-20T14:35:41.996629+00:00",
+            "completedAt": "2023-03-20T14:35:42.117616+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "86b8ca5e-4cdf-46a4-893b-bd5d2fcde282",
+            "key": "86b8ca5e-4cdf-46a4-893b-bd5d2fcde282",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:42.303528+00:00",
+            "startedAt": "2023-03-20T14:35:42.305494+00:00",
+            "completedAt": "2023-03-20T14:35:42.415001+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ed513366-6c89-4ca3-b3c8-44be1e1610fe",
+            "key": "ed513366-6c89-4ca3-b3c8-44be1e1610fe",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:43.692835+00:00",
+            "startedAt": "2023-03-20T14:35:43.694683+00:00",
+            "completedAt": "2023-03-20T14:35:43.805215+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8c0e2040-6752-4e49-a69d-8070bbbcef80",
+            "key": "8c0e2040-6752-4e49-a69d-8070bbbcef80",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:44.241507+00:00",
+            "startedAt": "2023-03-20T14:35:44.243425+00:00",
+            "completedAt": "2023-03-20T14:35:44.498212+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f285533d-8e51-4d6e-add2-cb1c86c0868a",
+            "key": "f285533d-8e51-4d6e-add2-cb1c86c0868a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:44.850126+00:00",
+            "startedAt": "2023-03-20T14:35:44.852057+00:00",
+            "completedAt": "2023-03-20T14:35:44.966880+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b83f1d0c-47f1-46bc-a6fe-08b05063b114",
+            "key": "b83f1d0c-47f1-46bc-a6fe-08b05063b114",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:45.488316+00:00",
+            "startedAt": "2023-03-20T14:35:45.490532+00:00",
+            "completedAt": "2023-03-20T14:35:45.608671+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "99dc8121-fbc9-46f8-a63e-756b485fbd72",
+            "key": "99dc8121-fbc9-46f8-a63e-756b485fbd72",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:46.054250+00:00",
+            "startedAt": "2023-03-20T14:35:46.056117+00:00",
+            "completedAt": "2023-03-20T14:35:46.180315+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "bc8a5668-4e6b-42c3-8057-cb50f092464b",
+            "key": "bc8a5668-4e6b-42c3-8057-cb50f092464b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:51.720140+00:00",
+            "startedAt": "2023-03-20T14:35:51.722158+00:00",
+            "completedAt": "2023-03-20T14:35:51.846707+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5988915a-76db-4bef-8569-12fb081dbeb2",
+            "key": "5988915a-76db-4bef-8569-12fb081dbeb2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:52.123561+00:00",
+            "startedAt": "2023-03-20T14:35:52.125583+00:00",
+            "completedAt": "2023-03-20T14:35:52.237518+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6f4ddfca-9c07-41ca-be8e-0f4e2556a7c0",
+            "key": "6f4ddfca-9c07-41ca-be8e-0f4e2556a7c0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:52.457497+00:00",
+            "startedAt": "2023-03-20T14:35:52.462477+00:00",
+            "completedAt": "2023-03-20T14:35:52.586015+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8ab56037-64e3-42d5-80e3-49ef65da0cb7",
+            "key": "8ab56037-64e3-42d5-80e3-49ef65da0cb7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:52.783200+00:00",
+            "startedAt": "2023-03-20T14:35:52.785201+00:00",
+            "completedAt": "2023-03-20T14:35:52.894579+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e4a8a7a1-1088-40e0-a54e-b5216c78bdf9",
+            "key": "e4a8a7a1-1088-40e0-a54e-b5216c78bdf9",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:35:53.111089+00:00",
+            "startedAt": "2023-03-20T14:35:53.113061+00:00",
+            "completedAt": "2023-03-20T14:35:53.204195+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "dcd5fc7b-2fc4-45d7-bc27-8c96df96b229",
+            "key": "dcd5fc7b-2fc4-45d7-bc27-8c96df96b229",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:35:58.674828+00:00",
+            "startedAt": "2023-03-20T14:35:58.676873+00:00",
+            "completedAt": "2023-03-20T14:35:58.694372+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2adb135c-5f7f-4c06-9934-abb7bc8c5a8e",
+            "key": "2adb135c-5f7f-4c06-9934-abb7bc8c5a8e",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:35:58.860351+00:00",
+            "startedAt": "2023-03-20T14:35:58.862830+00:00",
+            "completedAt": "2023-03-20T14:36:00.015653+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-4",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "134565b4-a46c-4a62-a8fc-5fa1e0c7c06e",
+            "key": "134565b4-a46c-4a62-a8fc-5fa1e0c7c06e",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:35:59.134018+00:00",
+            "startedAt": "2023-03-20T14:36:00.018187+00:00",
+            "completedAt": "2023-03-20T14:36:00.032763+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "477e804b-df4b-48e2-9f10-57a1e601c5ad",
+            "key": "477e804b-df4b-48e2-9f10-57a1e601c5ad",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:36:08.728661+00:00",
+            "startedAt": "2023-03-20T14:36:08.730337+00:00",
+            "completedAt": "2023-03-20T14:36:08.751363+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "eecb199a-a6be-4478-9832-13510e2a4cb5",
+            "key": "eecb199a-a6be-4478-9832-13510e2a4cb5",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:36:08.903916+00:00",
+            "startedAt": "2023-03-20T14:36:08.927887+00:00",
+            "completedAt": "2023-03-20T14:36:11.463803+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-7",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "df2fe551-45d8-453c-aeaa-9cd5c589f8ad",
+            "key": "df2fe551-45d8-453c-aeaa-9cd5c589f8ad",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:36:09.124675+00:00",
+            "startedAt": "2023-03-20T14:36:11.466472+00:00",
+            "completedAt": "2023-03-20T14:36:11.481621+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "fc1cf459-d0a1-41f7-8da5-98130afca00d",
+            "key": "fc1cf459-d0a1-41f7-8da5-98130afca00d",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:36:16.776581+00:00",
+            "startedAt": "2023-03-20T14:36:16.778567+00:00",
+            "completedAt": "2023-03-20T14:36:17.021561+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 10
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ca93e4ae-4ee4-45f8-857c-279bfd948ba1",
+            "key": "ca93e4ae-4ee4-45f8-857c-279bfd948ba1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:36:49.267934+00:00",
+            "startedAt": "2023-03-20T14:36:49.270386+00:00",
+            "completedAt": "2023-03-20T14:36:49.549931+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 10
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "268c36df-cdf3-49ce-aa6a-5180eb7da036",
+            "key": "268c36df-cdf3-49ce-aa6a-5180eb7da036",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:00.280467+00:00",
+            "startedAt": "2023-03-20T14:37:00.282688+00:00",
+            "completedAt": "2023-03-20T14:37:00.528184+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -10
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8be6615c-843c-492c-8409-6b99ae53ebd8",
+            "key": "8be6615c-843c-492c-8409-6b99ae53ebd8",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:07.484864+00:00",
+            "startedAt": "2023-03-20T14:37:07.486786+00:00",
+            "completedAt": "2023-03-20T14:37:07.619620+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6c8b4317-4459-428b-b887-82ec3e42408b",
+            "key": "6c8b4317-4459-428b-b887-82ec3e42408b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:08.111921+00:00",
+            "startedAt": "2023-03-20T14:37:08.113734+00:00",
+            "completedAt": "2023-03-20T14:37:08.245956+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "592514b1-15b0-4378-b0a0-baeaf2e4b88a",
+            "key": "592514b1-15b0-4378-b0a0-baeaf2e4b88a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:09.101924+00:00",
+            "startedAt": "2023-03-20T14:37:09.103792+00:00",
+            "completedAt": "2023-03-20T14:37:09.240610+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9e9ae6f6-8907-4417-83a2-91678fa665e7",
+            "key": "9e9ae6f6-8907-4417-83a2-91678fa665e7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:13.252839+00:00",
+            "startedAt": "2023-03-20T14:37:13.255020+00:00",
+            "completedAt": "2023-03-20T14:37:13.355575+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "263911d2-7524-461d-ba3e-62a70513a7c6",
+            "key": "263911d2-7524-461d-ba3e-62a70513a7c6",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:13.802376+00:00",
+            "startedAt": "2023-03-20T14:37:13.804228+00:00",
+            "completedAt": "2023-03-20T14:37:13.913770+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6bdd635f-7816-432d-ab3f-54b4b05c2efa",
+            "key": "6bdd635f-7816-432d-ab3f-54b4b05c2efa",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:17.867812+00:00",
+            "startedAt": "2023-03-20T14:37:17.869847+00:00",
+            "completedAt": "2023-03-20T14:37:17.973775+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5dfe9c80-832b-4f6f-a2b2-63216400b1e0",
+            "key": "5dfe9c80-832b-4f6f-a2b2-63216400b1e0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:18.385118+00:00",
+            "startedAt": "2023-03-20T14:37:18.386930+00:00",
+            "completedAt": "2023-03-20T14:37:18.493758+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f7ede751-660a-409e-add2-146eb3a7a867",
+            "key": "f7ede751-660a-409e-add2-146eb3a7a867",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:18.720441+00:00",
+            "startedAt": "2023-03-20T14:37:18.722455+00:00",
+            "completedAt": "2023-03-20T14:37:18.867456+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4c469d45-6a59-4229-bfc9-90168fcaf5ee",
+            "key": "4c469d45-6a59-4229-bfc9-90168fcaf5ee",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:19.424247+00:00",
+            "startedAt": "2023-03-20T14:37:19.426277+00:00",
+            "completedAt": "2023-03-20T14:37:19.536325+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "413eb0f1-99e7-4eb3-b663-f858c6834deb",
+            "key": "413eb0f1-99e7-4eb3-b663-f858c6834deb",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:20.626728+00:00",
+            "startedAt": "2023-03-20T14:37:20.637955+00:00",
+            "completedAt": "2023-03-20T14:37:20.754526+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9d433445-15e7-4c2e-9a0a-b34873e82f4f",
+            "key": "9d433445-15e7-4c2e-9a0a-b34873e82f4f",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:37:37.957072+00:00",
+            "startedAt": "2023-03-20T14:37:37.959378+00:00",
+            "completedAt": "2023-03-20T14:37:37.982472+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "538734cd-a5df-4a58-b4f8-6100d066eca5",
+            "key": "538734cd-a5df-4a58-b4f8-6100d066eca5",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:37:38.144178+00:00",
+            "startedAt": "2023-03-20T14:37:38.146989+00:00",
+            "completedAt": "2023-03-20T14:37:40.887047+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-8",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8327185f-2468-4c20-957c-071332edee14",
+            "key": "8327185f-2468-4c20-957c-071332edee14",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:37:38.335368+00:00",
+            "startedAt": "2023-03-20T14:37:40.888795+00:00",
+            "completedAt": "2023-03-20T14:37:40.902174+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0e9fd231-d5d6-49c5-8efe-84f878d84f8f",
+            "key": "0e9fd231-d5d6-49c5-8efe-84f878d84f8f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:49.127416+00:00",
+            "startedAt": "2023-03-20T14:37:49.129669+00:00",
+            "completedAt": "2023-03-20T14:37:49.416115+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "1fa1479e-521a-40a5-bcfa-f5395c7769d7",
+            "key": "1fa1479e-521a-40a5-bcfa-f5395c7769d7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:49.662967+00:00",
+            "startedAt": "2023-03-20T14:37:49.665331+00:00",
+            "completedAt": "2023-03-20T14:37:49.798094+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d150b184-7933-4cfa-86d9-e469f2c115fb",
+            "key": "d150b184-7933-4cfa-86d9-e469f2c115fb",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:50.147331+00:00",
+            "startedAt": "2023-03-20T14:37:50.149262+00:00",
+            "completedAt": "2023-03-20T14:37:50.306344+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2476bd93-0279-476e-b671-bf19dff62084",
+            "key": "2476bd93-0279-476e-b671-bf19dff62084",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:50.596507+00:00",
+            "startedAt": "2023-03-20T14:37:50.598366+00:00",
+            "completedAt": "2023-03-20T14:37:50.730253+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d8df6ec6-567f-4073-864d-eedbbb3337c7",
+            "key": "d8df6ec6-567f-4073-864d-eedbbb3337c7",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:51.778909+00:00",
+            "startedAt": "2023-03-20T14:37:51.780940+00:00",
+            "completedAt": "2023-03-20T14:37:51.912546+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "aa10456d-3e5b-4054-9c12-06145991ba2a",
+            "key": "aa10456d-3e5b-4054-9c12-06145991ba2a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:53.583474+00:00",
+            "startedAt": "2023-03-20T14:37:53.585292+00:00",
+            "completedAt": "2023-03-20T14:37:53.718447+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c34f2ecb-7fb4-4c29-817d-e08bc312b506",
+            "key": "c34f2ecb-7fb4-4c29-817d-e08bc312b506",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:37:56.791603+00:00",
+            "startedAt": "2023-03-20T14:37:56.795004+00:00",
+            "completedAt": "2023-03-20T14:37:56.917828+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "86a16077-62d1-4007-b312-af21cf6af070",
+            "key": "86a16077-62d1-4007-b312-af21cf6af070",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:05.457053+00:00",
+            "startedAt": "2023-03-20T14:38:05.459165+00:00",
+            "completedAt": "2023-03-20T14:38:05.568358+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d73b8642-d11f-4a99-aaac-fa3e331723dc",
+            "key": "d73b8642-d11f-4a99-aaac-fa3e331723dc",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:05.768320+00:00",
+            "startedAt": "2023-03-20T14:38:05.771332+00:00",
+            "completedAt": "2023-03-20T14:38:05.888560+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "27383666-6061-477f-bc15-b70ef8dd8572",
+            "key": "27383666-6061-477f-bc15-b70ef8dd8572",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:10.118238+00:00",
+            "startedAt": "2023-03-20T14:38:10.119998+00:00",
+            "completedAt": "2023-03-20T14:38:10.140994+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7c27c622-2882-4276-a789-b3a776bb12ae",
+            "key": "7c27c622-2882-4276-a789-b3a776bb12ae",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:38:10.289161+00:00",
+            "startedAt": "2023-03-20T14:38:10.291191+00:00",
+            "completedAt": "2023-03-20T14:38:13.471724+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-9",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e661c40a-7d1f-4c7c-bb0e-b5134b97a07b",
+            "key": "e661c40a-7d1f-4c7c-bb0e-b5134b97a07b",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:10.566066+00:00",
+            "startedAt": "2023-03-20T14:38:13.474082+00:00",
+            "completedAt": "2023-03-20T14:38:13.487719+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "fa97d17e-f141-448b-91ca-88b0a12ff4da",
+            "key": "fa97d17e-f141-448b-91ca-88b0a12ff4da",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:16.193350+00:00",
+            "startedAt": "2023-03-20T14:38:16.194995+00:00",
+            "completedAt": "2023-03-20T14:38:16.217329+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5cdbbef9-3618-47bb-a05b-bba3540ccdd1",
+            "key": "5cdbbef9-3618-47bb-a05b-bba3540ccdd1",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:38:16.358987+00:00",
+            "startedAt": "2023-03-20T14:38:16.363834+00:00",
+            "completedAt": "2023-03-20T14:38:19.141536+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-6",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "24a68c04-a9eb-433a-b88d-6260975a4753",
+            "key": "24a68c04-a9eb-433a-b88d-6260975a4753",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:16.637715+00:00",
+            "startedAt": "2023-03-20T14:38:19.143508+00:00",
+            "completedAt": "2023-03-20T14:38:19.156941+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a3aebb77-8fd3-4323-a90d-021082bdbde2",
+            "key": "a3aebb77-8fd3-4323-a90d-021082bdbde2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:33.231384+00:00",
+            "startedAt": "2023-03-20T14:38:33.233511+00:00",
+            "completedAt": "2023-03-20T14:38:33.366513+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "96111e0b-52d8-4765-ad0b-c52da2d5a647",
+            "key": "96111e0b-52d8-4765-ad0b-c52da2d5a647",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:33.559708+00:00",
+            "startedAt": "2023-03-20T14:38:33.561813+00:00",
+            "completedAt": "2023-03-20T14:38:33.697920+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8a6bfbe7-676b-45a6-9533-3633b43a7006",
+            "key": "8a6bfbe7-676b-45a6-9533-3633b43a7006",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:34.032746+00:00",
+            "startedAt": "2023-03-20T14:38:34.034563+00:00",
+            "completedAt": "2023-03-20T14:38:34.172660+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "34bc94e8-4845-416e-8917-c9188f0a0d24",
+            "key": "34bc94e8-4845-416e-8917-c9188f0a0d24",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:34.396274+00:00",
+            "startedAt": "2023-03-20T14:38:34.478965+00:00",
+            "completedAt": "2023-03-20T14:38:34.631203+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c5b1cb1d-41cf-447e-985d-d65667e960f0",
+            "key": "c5b1cb1d-41cf-447e-985d-d65667e960f0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:35.106742+00:00",
+            "startedAt": "2023-03-20T14:38:35.108568+00:00",
+            "completedAt": "2023-03-20T14:38:35.242642+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ca902c2a-0503-4bad-bd86-0d2f3b1ca1a3",
+            "key": "ca902c2a-0503-4bad-bd86-0d2f3b1ca1a3",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:38.868325+00:00",
+            "startedAt": "2023-03-20T14:38:38.870408+00:00",
+            "completedAt": "2023-03-20T14:38:38.987043+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b6a45db4-b180-40c8-ad54-577323607155",
+            "key": "b6a45db4-b180-40c8-ad54-577323607155",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:39.304363+00:00",
+            "startedAt": "2023-03-20T14:38:39.306186+00:00",
+            "completedAt": "2023-03-20T14:38:39.523175+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "eec21c1c-662b-4164-8c5c-db1db8bc1371",
+            "key": "eec21c1c-662b-4164-8c5c-db1db8bc1371",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:39.841390+00:00",
+            "startedAt": "2023-03-20T14:38:39.843315+00:00",
+            "completedAt": "2023-03-20T14:38:39.957373+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "11602ab6-8927-4b62-837d-e1808fc7ea92",
+            "key": "11602ab6-8927-4b62-837d-e1808fc7ea92",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:40.168411+00:00",
+            "startedAt": "2023-03-20T14:38:40.170800+00:00",
+            "completedAt": "2023-03-20T14:38:40.285829+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8487cc9a-dabf-43bf-8c64-9f71aaab72cb",
+            "key": "8487cc9a-dabf-43bf-8c64-9f71aaab72cb",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:40.527598+00:00",
+            "startedAt": "2023-03-20T14:38:40.529663+00:00",
+            "completedAt": "2023-03-20T14:38:40.644764+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8bed6fbe-281d-4a9b-ab9f-c09eb328282b",
+            "key": "8bed6fbe-281d-4a9b-ab9f-c09eb328282b",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:40.944240+00:00",
+            "startedAt": "2023-03-20T14:38:40.946255+00:00",
+            "completedAt": "2023-03-20T14:38:41.059370+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "395eebc4-075c-479b-a920-7439a1501972",
+            "key": "395eebc4-075c-479b-a920-7439a1501972",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:41.631557+00:00",
+            "startedAt": "2023-03-20T14:38:41.633418+00:00",
+            "completedAt": "2023-03-20T14:38:41.745095+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2a2f2345-d0e6-4644-ae25-ca8ae7424088",
+            "key": "2a2f2345-d0e6-4644-ae25-ca8ae7424088",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:42.180230+00:00",
+            "startedAt": "2023-03-20T14:38:42.182597+00:00",
+            "completedAt": "2023-03-20T14:38:42.294893+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9e15f9fe-da1a-4d5c-ba92-2aa2dea89a0c",
+            "key": "9e15f9fe-da1a-4d5c-ba92-2aa2dea89a0c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:42.618038+00:00",
+            "startedAt": "2023-03-20T14:38:42.620123+00:00",
+            "completedAt": "2023-03-20T14:38:42.725864+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "95a5e38d-1c23-4ba2-8970-8f1bfc8429f4",
+            "key": "95a5e38d-1c23-4ba2-8970-8f1bfc8429f4",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:38:43.228125+00:00",
+            "startedAt": "2023-03-20T14:38:43.230200+00:00",
+            "completedAt": "2023-03-20T14:38:43.334916+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0b16bd7f-f59f-490f-838d-16461a43311a",
+            "key": "0b16bd7f-f59f-490f-838d-16461a43311a",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:48.825685+00:00",
+            "startedAt": "2023-03-20T14:38:48.827375+00:00",
+            "completedAt": "2023-03-20T14:38:48.846561+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7e70c865-cec4-4aae-9a7d-4044e196f3d3",
+            "key": "7e70c865-cec4-4aae-9a7d-4044e196f3d3",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:38:48.989134+00:00",
+            "startedAt": "2023-03-20T14:38:48.996877+00:00",
+            "completedAt": "2023-03-20T14:38:51.094112+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-0",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c4e9443e-ccbd-4113-9e21-407653b6661b",
+            "key": "c4e9443e-ccbd-4113-9e21-407653b6661b",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:38:49.271696+00:00",
+            "startedAt": "2023-03-20T14:38:51.095890+00:00",
+            "completedAt": "2023-03-20T14:38:51.111156+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "afca1090-edf3-4066-8fa0-34541f06afb1",
+            "key": "afca1090-edf3-4066-8fa0-34541f06afb1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:01.755202+00:00",
+            "startedAt": "2023-03-20T14:39:01.757337+00:00",
+            "completedAt": "2023-03-20T14:39:01.880184+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "17612a86-de66-41ca-8bc6-6c0cc089b7bd",
+            "key": "17612a86-de66-41ca-8bc6-6c0cc089b7bd",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:02.119880+00:00",
+            "startedAt": "2023-03-20T14:39:02.121699+00:00",
+            "completedAt": "2023-03-20T14:39:02.224981+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "cd0123c6-2432-49f1-a2e4-db7714240c27",
+            "key": "cd0123c6-2432-49f1-a2e4-db7714240c27",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:02.497522+00:00",
+            "startedAt": "2023-03-20T14:39:02.499494+00:00",
+            "completedAt": "2023-03-20T14:39:02.603938+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "8eb2a2e7-a34e-4e4a-a0c6-fa6eeb4b7045",
+            "key": "8eb2a2e7-a34e-4e4a-a0c6-fa6eeb4b7045",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:02.802278+00:00",
+            "startedAt": "2023-03-20T14:39:02.804531+00:00",
+            "completedAt": "2023-03-20T14:39:02.927374+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "75350caf-7b7e-43ed-892d-7cfafb047cad",
+            "key": "75350caf-7b7e-43ed-892d-7cfafb047cad",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:03.131054+00:00",
+            "startedAt": "2023-03-20T14:39:03.132987+00:00",
+            "completedAt": "2023-03-20T14:39:03.277297+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a2345b24-6332-464c-a922-f9ffc5862923",
+            "key": "a2345b24-6332-464c-a922-f9ffc5862923",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:03.507839+00:00",
+            "startedAt": "2023-03-20T14:39:03.523537+00:00",
+            "completedAt": "2023-03-20T14:39:03.634998+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2ec73b41-dda5-4fd8-9951-e31c71aa3030",
+            "key": "2ec73b41-dda5-4fd8-9951-e31c71aa3030",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:04.003710+00:00",
+            "startedAt": "2023-03-20T14:39:04.005781+00:00",
+            "completedAt": "2023-03-20T14:39:04.117419+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4793f8ce-f56a-4ff9-b5a9-d7dc4e56c4a2",
+            "key": "4793f8ce-f56a-4ff9-b5a9-d7dc4e56c4a2",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:05.237112+00:00",
+            "startedAt": "2023-03-20T14:39:05.239277+00:00",
+            "completedAt": "2023-03-20T14:39:05.357030+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ed2e3a63-8e2f-4eed-8399-87b49bb79947",
+            "key": "ed2e3a63-8e2f-4eed-8399-87b49bb79947",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:39:05.802877+00:00",
+            "startedAt": "2023-03-20T14:39:05.804739+00:00",
+            "completedAt": "2023-03-20T14:39:05.915186+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "x",
+                "distance": 0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6820ef1a-9cdb-47be-9dff-2ca50c4fc32e",
+            "key": "6820ef1a-9cdb-47be-9dff-2ca50c4fc32e",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:39:08.427310+00:00",
+            "startedAt": "2023-03-20T14:39:08.430037+00:00",
+            "completedAt": "2023-03-20T14:39:08.461670+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "fc9ac783-7853-4daf-b459-7ee00ab8d7a4",
+            "key": "fc9ac783-7853-4daf-b459-7ee00ab8d7a4",
+            "commandType": "dropTip",
+            "createdAt": "2023-03-20T14:39:08.714745+00:00",
+            "startedAt": "2023-03-20T14:39:08.716392+00:00",
+            "completedAt": "2023-03-20T14:39:21.507925+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0.6000000000001364,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a6f15a92-0ba0-430b-8f3d-56af22b0f045",
+            "key": "a6f15a92-0ba0-430b-8f3d-56af22b0f045",
+            "commandType": "home",
+            "createdAt": "2023-03-20T14:39:08.926856+00:00",
+            "startedAt": "2023-03-20T14:39:21.510202+00:00",
+            "completedAt": "2023-03-20T14:39:45.640958+00:00",
+            "status": "succeeded",
+            "params": {},
+            "intent": "setup"
+        },
+        {
+            "id": "9915b63f-7f58-419b-b93d-49e5bac837ef",
+            "key": "9915b63f-7f58-419b-b93d-49e5bac837ef",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.141496+00:00",
+            "startedAt": "2023-03-20T14:39:46.161360+00:00",
+            "completedAt": "2023-03-20T14:39:46.166130+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "8"
+                },
+                "loadName": "opentrons_96_filtertiprack_1000ul",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-1",
+                "displayName": "1000ul filter tiprack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "38cdc8f6-4e2f-4597-a6c9-3f9d8c3ac797",
+            "key": "38cdc8f6-4e2f-4597-a6c9-3f9d8c3ac797",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.157131+00:00",
+            "startedAt": "2023-03-20T14:39:46.207108+00:00",
+            "completedAt": "2023-03-20T14:39:46.211578+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "6"
+                },
+                "loadName": "opentrons_24_tuberack_generic_2ml_screwcap",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-0",
+                "displayName": "empty tubes rack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "58e1e935-9741-43a1-b5b3-64c94aefefc2",
+            "key": "58e1e935-9741-43a1-b5b3-64c94aefefc2",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.183501+00:00",
+            "startedAt": "2023-03-20T14:39:46.224021+00:00",
+            "completedAt": "2023-03-20T14:39:46.228432+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "9"
+                },
+                "loadName": "opentrons_96_filtertiprack_200ul",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-2",
+                "displayName": "200ul filter tiprack"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4d197313-141e-486f-8a3c-bcfa904af267",
+            "key": "commands.LOAD_MODULE-0",
+            "commandType": "loadModule",
+            "createdAt": "2023-03-20T14:39:46.204025+00:00",
+            "startedAt": "2023-03-20T14:39:46.268723+00:00",
+            "completedAt": "2023-03-20T14:39:46.280315+00:00",
+            "status": "succeeded",
+            "params": {
+                "model": "temperatureModuleV2",
+                "location": {
+                    "slotName": "10"
+                },
+                "moduleId": "module-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9a346fe6-b1f4-4a51-9048-807af3ddf10b",
+            "key": "9a346fe6-b1f4-4a51-9048-807af3ddf10b",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.251500+00:00",
+            "startedAt": "2023-03-20T14:39:46.289409+00:00",
+            "completedAt": "2023-03-20T14:39:46.294610+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "moduleId": "module-0"
+                },
+                "loadName": "opentrons_24_aluminumblock_generic_2ml_screwcap",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-3",
+                "displayName": "Reagents tube"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "cb9ed784-b6bc-433a-a621-9839ce0a5323",
+            "key": "cb9ed784-b6bc-433a-a621-9839ce0a5323",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.267009+00:00",
+            "startedAt": "2023-03-20T14:39:46.303967+00:00",
+            "completedAt": "2023-03-20T14:39:46.308468+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "11"
+                },
+                "loadName": "opentrons_6_tuberack_falcon_50ml_conical",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-4",
+                "displayName": "wash reagents tubes"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6d9676bf-57fd-4062-b568-bce77a4f814f",
+            "key": "6d9676bf-57fd-4062-b568-bce77a4f814f",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.351835+00:00",
+            "startedAt": "2023-03-20T14:39:46.401162+00:00",
+            "completedAt": "2023-03-20T14:39:46.406024+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "1"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-5",
+                "displayName": "Shared reagent plate"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "cbda0724-cbd7-4c3b-90b4-efc722abfb9d",
+            "key": "cbda0724-cbd7-4c3b-90b4-efc722abfb9d",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.367368+00:00",
+            "startedAt": "2023-03-20T14:39:46.411620+00:00",
+            "completedAt": "2023-03-20T14:39:46.415919+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "5"
+                },
+                "loadName": "nest_12_reservoir_15ml",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-6",
+                "displayName": "Shared wash plate"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c06afbb1-835a-4868-b3e7-9b09f79d0db5",
+            "key": "c06afbb1-835a-4868-b3e7-9b09f79d0db5",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.382875+00:00",
+            "startedAt": "2023-03-20T14:39:46.432404+00:00",
+            "completedAt": "2023-03-20T14:39:46.437464+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "2"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-7",
+                "displayName": "empty plate for CDNA1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "9e8b7727-1197-4d17-a9b2-f659255127e7",
+            "key": "9e8b7727-1197-4d17-a9b2-f659255127e7",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.398232+00:00",
+            "startedAt": "2023-03-20T14:39:46.480442+00:00",
+            "completedAt": "2023-03-20T14:39:46.485045+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "3"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-8",
+                "displayName": "empty plate for COV1 COV2"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5f61c956-9e15-498a-8671-9cff4d0d5cf8",
+            "key": "5f61c956-9e15-498a-8671-9cff4d0d5cf8",
+            "commandType": "loadLabware",
+            "createdAt": "2023-03-20T14:39:46.456935+00:00",
+            "startedAt": "2023-03-20T14:39:46.509237+00:00",
+            "completedAt": "2023-03-20T14:39:46.514586+00:00",
+            "status": "succeeded",
+            "params": {
+                "location": {
+                    "slotName": "4"
+                },
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "namespace": "opentrons",
+                "version": 1,
+                "labwareId": "labware-9",
+                "displayName": "empty plate for TAG1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7e599897-045c-4876-bd32-6d0567d5774d",
+            "key": "commands.LOAD_PIPETTE-0",
+            "commandType": "loadPipette",
+            "createdAt": "2023-03-20T14:39:46.478456+00:00",
+            "startedAt": "2023-03-20T14:39:46.529203+00:00",
+            "completedAt": "2023-03-20T14:39:48.566283+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteName": "p1000_single_gen2",
+                "mount": "left",
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e54061d5-c113-4253-8bb2-94240a193d03",
+            "key": "commands.LOAD_PIPETTE-1",
+            "commandType": "loadPipette",
+            "createdAt": "2023-03-20T14:39:46.613342+00:00",
+            "startedAt": "2023-03-20T14:39:48.568678+00:00",
+            "completedAt": "2023-03-20T14:39:50.543735+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteName": "p300_single_gen2",
+                "mount": "right",
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "4ec00d70-aa6a-4a4d-9e82-1fbfb191388e",
+            "key": "4ec00d70-aa6a-4a4d-9e82-1fbfb191388e",
+            "commandType": "home",
+            "createdAt": "2023-03-20T14:39:46.628990+00:00",
+            "startedAt": "2023-03-20T14:39:50.545800+00:00",
+            "completedAt": "2023-03-20T14:40:09.697676+00:00",
+            "status": "succeeded",
+            "params": {},
+            "intent": "setup"
+        },
+        {
+            "id": "1cb3ebe7-cc74-44d9-85ee-3621e8de7590",
+            "key": "1cb3ebe7-cc74-44d9-85ee-3621e8de7590",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:39:46.651546+00:00",
+            "startedAt": "2023-03-20T14:40:09.700608+00:00",
+            "completedAt": "2023-03-20T14:40:11.715811+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-1",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0476521c-4c62-48e4-a505-b8d0e43f2c8e",
+            "key": "0476521c-4c62-48e4-a505-b8d0e43f2c8e",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:39:46.865801+00:00",
+            "startedAt": "2023-03-20T14:40:11.717586+00:00",
+            "completedAt": "2023-03-20T14:40:11.731823+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f81e9d87-826d-479a-8de1-5ffe9b452c22",
+            "key": "f81e9d87-826d-479a-8de1-5ffe9b452c22",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:14.500241+00:00",
+            "startedAt": "2023-03-20T14:40:14.502345+00:00",
+            "completedAt": "2023-03-20T14:40:14.526188+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-0"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "847c2835-201b-4194-b656-94d849c1c11d",
+            "key": "847c2835-201b-4194-b656-94d849c1c11d",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:14.691366+00:00",
+            "startedAt": "2023-03-20T14:40:14.700273+00:00",
+            "completedAt": "2023-03-20T14:40:19.191612+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "2c9b230f-06a6-4266-af35-00d70def85c5",
+            "key": "2c9b230f-06a6-4266-af35-00d70def85c5",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:14.994644+00:00",
+            "startedAt": "2023-03-20T14:40:19.193514+00:00",
+            "completedAt": "2023-03-20T14:40:19.208090+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "42ba3096-c397-456c-ab15-54751b4de6a0",
+            "key": "42ba3096-c397-456c-ab15-54751b4de6a0",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:22.773757+00:00",
+            "startedAt": "2023-03-20T14:40:22.775385+00:00",
+            "completedAt": "2023-03-20T14:40:22.795970+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "bdea0277-af26-4632-b52d-910899c31008",
+            "key": "bdea0277-af26-4632-b52d-910899c31008",
+            "commandType": "pickUpTip",
+            "createdAt": "2023-03-20T14:40:23.047168+00:00",
+            "startedAt": "2023-03-20T14:40:23.048849+00:00",
+            "completedAt": "2023-03-20T14:40:28.225059+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b70a54dd-88d2-401e-be12-be26b3a1b5ae",
+            "key": "b70a54dd-88d2-401e-be12-be26b3a1b5ae",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:30.880931+00:00",
+            "startedAt": "2023-03-20T14:40:30.882648+00:00",
+            "completedAt": "2023-03-20T14:40:30.902781+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7dcdae99-095e-46b1-b872-918b2a1051f2",
+            "key": "7dcdae99-095e-46b1-b872-918b2a1051f2",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:31.067027+00:00",
+            "startedAt": "2023-03-20T14:40:31.069226+00:00",
+            "completedAt": "2023-03-20T14:40:33.396703+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-5",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "65c5937f-871c-408d-922e-9db4c5f2ab45",
+            "key": "65c5937f-871c-408d-922e-9db4c5f2ab45",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:31.315324+00:00",
+            "startedAt": "2023-03-20T14:40:33.398439+00:00",
+            "completedAt": "2023-03-20T14:40:33.413090+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7cff65b6-b5e6-4ade-8e29-9faff72e0bf9",
+            "key": "7cff65b6-b5e6-4ade-8e29-9faff72e0bf9",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:39.451069+00:00",
+            "startedAt": "2023-03-20T14:40:39.452845+00:00",
+            "completedAt": "2023-03-20T14:40:39.475355+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "344308d8-c50b-40fb-ab7e-d43c32e099dc",
+            "key": "344308d8-c50b-40fb-ab7e-d43c32e099dc",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:39.631572+00:00",
+            "startedAt": "2023-03-20T14:40:39.639074+00:00",
+            "completedAt": "2023-03-20T14:40:41.882314+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-3",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "548fd290-8096-425a-8147-9dcb80380633",
+            "key": "548fd290-8096-425a-8147-9dcb80380633",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:39.972601+00:00",
+            "startedAt": "2023-03-20T14:40:41.884012+00:00",
+            "completedAt": "2023-03-20T14:40:41.895763+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "18472599-7a76-431e-b6af-0d0d9e5bf991",
+            "key": "18472599-7a76-431e-b6af-0d0d9e5bf991",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:44.265171+00:00",
+            "startedAt": "2023-03-20T14:40:44.268242+00:00",
+            "completedAt": "2023-03-20T14:40:44.427118+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ce748baa-aabd-4a6d-8d00-ab80313ca619",
+            "key": "ce748baa-aabd-4a6d-8d00-ab80313ca619",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:44.479633+00:00",
+            "startedAt": "2023-03-20T14:40:44.482215+00:00",
+            "completedAt": "2023-03-20T14:40:45.764496+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-4",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "75dc24b4-b37b-4016-a172-478dfede850b",
+            "key": "75dc24b4-b37b-4016-a172-478dfede850b",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:44.725523+00:00",
+            "startedAt": "2023-03-20T14:40:45.766341+00:00",
+            "completedAt": "2023-03-20T14:40:45.780576+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "397a863d-62ab-489f-9165-1b2df533863e",
+            "key": "397a863d-62ab-489f-9165-1b2df533863e",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:49.208897+00:00",
+            "startedAt": "2023-03-20T14:40:49.210633+00:00",
+            "completedAt": "2023-03-20T14:40:49.230631+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "a1154f42-e183-4540-9aba-30c799eab264",
+            "key": "a1154f42-e183-4540-9aba-30c799eab264",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:49.390921+00:00",
+            "startedAt": "2023-03-20T14:40:49.452211+00:00",
+            "completedAt": "2023-03-20T14:40:51.886581+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-7",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3f58ba20-a983-4c8e-b8c0-9eb9519a79ad",
+            "key": "3f58ba20-a983-4c8e-b8c0-9eb9519a79ad",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:49.696894+00:00",
+            "startedAt": "2023-03-20T14:40:51.888287+00:00",
+            "completedAt": "2023-03-20T14:40:51.901756+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "69890393-4f2a-4017-bb39-00a50f91eb8c",
+            "key": "69890393-4f2a-4017-bb39-00a50f91eb8c",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:54.228819+00:00",
+            "startedAt": "2023-03-20T14:40:54.230623+00:00",
+            "completedAt": "2023-03-20T14:40:54.254809+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "993f6b53-5a86-4e3c-b800-f1fbdd86ea32",
+            "key": "993f6b53-5a86-4e3c-b800-f1fbdd86ea32",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:54.497708+00:00",
+            "startedAt": "2023-03-20T14:40:54.501096+00:00",
+            "completedAt": "2023-03-20T14:40:57.285899+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-8",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e6638ae1-430f-49d3-9c0c-cfd6a3de074d",
+            "key": "e6638ae1-430f-49d3-9c0c-cfd6a3de074d",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:54.711241+00:00",
+            "startedAt": "2023-03-20T14:40:57.287579+00:00",
+            "completedAt": "2023-03-20T14:40:57.301189+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "bc3ff1ee-f8a3-49a1-8f1e-549f307a1dea",
+            "key": "bc3ff1ee-f8a3-49a1-8f1e-549f307a1dea",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:40:59.647830+00:00",
+            "startedAt": "2023-03-20T14:40:59.649961+00:00",
+            "completedAt": "2023-03-20T14:40:59.672817+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "c57bb3e8-b3f1-4d28-b6a2-484494087c84",
+            "key": "c57bb3e8-b3f1-4d28-b6a2-484494087c84",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:40:59.828840+00:00",
+            "startedAt": "2023-03-20T14:40:59.830885+00:00",
+            "completedAt": "2023-03-20T14:41:02.932315+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-9",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "1e4c0e98-1d95-48e0-9df4-d10a82d67feb",
+            "key": "1e4c0e98-1d95-48e0-9df4-d10a82d67feb",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:00.123338+00:00",
+            "startedAt": "2023-03-20T14:41:02.935298+00:00",
+            "completedAt": "2023-03-20T14:41:02.949530+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "dc7d61fb-a9fd-4a37-bc1d-aa33f1dba644",
+            "key": "dc7d61fb-a9fd-4a37-bc1d-aa33f1dba644",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:07.801745+00:00",
+            "startedAt": "2023-03-20T14:41:07.803751+00:00",
+            "completedAt": "2023-03-20T14:41:07.936104+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "3b520a48-4d7d-49af-922b-e0a18a2a0265",
+            "key": "3b520a48-4d7d-49af-922b-e0a18a2a0265",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:10.147328+00:00",
+            "startedAt": "2023-03-20T14:41:10.149495+00:00",
+            "completedAt": "2023-03-20T14:41:10.285959+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ad052ac1-97c6-4d5e-ad8f-b38609d9e306",
+            "key": "ad052ac1-97c6-4d5e-ad8f-b38609d9e306",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:11.417473+00:00",
+            "startedAt": "2023-03-20T14:41:11.419432+00:00",
+            "completedAt": "2023-03-20T14:41:11.551402+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5512179b-95f8-4079-b30e-55a778729c6c",
+            "key": "5512179b-95f8-4079-b30e-55a778729c6c",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:11.955833+00:00",
+            "startedAt": "2023-03-20T14:41:11.957834+00:00",
+            "completedAt": "2023-03-20T14:41:12.095531+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "78eae8d4-b4a5-461a-860b-6d03834d1773",
+            "key": "78eae8d4-b4a5-461a-860b-6d03834d1773",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:12.442569+00:00",
+            "startedAt": "2023-03-20T14:41:12.444465+00:00",
+            "completedAt": "2023-03-20T14:41:12.577278+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "155112bf-b0e7-47ae-a3b4-7e645294321a",
+            "key": "155112bf-b0e7-47ae-a3b4-7e645294321a",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:12.925817+00:00",
+            "startedAt": "2023-03-20T14:41:12.928161+00:00",
+            "completedAt": "2023-03-20T14:41:13.066806+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0bb7a98a-9563-40ab-b0e9-a7385067b47f",
+            "key": "0bb7a98a-9563-40ab-b0e9-a7385067b47f",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:14.041609+00:00",
+            "startedAt": "2023-03-20T14:41:14.043445+00:00",
+            "completedAt": "2023-03-20T14:41:14.178771+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": 1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "7dfab744-e5db-4353-8519-d829ff5dc5b5",
+            "key": "7dfab744-e5db-4353-8519-d829ff5dc5b5",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:23.593078+00:00",
+            "startedAt": "2023-03-20T14:41:23.595065+00:00",
+            "completedAt": "2023-03-20T14:41:23.745453+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "z",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "79457075-eee5-4c25-8aeb-fd945457bb00",
+            "key": "79457075-eee5-4c25-8aeb-fd945457bb00",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:26.536712+00:00",
+            "startedAt": "2023-03-20T14:41:26.538582+00:00",
+            "completedAt": "2023-03-20T14:41:26.657546+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "ed317599-66af-4175-9eb5-c21205e94df0",
+            "key": "ed317599-66af-4175-9eb5-c21205e94df0",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:27.000838+00:00",
+            "startedAt": "2023-03-20T14:41:27.002655+00:00",
+            "completedAt": "2023-03-20T14:41:27.141563+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "e31dcec6-debb-4e44-b6b4-b385623c6ac1",
+            "key": "e31dcec6-debb-4e44-b6b4-b385623c6ac1",
+            "commandType": "moveRelative",
+            "createdAt": "2023-03-20T14:41:27.716816+00:00",
+            "startedAt": "2023-03-20T14:41:27.718663+00:00",
+            "completedAt": "2023-03-20T14:41:27.847378+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1",
+                "axis": "y",
+                "distance": -0.1
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "f17f792e-a14e-4bac-907e-2888eb5e0c15",
+            "key": "f17f792e-a14e-4bac-907e-2888eb5e0c15",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:37.729027+00:00",
+            "startedAt": "2023-03-20T14:41:37.730969+00:00",
+            "completedAt": "2023-03-20T14:41:37.751986+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "5add033a-6fc4-4f8e-a259-43c83e54a761",
+            "key": "5add033a-6fc4-4f8e-a259-43c83e54a761",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:41:37.907716+00:00",
+            "startedAt": "2023-03-20T14:41:37.909712+00:00",
+            "completedAt": "2023-03-20T14:41:40.481732+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-6",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "60da628a-9ea1-4725-a99c-3e8d5699b150",
+            "key": "60da628a-9ea1-4725-a99c-3e8d5699b150",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:38.216113+00:00",
+            "startedAt": "2023-03-20T14:41:40.483487+00:00",
+            "completedAt": "2023-03-20T14:41:40.495044+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "56d1ada6-e978-404a-a41c-51f899a94426",
+            "key": "56d1ada6-e978-404a-a41c-51f899a94426",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:43.014128+00:00",
+            "startedAt": "2023-03-20T14:41:43.016540+00:00",
+            "completedAt": "2023-03-20T14:41:43.114189+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "0b6f38ac-8848-4f06-a77b-cd676b8167ca",
+            "key": "0b6f38ac-8848-4f06-a77b-cd676b8167ca",
+            "commandType": "moveToWell",
+            "createdAt": "2023-03-20T14:41:43.279836+00:00",
+            "startedAt": "2023-03-20T14:41:43.282246+00:00",
+            "completedAt": "2023-03-20T14:41:45.506052+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-0",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "01dcb6be-547b-42ef-94d4-5fca9eef67d4",
+            "key": "01dcb6be-547b-42ef-94d4-5fca9eef67d4",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:43.630419+00:00",
+            "startedAt": "2023-03-20T14:41:45.508036+00:00",
+            "completedAt": "2023-03-20T14:41:45.522076+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "b195a82a-d1d6-4922-b87a-22bc8ae2799e",
+            "key": "b195a82a-d1d6-4922-b87a-22bc8ae2799e",
+            "commandType": "savePosition",
+            "createdAt": "2023-03-20T14:41:48.372866+00:00",
+            "startedAt": "2023-03-20T14:41:48.374738+00:00",
+            "completedAt": "2023-03-20T14:41:48.398702+00:00",
+            "status": "succeeded",
+            "params": {
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "d3817042-597d-447e-b69c-6da83b0d92d0",
+            "key": "d3817042-597d-447e-b69c-6da83b0d92d0",
+            "commandType": "dropTip",
+            "createdAt": "2023-03-20T14:41:48.696682+00:00",
+            "startedAt": "2023-03-20T14:41:48.698365+00:00",
+            "completedAt": "2023-03-20T14:42:01.619248+00:00",
+            "status": "succeeded",
+            "params": {
+                "labwareId": "labware-2",
+                "wellName": "A1",
+                "wellLocation": {
+                    "origin": "top",
+                    "offset": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "pipetteId": "pipette-1"
+            },
+            "intent": "setup"
+        },
+        {
+            "id": "6ec18818-1720-4769-b692-01f25608dc6a",
+            "key": "6ec18818-1720-4769-b692-01f25608dc6a",
+            "commandType": "home",
+            "createdAt": "2023-03-20T14:41:48.926319+00:00",
+            "startedAt": "2023-03-20T14:42:01.621570+00:00",
+            "completedAt": "2023-03-20T14:42:26.017971+00:00",
+            "status": "succeeded",
+            "params": {},
+            "intent": "setup"
+        }
+    ]
+}
