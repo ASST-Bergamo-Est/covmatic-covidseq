@@ -2,9 +2,12 @@ import json
 import logging
 import math
 import os.path
+from typing import Optional
+
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC, abstractmethod
 
+from opentrons import types
 from opentrons.protocol_api.labware import Labware
 
 from .recipe import Recipe
@@ -143,7 +146,12 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
                  column_offset_cov2: int = 6,
+                 offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
+                 labware_load_offset: bool = False,
                  *args, **kwargs):
+        """ Class initialization.
+            :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
+        """
         super().__init__(robot_manager_host=robot_manager_host,
                          robot_manager_port=robot_manager_port,
                          *args, **kwargs)
@@ -159,7 +167,53 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
         self._column_offset_cov2 = column_offset_cov2
+        self._offsets_json_filepath = offsets_json_filepath
+        self._labware_load_offset = labware_load_offset
         self._task_name = ""
+        self._offsets = []
+        self.load_offsets()
+
+    def load_offsets(self):
+        """ Warning: offset must be loaded only for opentrons_execute.
+            Do not use set_offset with Opentrons App Labware Check
+        """
+        if self._labware_load_offset:
+            self._offsets = self._load_offsets_from_file(self._offsets_json_filepath)
+            self.logger.info("Loaded offsets: {}".format(self._offsets))
+
+    def _load_offsets_from_file(self, filepath):
+        self.logger.info("Loading offsets from {}".format(filepath))
+        try:
+            with open(filepath, "r") as f:
+                offsets = json.load(f)
+        except FileNotFoundError:
+            if self._ctx.is_simulating:
+                offsets = []
+                self.logger.warning("Labware offset file not found: {}".format(filepath))
+            else:
+                raise Exception("Labware offset file not found: {}. Please create it before starting the run"
+                                .format(filepath))
+        return offsets
+
+    def apply_offset_to_labware(self, labware: Labware):
+        self.logger.info("Searching offset for labware: {}".format(labware.load_name))
+        if self._labware_load_offset:
+            for slot in self._ctx.loaded_labwares:
+                if self._ctx.loaded_labwares[slot] == labware:
+                    labware_slot = slot
+                    self.logger.info("Found slot {} for labware {}".format(labware_slot, labware.load_name))
+                    break
+            else:
+                raise Exception("Offset for labware: slot not found for labware {}".format(labware.load_name))
+
+            offset = list(filter(
+                    lambda x: (x['slot'] == str(labware_slot) and x['labware_name'] == labware.load_name), self._offsets))
+
+            if len(offset) < 1 or len(offset) > 1:
+                raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
+
+            self.logger.info("Labware {} applying offset {}".format(labware.load_name, offset[0]['offsets']))
+            labware.set_offset(**offset[0]['offsets'])
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
@@ -197,9 +251,22 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             for d in data:
                 self.add_recipe(Recipe(**d))
 
+    def load_labware_with_offset(
+        self,
+        load_name: str,
+        location: types.DeckLocation,
+        label: Optional[str] = None,
+        namespace: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> Labware:
+        """ Wrapper to ease labware loading and offset setting for running with opentrons_execute"""
+        labware = self._ctx.load_labware(load_name, location, label, namespace, version)
+        self.apply_offset_to_labware(labware)
+        return labware
+
     def load_reagent_plate_in_slot(self, slot):
         self.logger.info("Initializing Reagent plate helper on slot {}".format(slot))
-        plate = self._ctx.load_labware(self._reagent_plate_labware_name, slot, "Shared reagent plate")
+        plate = self.load_labware_with_offset(self._reagent_plate_labware_name, slot, "Shared reagent plate")
         self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
         for r in self.recipes:
             if r.use_reagent_plate:
@@ -208,7 +275,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
     def load_wash_plate_in_slot(self, slot):
         self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
-        plate = self._ctx.load_labware(self._wash_plate_labware_name, slot, "Shared wash plate")
+        plate = self.load_labware_with_offset(self._wash_plate_labware_name, slot, "Shared wash plate")
         self._wash_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._wash_plate_max_volume)
         for r in self.recipes:
             if r.use_wash_plate:

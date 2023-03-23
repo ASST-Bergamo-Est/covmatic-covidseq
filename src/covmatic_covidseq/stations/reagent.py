@@ -59,13 +59,13 @@ class ReagentStation(CovidseqBaseStation):
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
         self._tipracks300 = [
-            self._ctx.load_labware('opentrons_96_filtertiprack_200ul', slot, '200ul filter tiprack')
+            self.load_labware_with_offset('opentrons_96_filtertiprack_200ul', slot, '200ul filter tiprack')
             for slot in self._tipracks300_slots]
 
     @labware_loader(0, "_tipracks1000")
     def load_tipracks1000(self):
         self._tipracks1000 = [
-            self._ctx.load_labware('opentrons_96_filtertiprack_1000ul', slot, '1000ul filter tiprack')
+            self.load_labware_with_offset('opentrons_96_filtertiprack_1000ul', slot, '1000ul filter tiprack')
             for slot in self._tipracks1000_slots]
 
     @instrument_loader(0, '_p300')
@@ -80,7 +80,7 @@ class ReagentStation(CovidseqBaseStation):
 
     @labware_loader(0, '_empty_tube_racks')
     def load_empty_tube_racks(self):
-        self._empty_tube_racks = self._ctx.load_labware('opentrons_24_tuberack_generic_2ml_screwcap', 6, 'empty tubes rack')
+        self._empty_tube_racks = self.load_labware_with_offset('opentrons_24_tuberack_generic_2ml_screwcap', 6, 'empty tubes rack')
 
     @labware_loader(1, '_empty_tubes_list')
     def load_empty_tubes(self):
@@ -106,6 +106,8 @@ class ReagentStation(CovidseqBaseStation):
         self._reagents_chilled = self._reagents_tempdeck.load_labware('opentrons_24_aluminumblock_generic_2ml_screwcap',
                                                                     'Reagents tube')
 
+        self.apply_offset_to_labware(self._reagents_chilled)
+
         for rct in self._reagents_chilled_tubes:
             recipe = self.get_recipe(rct["name"])
             if not recipe.needs_empty_tube:
@@ -113,7 +115,7 @@ class ReagentStation(CovidseqBaseStation):
 
     @labware_loader(1, '_reagents_wash_tubes')
     def load_reagents_wash_tubes(self):
-        self._reagents_wash = self._ctx.load_labware('opentrons_6_tuberack_falcon_50ml_conical',
+        self._reagents_wash = self.load_labware_with_offset('opentrons_6_tuberack_falcon_50ml_conical',
                                                      self._reagents_wash_slot,
                                                      'wash reagents tubes')
         self.append_tube_for_recipe("TWB", self._reagents_wash.wells_by_name()['A1'])
@@ -128,17 +130,17 @@ class ReagentStation(CovidseqBaseStation):
 
     @labware_loader(3, '_cdna1_plate')
     def load_cdna1_plate(self):
-        self._cdna1_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
+        self._cdna1_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
                                                    self._cdna1_plate_slot, 'empty plate for CDNA1')
 
     @labware_loader(4, '_cov12_plate')
     def load_cov12_plate(self):
-        self._cov12_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
+        self._cov12_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
                                                    self._cov12_plate_slot, 'empty plate for COV1 COV2')
 
     @labware_loader(5, '_tag1_plate')
     def load_tag1_plate(self):
-        self._tag1_plate = self._ctx.load_labware('nest_96_wellplate_100ul_pcr_full_skirt',
+        self._tag1_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
                                                    self._tag1_plate_slot, 'empty plate for TAG1')
 
     def _tipracks(self) -> dict:
@@ -333,7 +335,7 @@ class ReagentStation(CovidseqBaseStation):
         if self.run_stage(self.build_stage("Prep. {}".format(recipe_name))):
             recipe = self.get_recipe(recipe_name)
             tube = self.get_tube_for_recipe(recipe_name)
-            tube.fill(recipe.total_prepared_vol)
+            tube.fill(recipe.total_prepared_vol * self._num_samples)
             self.pause("Place tube {} in {}".format(recipe_name, tube), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
