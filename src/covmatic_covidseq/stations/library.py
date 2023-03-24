@@ -195,7 +195,7 @@ class LibraryStation(CovidseqBaseStation):
         source = reagent_mts['multi_tube_source']
         source_tip_per_row = math.ceil(pipette.channels / reagent_mts['rows_count'])
         self.logger.info("Source is: {}".format(source))
-        self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
+        self.logger.debug("We have {} tips for each source row".format(source_tip_per_row))
 
         if disposal_volume is None:
             disposal_volume = pipette.min_volume / 2
@@ -288,8 +288,6 @@ class LibraryStation(CovidseqBaseStation):
 
                         source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
                         source.prepare_aspiration(total_remaining_volume)
-                        self.logger.info("Aspirate list: {}".format(source._aspirate_list))
-                        self.logger.info("Source: {}".format(source._source_tubes_and_vol))
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)

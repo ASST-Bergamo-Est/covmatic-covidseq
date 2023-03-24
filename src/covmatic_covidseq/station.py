@@ -214,7 +214,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             if len(offset) < 1 or len(offset) > 1:
                 raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
 
-            self.logger.info("Labware {} applying offset {}".format(labware.load_name, offset[0]['offsets']))
+            self.logger.info("Labware {} applying offset {}".format(
+                labware.load_name,
+                ", ".join(["{}: {}".format(k, offset[0]['offsets'][k]) for k in  offset[0]['offsets']])))
             labware.set_offset(**offset[0]['offsets'])
 
     def add_recipe(self, recipe: Recipe):
