@@ -398,8 +398,8 @@ class LibraryStation(CovidseqBaseStation):
                 self.drop(pipette)
 
     def anneal_rna(self):
-        self.logger.info("Calibrated offset: {}".format(self._work_plate.calibrated_offset))
-        self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
+        if self.run_stage("load samples"):
+            self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
         self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "CDNA1_FULL")
         self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=5, mix_volume=16)
         self.thermal_cycle(self._work_plate, "ANNEAL")
