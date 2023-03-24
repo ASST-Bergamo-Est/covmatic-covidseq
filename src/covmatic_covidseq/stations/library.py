@@ -32,7 +32,7 @@ def mix_well(pipette,
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
 
-    well_with_volume = WellWithVolume(well)
+    well_with_volume = WellWithVolume(well, headroom_height=0)
     height_min = well_with_volume.height
     logger.info("Mix height min: {}".format(height_min))
 
