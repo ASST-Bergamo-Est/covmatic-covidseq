@@ -85,6 +85,7 @@ class LibraryStation(CovidseqBaseStation):
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
         self._mag_height = mag_height
+        self._reagents_mts = []
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -137,6 +138,37 @@ class LibraryStation(CovidseqBaseStation):
                                                    self._input_plate_slot,
                                                    "Sample input plate")
 
+    @labware_loader(99, '_reagents_mts')
+    def load_reagents_mts(self):
+        """ Loads reagents as MultiTubeSource to be used in distribute functions """
+        self.logger.info("Loading recipes multi tube sources")
+        for recipe in filter(lambda x: x.use_wash_plate or x.use_reagent_plate, self.recipes):
+            self.logger.info("Loading recipe {}".format(recipe.name))
+            if recipe.use_wash_plate:
+                helper = self.wash_plate_helper
+            else:
+                helper = self.reagent_plate_helper
+
+            source_wells = helper.get_first_row_available_volume(recipe.name)
+            self.logger.info("Recipe {} source wells are: {}".format(recipe.name, source_wells))
+
+            source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
+            for w, v in source_wells:
+                source.append_tube_with_vol(w, v)
+
+            self.logger.info("Now source is: {}".format(source))
+            self._reagents_mts.append({"recipe_name": recipe.name,
+                                       "multi_tube_source": source,
+                                       "rows_count": helper.get_rows_count(recipe.name)})
+
+    def get_reagent_mts_for_recipe(self, recipe_name):
+        recipes = list(filter(lambda x: x['recipe_name'] == recipe_name, self._reagents_mts))
+
+        if len(recipes) < 1 or len(recipes) > 1:
+            raise Exception("None or multiple recipe found for name {}: {}".format(recipe_name, recipes))
+
+        return recipes[0]
+
     def _tipracks(self) -> dict:
         return {
             '_tipracks20': '_p20',
@@ -155,18 +187,14 @@ class LibraryStation(CovidseqBaseStation):
                                    If None it is set to the half of the pipette minimum volume
                """
         recipe = self.get_recipe(recipe_name)
+        reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
 
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
 
-        if recipe.use_wash_plate:
-            helper = self.wash_plate_helper
-        else:
-            helper = self.reagent_plate_helper
-
-        source_wells = helper.get_first_row_available_volume(recipe_name)
-        source_tip_per_row = math.ceil(pipette.channels / helper.get_rows_count(recipe_name))
-        self.logger.info("Source wells are: {}".format(source_wells))
+        source = reagent_mts['multi_tube_source']
+        source_tip_per_row = math.ceil(pipette.channels / reagent_mts['rows_count'])
+        self.logger.info("Source is: {}".format(source))
         self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
 
         if disposal_volume is None:
@@ -176,13 +204,6 @@ class LibraryStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
 
-        self.logger.info("Source wells are: {}".format(source_wells))
-
-        source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
-        for w, v in source_wells:
-            source.append_tube_with_vol(w, v + disposal_volume)
-        self.logger.info("Now source is: {}".format(source))
-        
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
@@ -227,26 +248,16 @@ class LibraryStation(CovidseqBaseStation):
 
     def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0, stage_name=None):
         recipe = self.get_recipe(recipe_name)
+        reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
 
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
 
-        if recipe.use_wash_plate:
-            helper = self.wash_plate_helper
-        else:
-            helper = self.reagent_plate_helper
-
-        source_wells = helper.get_first_row_available_volume(recipe_name)
-        source_tip_per_row = math.ceil(pipette.channels/helper.get_rows_count(recipe_name))
-        self.logger.info("Source wells are: {}".format(source_wells))
+        source = reagent_mts['multi_tube_source']
+        source_tip_per_row = math.ceil(pipette.channels/reagent_mts['rows_count'])
+        self.logger.info("Source is: {}".format(source))
         self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
 
-        source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
-        for w, v in source_wells:
-            source.append_tube_with_vol(w, v)
-            self.logger.info("Geometry: {} {}".format(w.width, w.length))
-
-        self.logger.info("Now source is: {}".format(source))
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
