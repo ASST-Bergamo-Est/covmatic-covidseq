@@ -119,10 +119,11 @@
       {
         "name": "",
         "reagent": "TWB",
-        "vol": 210
+        "vol": 110
       }
     ],
     "volume_final": 100,
+    "number_of_times_needed": 2,
     "use_wash_plate": true
   }
 

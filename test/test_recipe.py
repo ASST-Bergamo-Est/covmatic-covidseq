@@ -11,6 +11,7 @@ EXAMPLE_STEPS_1 = [
 EXPECTED_VOL_STEPS_1 = 10
 VOLUME_FINAL_1 = 8
 VOLUME_TO_DISTRIBUTE_1 = 10
+VOLUME_AVAILABLE_1 = VOLUME_FINAL_1
 NEEDS_EMPTY_TUBE_1 = False
 
 RECIPE_2_NAME = "TEST RECIPE 2"
@@ -28,6 +29,7 @@ EXAMPLE_STEPS_2 = [
 EXPECTED_VOL_STEPS_2 = 21
 VOLUME_FINAL_2 = 19
 VOLUME_TO_DISTRIBUTE_2 = 20
+VOLUME_AVAILABLE_2 = VOLUME_FINAL_2
 NEEDS_EMPTY_TUBE_2 = True
 
 
@@ -60,6 +62,7 @@ class RecipeSteps1(RecipeBaseClass):
         self.expected_vol = EXPECTED_VOL_STEPS_1
         self.vol_final = VOLUME_FINAL_1
         self.vol_to_distribute = VOLUME_TO_DISTRIBUTE_1
+        self.vol_available = VOLUME_AVAILABLE_1
         self.needs_empty_tube = NEEDS_EMPTY_TUBE_1
 
     def test_get_steps_are_equal(self):
@@ -89,6 +92,10 @@ class RecipeSteps1(RecipeBaseClass):
     def test_use_empty_tube(self):
         self.assertEqual(self.needs_empty_tube, self._r.needs_empty_tube)
 
+    def test_volume_available(self):
+        self._r.volume_final = self.vol_final
+        self.assertEqual(self.vol_available, self._r.volume_available)
+
 
 class RecipeSteps2(RecipeSteps1):
     """ Since this class inherits from RecipeSteps1
@@ -100,6 +107,7 @@ class RecipeSteps2(RecipeSteps1):
         self.expected_vol = EXPECTED_VOL_STEPS_2
         self.vol_final = VOLUME_FINAL_2
         self.vol_to_distribute = VOLUME_TO_DISTRIBUTE_2
+        self.vol_available = VOLUME_AVAILABLE_2
         self.needs_empty_tube = NEEDS_EMPTY_TUBE_2
 
 
@@ -159,3 +167,24 @@ class TestRecipeWashPlate(unittest.TestCase):
     def test_washplate_unsets_reagent(self):
         r = Recipe(use_wash_plate=True)
         self.assertFalse(r.use_reagent_plate)
+
+
+TEST_NUMBER_OF_TIMES_NEEDED = 2
+TEST_NUMBER_OF_TIMES_NEEDED_EXPECTED_DISTRIBUTED_VOLUME_1 =  VOLUME_TO_DISTRIBUTE_1 * TEST_NUMBER_OF_TIMES_NEEDED
+TEST_NUMBER_OF_TIMES_AVAILABLE_VOLUME = VOLUME_FINAL_1 * TEST_NUMBER_OF_TIMES_NEEDED
+
+
+class TestNumberOfTimesNeededOneStep(unittest.TestCase):
+    def setUp(self) -> None:
+        self._r = Recipe(steps=EXAMPLE_STEPS_1,
+                         volume_final=VOLUME_FINAL_1,
+                         number_of_times_needed=TEST_NUMBER_OF_TIMES_NEEDED)
+
+    def test_volume_to_distribute(self):
+        self.assertEqual(TEST_NUMBER_OF_TIMES_NEEDED_EXPECTED_DISTRIBUTED_VOLUME_1, self._r.volume_to_distribute)
+
+    def test_final_volume_is_the_same(self):
+        self.assertEqual(VOLUME_FINAL_1, self._r.volume_final)
+
+    def test_volume_available(self):
+        self.assertEqual(TEST_NUMBER_OF_TIMES_AVAILABLE_VOLUME, self._r.volume_available)

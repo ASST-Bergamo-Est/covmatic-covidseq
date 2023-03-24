@@ -270,7 +270,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
         for r in self.recipes:
             if r.use_reagent_plate:
-                self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
+                self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
         return plate
 
     def load_wash_plate_in_slot(self, slot):
@@ -279,7 +279,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._wash_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._wash_plate_max_volume)
         for r in self.recipes:
             if r.use_wash_plate:
-                self._wash_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_final)
+                self._wash_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
         return plate
 
     @property

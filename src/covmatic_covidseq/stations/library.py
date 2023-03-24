@@ -480,6 +480,7 @@ class LibraryStation(CovidseqBaseStation):
     def disengage_magnets(self):
         self._magdeck.disengage()
 
+
 class LibraryManualStation(LibraryStation):
     def __init__(self,
                  tipracks20_slots: Tuple[str, ...] = ("9", "6", "3"),

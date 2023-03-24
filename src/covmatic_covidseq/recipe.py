@@ -11,7 +11,8 @@ class Recipe:
                  volume_final=None,
                  use_reagent_plate=True,
                  use_wash_plate=False,
-                 headroom_fraction=0.5):
+                 headroom_fraction=0.5,
+                 number_of_times_needed=1):
         self._name = name
         self._description = description
         self._vol = 0
@@ -21,6 +22,7 @@ class Recipe:
         self._use_reagent_plate = False if use_wash_plate else use_reagent_plate
         self._use_wash_plate = use_wash_plate
         self._headroom_fraction = headroom_fraction
+        self._number_of_times_needed = number_of_times_needed
 
     def __str__(self):
         return "Recipe name: {}; vol: {}; steps: {}".format(
@@ -77,9 +79,10 @@ class Recipe:
         """ The volume to distrubute for the first transfer from primary tube. Includes overhead."""
         if self._vol > 0:
             if self.needs_empty_tube:
-                return (1-self._headroom_fraction) * self.total_prepared_vol + self._headroom_fraction * self._vol
+                volume = (1-self._headroom_fraction) * self.total_prepared_vol + self._headroom_fraction * self._vol
             else:
-                return self.total_prepared_vol
+                volume = self.total_prepared_vol
+            return volume * self._number_of_times_needed
         raise RecipeException("Total volume not set")
 
     @property
@@ -91,11 +94,17 @@ class Recipe:
 
     @volume_final.setter
     def volume_final(self, v):
-        """ The volume to use for the final transfer to samples plate. Do not include overheads."""
+        """ The volume to use for the final transfer to samples plate in one step. Do not include overheads."""
         if v <= self.total_prepared_vol:
             self._vol = v
         else:
             raise RecipeException("Requested volume not enough in recipe")
+
+
+    @property
+    def volume_available(self):
+        """ The total volume available to be distributed for a reagent. Do not include overheads."""
+        return self.volume_final * self._number_of_times_needed
 
     @property
     def total_prepared_vol(self):
