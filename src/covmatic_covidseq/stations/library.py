@@ -31,15 +31,15 @@ def mix_well(pipette,
     """
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
-    logger.info("Current pipette volume: {}".format(pipette.current_volume))
 
     well_with_volume = WellWithVolume(well)
     height_min = well_with_volume.height
+    logger.info("Mix height min: {}".format(height_min))
 
     well_with_volume.fill(volume)
     height_max = max(well_with_volume.height, height_min + min_z_difference)
-
-    side_movement = (well.diameter or well.length) / 2 * 0.7
+    logger.info("Mix height max: {}".format(height_max))
+    side_movement = (well.diameter or well.length) / 2 * 0.6
 
     aspirate_pos = [well.bottom((height_min + height_max)/2)]
     dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
