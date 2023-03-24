@@ -369,10 +369,26 @@ class LibraryStation(CovidseqBaseStation):
 
         sources = self.get_samples_first_row_for_labware(labware)
 
-        def discard_liquid(pip, source_well):
+        def discard_liquid(pip, source_well, blow_out=False, side=False, top_height=-5):
+            """ Discard the supernatant in the waste well.
+                :param pip: the pipette to use
+                :param source_well: the well to aspirate from
+                :param blow_out: if True the pipette will be blown out
+                :param side: if True dispense to the side of the waste to avoid drops
+                :param top_height: the waste height to be passed to 'top' function.
+            """
+            destination = waste.top(top_height)
+            if side:
+                destination = destination.move(Point(x=waste.length*0.4))
+
             pip.move_to(source_well.top(), speed=self._slow_vertical_speed)
             pip.air_gap(self._pipette_chooser.get_air_gap(pip))
-            pip.dispense(pip.current_volume, waste.top())
+
+            pip.move_to(waste.top(top_height))
+            pip.dispense(pip.current_volume, destination)
+            if blow_out:
+                pip.blow_out()
+            pip.move_to(waste.top(top_height))
             pip.air_gap(self._pipette_chooser.get_air_gap(pip))
 
         for i, s in enumerate(sources):
@@ -421,7 +437,7 @@ class LibraryStation(CovidseqBaseStation):
                     self.logger.info("Moving to {}".format(h))
                     pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
 
-                discard_liquid(pipette, s)
+                discard_liquid(pipette, s, side=True, blow_out=True)
 
                 self.drop(pipette)
 
