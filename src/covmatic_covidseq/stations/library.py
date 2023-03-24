@@ -89,13 +89,13 @@ class LibraryStation(CovidseqBaseStation):
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
         self._tipracks300 = [
-            self._ctx.load_labware('opentrons_96_filtertiprack_200ul', slot, '200ul filter tiprack')
+            self.load_labware_with_offset('opentrons_96_filtertiprack_200ul', slot, '200ul filter tiprack')
             for slot in self._tipracks300_slots]
 
     @labware_loader(0, "_tipracks20")
     def load_tipracks20(self):
         self._tipracks20 = [
-            self._ctx.load_labware('opentrons_96_filtertiprack_20ul', slot, '20ul filter tiprack')
+            self.load_labware_with_offset('opentrons_96_filtertiprack_20ul', slot, '20ul filter tiprack')
             for slot in self._tipracks20_slots]
 
     @instrument_loader(0, '_p20')
@@ -115,11 +115,13 @@ class LibraryStation(CovidseqBaseStation):
     @labware_loader(2, '_mag_plate')
     def load_mag_plate(self):
         self._mag_plate = self._magdeck.load_labware_from_definition(get_labware_json_from_filename("customvertical_96_top_right_aligned.json"))
+        self.apply_offset_to_labware(self._mag_plate)
 
     @labware_loader(3, '_work_plate')
     def load_work_plate(self):
         self._work_plate = self._ctx.load_labware_from_definition(
             get_labware_json_from_filename("customvertical_96_top_right_aligned.json"), self._work_plate_slot, "Vertical work plate")
+        self.apply_offset_to_labware(self._work_plate)
 
     @labware_loader(4, '_reagent_plate')
     def load_reagent_plate(self):
@@ -131,7 +133,7 @@ class LibraryStation(CovidseqBaseStation):
 
     @labware_loader(5, '_input_plate')
     def load_input_plate(self):
-        self._input_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
+        self._input_plate = self.load_labware_with_offset("nest_96_wellplate_100ul_pcr_full_skirt",
                                                    self._input_plate_slot,
                                                    "Sample input plate")
 
@@ -500,11 +502,13 @@ class LibraryManualStation(LibraryStation):
     @labware_loader(2, '_mag_plate')
     def load_mag_plate(self):
         self._mag_plate = self._magdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Mag plate")
+        self.apply_offset_to_labware(self._mag_plate)
 
     @labware_loader(3, '_work_plate')
     def load_work_plate(self):
         self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
                                                   self._work_plate_slot,
                                                   "Work plate")
+        self.apply_offset_to_labware(self._work_plate)
 
 
