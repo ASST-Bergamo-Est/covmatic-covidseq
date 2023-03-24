@@ -124,6 +124,8 @@ class ReagentPlateHelper:
             return list(filter(lambda x: x[0] in first_row, data["wells_available_volume"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
+    def get_rows_count(self, reagent_name: str):
+        return len(self.get_columns_for_reagent(reagent_name)[0])
 
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.

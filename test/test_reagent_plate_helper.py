@@ -9,8 +9,11 @@ COLUMN_2 = ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
 COLUMN_3 = ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]
 COLUMN_4 = ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"]
 
+EXPECTED_ROW_COUNT = 8
+
 labware_mock = MagicMock()
 labware_mock.columns.return_value = [COLUMN_1, COLUMN_2, COLUMN_3, COLUMN_4]
+labware_mock.rows.return_value = list(zip([COLUMN_1, COLUMN_2, COLUMN_3, COLUMN_4]))
 
 SAMPLES_PER_ROW = [1, 1, 1, 1, 1, 1, 1, 1]
 SAMPLES_PER_ROW_LESS = [1, 2, 3, 4, 5, 6, 7]
@@ -48,6 +51,16 @@ NOT_8_MULTIPLE_REAGENT2_EXPECTED_VOLUMES_FOR_WELL = [80, 80, 80, 80, 80, 80, 80,
                                                      80, 80, 80, 40, 40, 40, 40, 40,
                                                      80, 80, 80]
 
+SINGLE_WELL_COLUMN_1 = ["A1"]
+SINGLE_WELL_COLUMN_2 = ["A2"]
+SINGLE_WELL_COLUMN_3 = ["A3"]
+SINGLE_WELL_COLUMN_4 = ["A4"]
+
+SINGLE_WELL_EXPECTED_ROW_COUNT = 1
+
+single_well_labware_mock = MagicMock()
+single_well_labware_mock.columns.return_value = [SINGLE_WELL_COLUMN_1, SINGLE_WELL_COLUMN_2, SINGLE_WELL_COLUMN_3, SINGLE_WELL_COLUMN_4]
+single_well_labware_mock.rows.return_value = [[SINGLE_WELL_COLUMN_1]]
 
 class BaseTestClass(unittest.TestCase):
     def setUp(self):
@@ -106,8 +119,10 @@ class TestReagent1(BaseTestClass):
     def test_first_row_dispensed_vols(self):
         self.assertEqual(self._expected_first_row_dispensed_vols,
                          self._rp.get_first_row_dispensed_volume(self._reagent_name))
-    # def test_available_volume(self):
-    #     self.assertEqual(self._expected_available_wells_volumes)
+
+    def test_column_count(self):
+        self.assertEqual(EXPECTED_ROW_COUNT, self._rp.get_rows_count(self._reagent_name))
+
 
 class TestReagent2(TestReagent1):
     def setUpExpectations(self):
@@ -189,3 +204,20 @@ class TestInitializationArguments(unittest.TestCase):
     def test_wrong_samples_per_row_more(self):
         with self.assertRaises(ReagentPlateException):
             ReagentPlateHelper(labware_mock, SAMPLES_PER_ROW_MORE, logger=logger)
+
+
+class TestSingleWellLabware(unittest.TestCase):
+    def setUp(self) -> None:
+        self._rp = ReagentPlateHelper(single_well_labware_mock, SAMPLES_PER_ROW, logger=logger)
+        self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
+
+    def test_expected_row_count(self):
+        self.assertEqual(SINGLE_WELL_EXPECTED_ROW_COUNT, self._rp.get_rows_count(REAGENT1_NAME))
+
+    def test_expected_wells(self):
+        wells_with_volumes = self._rp.get_wells_with_volume(REAGENT1_NAME)
+        self.assertEqual(1, len(wells_with_volumes))
+
+    def test_expected_volumes(self):
+        well, volume = self._rp.get_wells_with_volume(REAGENT1_NAME)[0]
+        self.assertEqual(REAGENT1_VOLUME * sum(SAMPLES_PER_ROW), volume)

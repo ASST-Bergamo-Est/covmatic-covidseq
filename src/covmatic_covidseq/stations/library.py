@@ -159,6 +159,16 @@ class LibraryStation(CovidseqBaseStation):
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
 
+        if recipe.use_wash_plate:
+            helper = self.wash_plate_helper
+        else:
+            helper = self.reagent_plate_helper
+
+        source_wells = helper.get_first_row_available_volume(recipe_name)
+        source_tip_per_row = math.ceil(pipette.channels / helper.get_rows_count(recipe_name))
+        self.logger.info("Source wells are: {}".format(source_wells))
+        self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
+
         if disposal_volume is None:
             disposal_volume = pipette.min_volume / 2
 
@@ -166,7 +176,6 @@ class LibraryStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
 
-        source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
         self.logger.info("Source wells are: {}".format(source_wells))
 
         source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
@@ -198,6 +207,7 @@ class LibraryStation(CovidseqBaseStation):
                                                      (len(destinations)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
                         self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
 
+                        source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
                         source.prepare_aspiration(total_remaining_volume)
                         source.aspirate(pipette)
 
@@ -218,21 +228,27 @@ class LibraryStation(CovidseqBaseStation):
     def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0, stage_name=None):
         recipe = self.get_recipe(recipe_name)
 
+        if pipette is None:
+            pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
+
         if recipe.use_wash_plate:
-            source_wells = self.wash_plate_helper.get_first_row_available_volume(recipe_name)
+            helper = self.wash_plate_helper
         else:
-            source_wells = self.reagent_plate_helper.get_first_row_available_volume(recipe_name)
+            helper = self.reagent_plate_helper
+
+        source_wells = helper.get_first_row_available_volume(recipe_name)
+        source_tip_per_row = math.ceil(pipette.channels/helper.get_rows_count(recipe_name))
         self.logger.info("Source wells are: {}".format(source_wells))
+        self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
 
         source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
         for w, v in source_wells:
             source.append_tube_with_vol(w, v)
+            self.logger.info("Geometry: {} {}".format(w.width, w.length))
+
         self.logger.info("Now source is: {}".format(source))
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
-
-        if pipette is None:
-            pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette)
 
@@ -259,7 +275,10 @@ class LibraryStation(CovidseqBaseStation):
                         total_remaining_volume = volume - pipette.current_volume
                         self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
 
+                        source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
                         source.prepare_aspiration(total_remaining_volume)
+                        self.logger.info("Aspirate list: {}".format(source._aspirate_list))
+                        self.logger.info("Source: {}".format(source._source_tubes_and_vol))
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)
