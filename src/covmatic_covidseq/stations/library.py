@@ -215,7 +215,7 @@ class LibraryStation(CovidseqBaseStation):
         if pipette.has_tip:
             self.drop(pipette)
 
-    def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0):
+    def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0, stage_name=None):
         recipe = self.get_recipe(recipe_name)
 
         if recipe.use_wash_plate:
@@ -243,7 +243,7 @@ class LibraryStation(CovidseqBaseStation):
 
             dest_well_with_volume = WellWithVolume(dest_well, 0)
 
-            if self.run_stage(self.build_stage("add {} {}/{}".format(recipe_name, i + 1, len(destinations)))):
+            if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
                 while volume > 0:
                     self.logger.debug("Remaining volume: {:1f}".format(volume))
                     volume_to_transfer = min(volume, pipette_available_volume)
@@ -324,7 +324,8 @@ class LibraryStation(CovidseqBaseStation):
                            min_steps=3,
                            last_steps=3,
                            last_steps_min_height=0.1,
-                           last_transfer_volume_ratio=0.1):
+                           last_transfer_volume_ratio=0.1,
+                           stage_name="rem sup"):
         self.logger.info("Removing supernatant from labware {} volume {}".format(labware, volume))
 
         if pipette is None:
@@ -346,55 +347,55 @@ class LibraryStation(CovidseqBaseStation):
             pip.dispense(pip.current_volume, waste.top())
             pip.air_gap(self._pipette_chooser.get_air_gap(pip))
 
-        for s in sources:
-            remaining_volume = first_phase_volume
-            source_with_volume = WellWithVolume(s, volume, headroom_height=0)
+        for i, s in enumerate(sources):
+            if self.run_stage("{} {}/{}".format(self.build_stage(stage_name), i+1, len(sources))):
+                remaining_volume = first_phase_volume
+                source_with_volume = WellWithVolume(s, volume, headroom_height=0)
 
-            aspirate_volume = first_phase_volume / first_phase_steps
-            self.logger.info("Aspirating {} volume per time".format(aspirate_volume))
+                aspirate_volume = first_phase_volume / first_phase_steps
+                self.logger.info("Aspirating {} volume per time".format(aspirate_volume))
 
-            if not pipette.has_tip:
                 self.pick_up(pipette)
 
-            while remaining_volume > 0:
-                pipette.move_to(s.bottom(source_with_volume.height))
+                while remaining_volume > 0:
+                    pipette.move_to(s.bottom(source_with_volume.height))
 
-                current_height = source_with_volume.extract_vol_and_get_height(aspirate_volume)
-                current_volume = min(aspirate_volume,
-                                   available_volume - pipette.current_volume - self._pipette_chooser.get_air_gap(pipette))
+                    current_height = source_with_volume.extract_vol_and_get_height(aspirate_volume)
+                    current_volume = min(aspirate_volume,
+                                       available_volume - pipette.current_volume - self._pipette_chooser.get_air_gap(pipette))
 
-                self.logger.info("Aspirating at {:.1f} volume {:.1f}".format(current_height, current_volume))
+                    self.logger.info("Aspirating at {:.1f} volume {:.1f}".format(current_height, current_volume))
 
-                pipette.move_to(s.bottom(current_height), speed=self._slow_vertical_speed)
-                pipette.aspirate(current_volume)
-                remaining_volume -= current_volume
+                    pipette.move_to(s.bottom(current_height), speed=self._slow_vertical_speed)
+                    pipette.aspirate(current_volume)
+                    remaining_volume -= current_volume
 
-                if pipette.current_volume == available_volume:
+                    if pipette.current_volume == available_volume:
+                        discard_liquid(pipette, s)
+
+                last_phase_total_volume = min(available_volume, volume * last_transfer_volume_ratio * last_steps)
+                last_phase_volume_per_step = last_phase_total_volume / last_steps
+                self.logger.info("Last phase volume per step: {}".format(last_phase_volume_per_step))
+
+                if (available_volume - pipette.current_volume) < last_phase_total_volume:
                     discard_liquid(pipette, s)
 
-            last_phase_total_volume = min(available_volume, volume * last_transfer_volume_ratio * last_steps)
-            last_phase_volume_per_step = last_phase_total_volume / last_steps
-            self.logger.info("Last phase volume per step: {}".format(last_phase_volume_per_step))
+                start_height = source_with_volume.height
+                heights = [last_steps_min_height + (start_height-last_steps_min_height) / last_steps * i for i in range(last_steps)]
 
-            if (available_volume - pipette.current_volume) < last_phase_total_volume:
+                self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
+                for h in reversed(heights):
+                    self.logger.info("Aspirating at {}".format(h))
+                    pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+                    pipette.aspirate(last_phase_volume_per_step)
+
+                for h in heights:
+                    self.logger.info("Moving to {}".format(h))
+                    pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+
                 discard_liquid(pipette, s)
 
-            start_height = source_with_volume.height
-            heights = [last_steps_min_height + (start_height-last_steps_min_height) / last_steps * i for i in range(last_steps)]
-
-            self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
-            for h in reversed(heights):
-                self.logger.info("Aspirating at {}".format(h))
-                pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
-                pipette.aspirate(last_phase_volume_per_step)
-
-            for h in heights:
-                self.logger.info("Moving to {}".format(h))
-                pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
-
-            discard_liquid(pipette, s)
-
-            self.drop(pipette)
+                self.drop(pipette)
 
     def anneal_rna(self):
         self.logger.info("Calibrated offset: {}".format(self._work_plate.calibrated_offset))
@@ -454,14 +455,14 @@ class LibraryStation(CovidseqBaseStation):
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 50)
         self.disengage_magnets()
 
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80)
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1")
         self.engage_magnets()
         self.delay_wait_to_elapse(minutes=3)
 
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
         self.disengage_magnets()
 
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80)
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2")
 
         # for now make plate available for user interaction now.
         self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_COMPLETED")
