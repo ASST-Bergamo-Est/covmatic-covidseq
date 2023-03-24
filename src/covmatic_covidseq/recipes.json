@@ -10,7 +10,6 @@
       }
     ],
     "volume_final": 8.5,
-    "headroom_fraction": 0.25,
     "use_reagent_plate": false
   },
   {
@@ -52,7 +51,7 @@
       }
     ],
     "volume_final": 20,
-    "headroom_fraction": 0.25
+    "use_reagent_plate": false
   },
   {
     "name": "CPP2 Mix",
@@ -75,7 +74,7 @@
       }
     ],
     "volume_final": 20,
-    "headroom_fraction": 0.25
+    "use_reagent_plate": false
   },
   {
     "name": "TAG Mix",
@@ -98,7 +97,7 @@
       }
     ],
     "volume_final": 30,
-    "headroom_fraction": 0.25
+    "use_reagent_plate": false
   },
   {
     "name": "ST2",
