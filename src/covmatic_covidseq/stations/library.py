@@ -353,7 +353,13 @@ class LibraryStation(CovidseqBaseStation):
                            last_steps=3,
                            last_steps_min_height=0.1,
                            last_transfer_volume_ratio=0.1,
+                           side_top_ratio=1,
+                           side_bottom_ratio=0.2,
                            stage_name="rem sup"):
+        """ Supernatant removal.
+            :param side_top_ratio: the value to multipy with the well length to calculate the side movement in the top of the well
+            :param side_bottom_ratio: the value to multipy with the well length to calculate the side movement in the bottom of the well
+        """
         self.logger.info("Removing supernatant from labware {} volume {}".format(labware, volume))
 
         if pipette is None:
@@ -369,16 +375,43 @@ class LibraryStation(CovidseqBaseStation):
 
         sources = self.get_samples_first_row_for_labware(labware)
 
-        def discard_liquid(pip, source_well, blow_out=False, side=False, top_height=-5):
+        def get_side_movement(well, height) -> float:
+            """ Get the horizontal displacement from the center of the well incrementally:
+                - at top height will be well length * side_top_ratio,
+                - at bottom height will be length * side_bottom_ratio
+                - at passed height it will be the linear function between top and bottom;
+                :param well the well to extract the data from;
+                :param height: height in which to calculate the horizontal displacement;
+                :return the horizontal displacement corrisponding to the height passed. Limited always to half of the well lenght
+
+            """
+            depth = well.depth
+            length = well.diameter or well.length
+            side_top = side_top_ratio * length
+            side_bottom = side_bottom_ratio * length
+            return min(length/2, side_bottom + (side_top-side_bottom) * height / depth)
+
+        def get_side_direction(well: Well):
+            """ Calculates the correct horizontal direction to keep the tip away from magnets
+                when plate is onto magnetic module. (Magnets are between each couple of columns, eg. 1-2 and 3-4)
+            """
+            for idx, c in enumerate(well.parent.columns()):
+                if well in c:
+                    return -1 if (idx % 2 == 0) else 1
+            else:
+                self.logger.warning("Side direction not found for well {}".format(well))
+                return 0
+
+        def discard_liquid(pip, source_well, last_phase=False, top_height=-5):
             """ Discard the supernatant in the waste well.
                 :param pip: the pipette to use
                 :param source_well: the well to aspirate from
-                :param blow_out: if True the pipette will be blown out
-                :param side: if True dispense to the side of the waste to avoid drops
+                :param last_phase: if True the pipette will be blown out and the dispense will be done to the side of the well
                 :param top_height: the waste height to be passed to 'top' function.
             """
             destination = waste.top(top_height)
-            if side:
+
+            if last_phase:
                 destination = destination.move(Point(x=waste.length*0.4))
 
             pip.move_to(source_well.top(), speed=self._slow_vertical_speed)
@@ -386,10 +419,15 @@ class LibraryStation(CovidseqBaseStation):
 
             pip.move_to(waste.top(top_height))
             pip.dispense(pip.current_volume, destination)
-            if blow_out:
+            if last_phase:
                 pip.blow_out()
+
             pip.move_to(waste.top(top_height))
             pip.air_gap(self._pipette_chooser.get_air_gap(pip))
+
+            if not last_phase:
+                pip.move_to(source_well.top())
+                pip.dispense(self._pipette_chooser.get_air_gap(pip))
 
         for i, s in enumerate(sources):
             if self.run_stage("{} {}/{}".format(self.build_stage(stage_name), i+1, len(sources))):
@@ -401,16 +439,19 @@ class LibraryStation(CovidseqBaseStation):
 
                 self.pick_up(pipette)
 
-                while remaining_volume > 0:
-                    pipette.move_to(s.bottom(source_with_volume.height))
+                side_direction = get_side_direction(s)
 
+                pipette.move_to(s.top())
+
+                while remaining_volume > 0:
                     current_height = source_with_volume.extract_vol_and_get_height(aspirate_volume)
                     current_volume = min(aspirate_volume,
                                        available_volume - pipette.current_volume - self._pipette_chooser.get_air_gap(pipette))
 
                     self.logger.info("Aspirating at {:.1f} volume {:.1f}".format(current_height, current_volume))
-
-                    pipette.move_to(s.bottom(current_height), speed=self._slow_vertical_speed)
+                    side_offset = side_direction * get_side_movement(s, current_height)
+                    self.logger.info("Side movement is {}".format(side_offset))
+                    pipette.move_to(s.bottom(current_height).move(Point(x=side_offset)), speed=self._slow_vertical_speed)
                     pipette.aspirate(current_volume)
                     remaining_volume -= current_volume
 
@@ -425,19 +466,20 @@ class LibraryStation(CovidseqBaseStation):
                     discard_liquid(pipette, s)
 
                 start_height = source_with_volume.height
+
                 heights = [last_steps_min_height + (start_height-last_steps_min_height) / last_steps * i for i in range(last_steps)]
+                side_offsets = [side_direction * get_side_movement(s, h) for h in heights]
+                points = [s.bottom(h).move(Point(x=side)) for h, side in zip(heights, side_offsets)]
 
                 self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
-                for h in reversed(heights):
-                    self.logger.info("Aspirating at {}".format(h))
-                    pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+                for p in reversed(points):
+                    pipette.move_to(p, speed=self._very_slow_vertical_speed)
                     pipette.aspirate(last_phase_volume_per_step)
 
-                for h in heights:
-                    self.logger.info("Moving to {}".format(h))
-                    pipette.move_to(s.bottom(h), speed=self._very_slow_vertical_speed)
+                for p in points:
+                    pipette.move_to(p, speed=self._very_slow_vertical_speed)
 
-                discard_liquid(pipette, s, side=True, blow_out=True)
+                discard_liquid(pipette, s, last_phase=True)
 
                 self.drop(pipette)
 
