@@ -505,8 +505,8 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
 
         self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
-        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_THERMAL")
-        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
+        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+                                           "SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
         self.thermal_cycle(self._work_plate, "PCR")
 
     def tagment_pcr_amplicons(self):
@@ -518,25 +518,25 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources_cov2, destinations, volume=10, mix_times=5, mix_volume=20, stage_name="COV2")
 
         self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT2", "COV12_TRASH")
-
-        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_THERMAL")
-        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
-
+        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+                                           "SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
         self.thermal_cycle(self._work_plate, "TAG")
 
     def post_tagmentation_cleanup(self):
         self.disengage_magnets()
 
+        self.robot_transfer_plate_internal("SLOT{}".format(self._work_plate_slot),
+                                           "SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
+
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.robot_pick_plate("SLOT{}".format(self._work_plate_slot), "TAG1_CLEANUP")
-        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
+
         self.distribute_dirty("ST2", self._mag_plate, mix_times=10, mix_volume=20)
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
 
         self.engage_magnets()
         self.delay_start_count()
 
         self.robot_drop_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.delay_wait_to_elapse(minutes=3)
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 50)
         self.disengage_magnets()
@@ -551,8 +551,8 @@ class LibraryStation(CovidseqBaseStation):
         self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2")
 
         # for now make plate available for user interaction now.
-        self.robot_pick_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_COMPLETED")
-        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
+        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+                                           "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
