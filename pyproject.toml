@@ -61,6 +61,7 @@ run = "opentrons_simulate {matrix:protocols} {args}"
 protocols = [
   "protocols/station_reagent.py",
   "protocols/station_reagent_start_at.py",
+  "protocols/station_reagent_configfile.py",
   "protocols/station_library.py",
   "protocols/station_library_manual.py"
 ]

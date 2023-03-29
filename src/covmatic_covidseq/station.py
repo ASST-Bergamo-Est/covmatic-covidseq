@@ -127,6 +127,29 @@ class ReagentPlateHelper:
     def get_rows_count(self, reagent_name: str):
         return len(self.get_columns_for_reagent(reagent_name)[0])
 
+
+class ConfigFileException(Exception):
+    pass
+
+class ConfigFile:
+    def __init__(self, filepath, logger=None):
+        self._logger = logger or logging.getLogger(self.__class__.__name__)
+        self._logger.info("Loading config file from {}".format(filepath))
+        try:
+            with open(filepath, "r") as f:
+                config = json.load(f)
+                for key in config:
+                    self._logger.debug("Config set attribute {}: {}".format(key, config[key]))
+                    setattr(self, key, config[key])
+        except FileNotFoundError:
+            self._logger.warning("Config file not found: {}".format(filepath))
+
+    def __getattr__(self, name: str):
+        if f"{name}" not in self.__dict__:
+            raise ConfigFileException("Config key {} not found".format(name))
+        return self.__dict__[f"{name}"]
+
+
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
         Covidseq is executed by two robot:
@@ -138,8 +161,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         Note: this is an abstract class because each OT will have its own implementation.
     """
     def __init__(self,
-                 robot_manager_host: str,
-                 robot_manager_port: int,
+                 robot_manager_host: str = None,
+                 robot_manager_port: int = None,
                  recipe_file: str or None = "recipes.json",
                  reagent_plate_labware_name: str = "nest_96_wellplate_100ul_pcr_full_skirt",
                  reagent_plate_max_volume: float = 100,
@@ -149,13 +172,15 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  slow_vertical_speed: float = 10,
                  column_offset_cov2: int = 6,
                  offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
+                 config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
                  labware_load_offset: bool = False,
                  *args, **kwargs):
         """ Class initialization.
             :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
         """
-        super().__init__(robot_manager_host=robot_manager_host,
-                         robot_manager_port=robot_manager_port,
+        self._config = ConfigFile(config_json_filepath)
+        super().__init__(robot_manager_host=robot_manager_host or self._config.robot_manager_host,
+                         robot_manager_port=robot_manager_port or self._config.robot_manager_port,
                          *args, **kwargs)
         self._reagent_plate_labware_name = reagent_plate_labware_name
         self._reagent_plate_max_volume = reagent_plate_max_volume

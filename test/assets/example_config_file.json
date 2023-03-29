@@ -1,0 +1,4 @@
+{
+  "robot_manager_host": "fakehost",
+  "robot_manager_port": 8080
+}
