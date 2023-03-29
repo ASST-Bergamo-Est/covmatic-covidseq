@@ -198,6 +198,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._labware_load_offset = labware_load_offset
         self._task_name = ""
         self._offsets = []
+
+    def pre_loaders_initializations(self):
+        super().pre_loaders_initializations()
         self.load_offsets()
 
     def load_offsets(self):
@@ -236,13 +239,16 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             offset = list(filter(
                     lambda x: (x['slot'] == str(labware_slot) and x['labware_name'] == labware.load_name), self._offsets))
 
-            if len(offset) < 1 or len(offset) > 1:
-                raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
-
-            self.logger.info("Labware {} applying offset {}".format(
-                labware.load_name,
-                ", ".join(["{}: {}".format(k, offset[0]['offsets'][k]) for k in  offset[0]['offsets']])))
-            labware.set_offset(**offset[0]['offsets'])
+            if len(offset) == 1:
+                self.logger.info("Labware {} applying offset {}".format(
+                    labware.load_name,
+                    ", ".join(["{}: {}".format(k, offset[0]['offsets'][k]) for k in  offset[0]['offsets']])))
+                labware.set_offset(**offset[0]['offsets'])
+            else:
+                if self._ctx.is_simulating():
+                    self.logger.warning("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
+                else:
+                    raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
