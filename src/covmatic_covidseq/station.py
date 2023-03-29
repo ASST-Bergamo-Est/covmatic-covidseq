@@ -214,7 +214,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             with open(filepath, "r") as f:
                 offsets = json.load(f)
         except FileNotFoundError:
-            if self._ctx.is_simulating:
+            if self._ctx.is_simulating():
                 offsets = []
                 self.logger.warning("Labware offset file not found: {}".format(filepath))
             else:
