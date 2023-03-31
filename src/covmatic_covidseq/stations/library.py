@@ -45,17 +45,20 @@ def mix_well(pipette,
     dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
     dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
 
-    dispense_pos = [well.bottom(h).move(Point(x=x_side*side_movement, y=y_side*side_movement))
-                    for h, (x_side, y_side) in islice(zip(cycle(dispense_heights),
-                                                      dispense_xy_directions), repetitions)]
+    dispense_pos_center = [well.bottom(h) for h in islice(cycle(dispense_heights), repetitions)]
 
-    for i, (a, d) in enumerate(zip(cycle(aspirate_pos), dispense_pos)):
+    dispense_pos_side = [w.move(Point(x=x_side * side_movement, y=y_side * side_movement))
+                         for w, (x_side, y_side) in zip(dispense_pos_center, cycle(dispense_xy_directions))]
+
+    for i, (a, d_center, d_side) in enumerate(zip(cycle(aspirate_pos), dispense_pos_center, dispense_pos_side)):
         if i == (repetitions - 1) and last_dispense_flow_rate is not None:
             pipette.flow_rate.dispense = last_dispense_flow_rate
         pipette.move_to(a, speed=travel_speed, publish=False)
         pipette.aspirate(volume)
-        pipette.move_to(d, speed=travel_speed, publish=False)
+        pipette.move_to(d_center, speed=travel_speed, publish=False)
+        pipette.move_to(d_side, speed=travel_speed, publish=False)
         pipette.dispense(volume)
+        pipette.move_to(d_center, speed=travel_speed, publish=False)
     pipette.move_to(well.bottom(height_max), speed=travel_speed, publish=False)
 
 
