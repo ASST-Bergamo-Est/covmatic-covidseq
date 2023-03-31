@@ -71,7 +71,7 @@ class LibraryStation(CovidseqBaseStation):
                  magdeck_slot=11,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
-                 mag_height=14,
+                 mag_height=15,
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._pipette_chooser = PipetteChooser()
