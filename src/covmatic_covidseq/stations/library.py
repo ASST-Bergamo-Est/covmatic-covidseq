@@ -65,13 +65,13 @@ def mix_well(pipette,
 class LibraryStation(CovidseqBaseStation):
     def __init__(self,
                  ot_name="OT2",
-                 tipracks20_slots: Tuple[str, ...] = ("1", "2", "3"),
-                 tipracks300_slots: Tuple[str, ...] = ("4",),
-                 input_plate_slot=9,
-                 reagent_plate_slot=6,
-                 wash_plate_slot=7,
-                 work_plate_slot=5,
-                 magdeck_slot=11,
+                 tipracks20_slots: Tuple[str, ...] = ("9", "6", "3"),
+                 tipracks300_slots: Tuple[str, ...] = ("2",),
+                 input_plate_slot=10,
+                 reagent_plate_slot=1,
+                 wash_plate_slot=5,
+                 work_plate_slot=4,
+                 magdeck_slot=7,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
                  mag_height=15,
@@ -118,13 +118,14 @@ class LibraryStation(CovidseqBaseStation):
 
     @labware_loader(2, '_mag_plate')
     def load_mag_plate(self):
-        self._mag_plate = self._magdeck.load_labware_from_definition(get_labware_json_from_filename("customvertical_96_top_right_aligned.json"))
+        self._mag_plate = self._magdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Mag plate")
         self.apply_offset_to_labware(self._mag_plate)
 
     @labware_loader(3, '_work_plate')
     def load_work_plate(self):
-        self._work_plate = self._ctx.load_labware_from_definition(
-            get_labware_json_from_filename("customvertical_96_top_right_aligned.json"), self._work_plate_slot, "Vertical work plate")
+        self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
+                                                  self._work_plate_slot,
+                                                  "Work plate")
         self.apply_offset_to_labware(self._work_plate)
 
     @labware_loader(4, '_reagent_plate')
@@ -569,37 +570,5 @@ class LibraryStation(CovidseqBaseStation):
     def disengage_magnets(self):
         self._magdeck.disengage()
 
-
-class LibraryManualStation(LibraryStation):
-    def __init__(self,
-                 tipracks20_slots: Tuple[str, ...] = ("9", "6", "3"),
-                 tipracks300_slots: Tuple[str, ...] = ("2",),
-                 input_plate_slot=10,
-                 reagent_plate_slot=1,
-                 wash_plate_slot=5,
-                 work_plate_slot=4,
-                 magdeck_slot=7,
-                 *args, **kwargs):
-        super().__init__(
-            tipracks20_slots=tipracks20_slots,
-            tipracks300_slots=tipracks300_slots,
-            input_plate_slot=input_plate_slot,
-            reagent_plate_slot=reagent_plate_slot,
-            wash_plate_slot=wash_plate_slot,
-            work_plate_slot=work_plate_slot,
-            magdeck_slot=magdeck_slot,
-            *args, **kwargs)
-
-    @labware_loader(2, '_mag_plate')
-    def load_mag_plate(self):
-        self._mag_plate = self._magdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Mag plate")
-        self.apply_offset_to_labware(self._mag_plate)
-
-    @labware_loader(3, '_work_plate')
-    def load_work_plate(self):
-        self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
-                                                  self._work_plate_slot,
-                                                  "Work plate")
-        self.apply_offset_to_labware(self._work_plate)
 
 

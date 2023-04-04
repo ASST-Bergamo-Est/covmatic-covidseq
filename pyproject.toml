@@ -46,7 +46,6 @@ install = "pip install ."
 install_package = "pip install {args} --force-reinstall --no-deps"
 run_reagent = "opentrons_simulate protocols/station_reagent.py {args}"
 run_library = "opentrons_simulate protocols/station_library.py {args}"
-run_library_manual = "opentrons_simulate protocols/station_library_manual.py {args}"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38"]
@@ -62,8 +61,7 @@ protocols = [
   "protocols/station_reagent.py",
   "protocols/station_reagent_start_at.py",
   "protocols/station_reagent_configfile.py",
-  "protocols/station_library.py",
-  "protocols/station_library_manual.py"
+  "protocols/station_library.py"
 ]
 
 [tool.coverage.run]
