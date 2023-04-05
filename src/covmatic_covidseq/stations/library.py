@@ -521,7 +521,7 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
         self.transfer_dirty(sources_cov2, destinations, volume=10, mix_times=5, mix_volume=20, stage_name="COV2")
 
-        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT2", "COV12_TRASH")
+        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "COV12_TRASH")
         self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
                                            "SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
         self.thermal_cycle(self._work_plate, "TAG")
