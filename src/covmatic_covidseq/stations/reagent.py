@@ -191,7 +191,7 @@ class ReagentStation(CovidseqBaseStation):
             pipette = self._pipette_chooser.get_pipette(remaining_volume_to_aspirate)
 
         if disposal_volume is None:
-            disposal_volume = pipette.min_volume / 2
+            disposal_volume = pipette.min_volume / 4
 
         self.logger.info("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
 
