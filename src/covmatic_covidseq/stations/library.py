@@ -547,7 +547,7 @@ class LibraryStation(CovidseqBaseStation):
 
         self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1")
         self.engage_magnets()
-        self.delay_wait_to_elapse(minutes=3)
+        self.delay(mins=3)
 
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
         self.disengage_magnets()
