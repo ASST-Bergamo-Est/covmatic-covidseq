@@ -1,3 +1,4 @@
+import inspect
 import json
 import logging
 import math
@@ -131,6 +132,7 @@ class ReagentPlateHelper:
 class ConfigFileException(Exception):
     pass
 
+
 class ConfigFile:
     def __init__(self, filepath, logger=None):
         self._logger = logger or logging.getLogger(self.__class__.__name__)
@@ -249,6 +251,27 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                     self.logger.warning("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
                 else:
                     raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
+
+
+    @property
+    def current_directory(self):
+        """ Get the current directory in which the class is defined.
+            Each subclass will have the corresponding directory
+        """
+        return os.path.split(inspect.getsourcefile(self.__class__))[0]
+
+    def check_and_get_absolute_path(self, filename):
+        """ Check if the passed variable is an absolute path.
+            If it is not absolute it will concatenate it with the current module directory
+            :param filename: a filename or an absolute path
+            :return the same as input if it is an absolute path or the passed input concatenated with the current folder
+        """
+        if not os.path.isabs(filename):
+            abspath = os.path.join(self.current_directory, filename)
+        else:
+            abspath = filename
+        self.logger.debug("Absolute path: File {} returning path {}".format(filename, abspath))
+        return abspath
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)

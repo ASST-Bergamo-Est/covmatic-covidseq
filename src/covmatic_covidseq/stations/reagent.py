@@ -46,11 +46,7 @@ class ReagentStation(CovidseqBaseStation):
         self.load_reagents_chilled_tubes_json(reagent_chilled_tubes_json)
 
     def load_reagents_chilled_tubes_json(self, filename):
-        if not os.path.isabs(filename):
-            current_folder = os.path.split(__file__)[0]
-            abspath = os.path.join(current_folder, filename)
-        else:
-            abspath = filename
+        abspath = self.check_and_get_absolute_path(filename)
         self.logger.info("Loading reagents chilled tubes from {}".format(abspath))
 
         with open(abspath, "r") as f:
