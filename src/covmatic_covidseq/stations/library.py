@@ -19,7 +19,10 @@ def mix_well(pipette,
              repetitions,
              last_dispense_flow_rate=None,
              min_z_difference=1.0,
-             travel_speed=25.0, logger=logging.getLogger()):
+             travel_speed=25.0,
+             onto_beads=False,
+             side_ratio=0.6,
+             logger=logging.getLogger()):
     """ Mix a well
         :param pipette: pipette object to use
         :param well: well to mix
@@ -28,6 +31,8 @@ def mix_well(pipette,
         :param last_dispense_flow_rate: flow rate to use in the last dispense to avoid leaving liquid in tip
         :param min_z_difference: the minimum difference to have in the vertical axis
         :param travel_speed: the speed between different positions.
+        :param onto_beads: if dispense directly onto beads to help resuspension.
+        :param side_ratio: float from 0 to 1, the ratio of side movement; 0 means no movement; 1 means entire well length
     """
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
@@ -37,13 +42,18 @@ def mix_well(pipette,
     logger.info("Mix height min: {}".format(height_min))
 
     well_with_volume.fill(volume)
-    height_max = max(well_with_volume.height, height_min + min_z_difference)
+    height_max = max(well_with_volume.height, height_min + min_z_difference, well.depth / 2 if onto_beads else 0)
     logger.info("Mix height max: {}".format(height_max))
-    side_movement = (well.diameter or well.length) / 2 * 0.6
+    side_movement = (well.diameter or well.length) / 2 * side_ratio
 
     aspirate_pos = [well.bottom((height_min + height_max)/2)]
-    dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
-    dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
+    if onto_beads:
+        dispense_heights = [height_max]
+        direction = get_magnets_direction(well)
+        dispense_xy_directions = [(direction, 0), (direction, 1), (direction, -1)]
+    else:
+        dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
+        dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
 
     dispense_pos_center = [well.bottom(h) for h in islice(cycle(dispense_heights), repetitions)]
 
@@ -61,6 +71,26 @@ def mix_well(pipette,
         pipette.move_to(d_center, speed=travel_speed, publish=False)
     pipette.move_to(well.bottom(height_max), speed=travel_speed, publish=False)
 
+
+def get_magnets_opposite_direction(well: Well):
+    """ Calculates the correct horizontal direction that multiplied by a horizontal positive distance will
+        keep the tip away from magnets when plate is onto magnetic module.
+        (Magnets are between each couple of columns, eg. 1-2 and 3-4)
+    """
+    for idx, c in enumerate(well.parent.columns()):
+        if well in c:
+            return -1 if (idx % 2 == 0) else 1
+    else:
+        logging.getLogger().warning("Side direction not found for well {}".format(well))
+        return 0
+
+
+def get_magnets_direction(well: Well):
+    """ Calculates the correct horizontal direction that multiplied by a horizontal positive distance will
+        keep the tip close to magnets when plate is onto magnetic module.
+        (Magnets are between each couple of columns, eg. 1-2 and 3-4)
+    """
+    return -get_magnets_opposite_direction(well)
 
 class LibraryStation(CovidseqBaseStation):
     def __init__(self,
@@ -256,7 +286,9 @@ class LibraryStation(CovidseqBaseStation):
         if pipette.has_tip:
             self.drop(pipette)
 
-    def distribute_dirty(self, recipe_name, dest_labware, pipette=None, mix_times=0, mix_volume=0, stage_name=None):
+    def distribute_dirty(self, recipe_name, dest_labware,
+                         pipette=None, mix_times=0, mix_volume=0, stage_name=None,
+                         onto_beads=False, side_ratio=0.6):
         recipe = self.get_recipe(recipe_name)
         reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
 
@@ -280,7 +312,7 @@ class LibraryStation(CovidseqBaseStation):
             num_transfers = math.ceil(volume / pipette_available_volume)
             self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, pipette_available_volume))
 
-            dest_well_with_volume = WellWithVolume(dest_well, 0)
+            dest_well_with_volume = WellWithVolume(dest_well, 0, headroom_height=0)
 
             if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
                 while volume > 0:
@@ -303,11 +335,18 @@ class LibraryStation(CovidseqBaseStation):
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)
-                    pipette.dispense(volume_to_transfer, dest_well.bottom(dest_well_with_volume.height))
+                    side_movement = (dest_well.length or dest_well.diameter) / 2 * side_ratio * get_magnets_direction(dest_well) if onto_beads else 0
+                    dest_central = dest_well.bottom(max(dest_well_with_volume.height, dest_well.depth / 2 if onto_beads else 0))
+                    dest_side = dest_central.move(Point(x=side_movement))
+
+                    pipette.move_to(dest_central)
+                    pipette.dispense(volume_to_transfer, dest_side)
+                    pipette.move_to(dest_central)
+
                     volume -= volume_to_transfer
 
                 if mix_volume != 0 and mix_times != 0:
-                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times))
+                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times), onto_beads=onto_beads, side_ratio=side_ratio)
 
                 pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
                 pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
@@ -407,17 +446,6 @@ class LibraryStation(CovidseqBaseStation):
             side_bottom = side_bottom_ratio * length
             return min(length/2, side_bottom + (side_top-side_bottom) * height / depth)
 
-        def get_side_direction(well: Well):
-            """ Calculates the correct horizontal direction to keep the tip away from magnets
-                when plate is onto magnetic module. (Magnets are between each couple of columns, eg. 1-2 and 3-4)
-            """
-            for idx, c in enumerate(well.parent.columns()):
-                if well in c:
-                    return -1 if (idx % 2 == 0) else 1
-            else:
-                self.logger.warning("Side direction not found for well {}".format(well))
-                return 0
-
         def discard_liquid(pip, source_well, last_phase=False, top_height=-5):
             """ Discard the supernatant in the waste well.
                 :param pip: the pipette to use
@@ -458,7 +486,7 @@ class LibraryStation(CovidseqBaseStation):
                 self.apply_flow_rate(pipette, supernatant_flow_rate)
                 self.pick_up(pipette)
 
-                side_direction = get_side_direction(s)
+                side_direction = get_magnets_opposite_direction(s)
 
                 pipette.move_to(s.top())
 
@@ -492,7 +520,7 @@ class LibraryStation(CovidseqBaseStation):
 
                 self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
                 self.apply_flow_rate(pipette, supernatant_flow_rate, 0.5)
-                
+
                 for p in reversed(points):
                     pipette.move_to(p, speed=self._very_slow_vertical_speed)
                     pipette.aspirate(last_phase_volume_per_step)
@@ -564,7 +592,7 @@ class LibraryStation(CovidseqBaseStation):
         self.disengage_magnets()
 
         self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1")
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1", onto_beads=True)
         self.engage_magnets()
         self.delay(mins=3)
 
@@ -572,7 +600,7 @@ class LibraryStation(CovidseqBaseStation):
         self.disengage_magnets()
 
         self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2")
+        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2", onto_beads=True)
 
         # for now make plate available for user interaction now.
         self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
