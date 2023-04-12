@@ -75,11 +75,11 @@ class LibraryStation(CovidseqBaseStation):
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
                  mag_height=15,
-                 flow_rates_filepath="library_flow_rates.json",
+                 flow_rate_json_filepath="library_flow_rates.json",
                  *args, **kwargs):
         super().__init__(
             ot_name=ot_name,
-            flow_rates_filepath=flow_rates_filepath,
+            flow_rate_json_filepath=flow_rate_json_filepath,
             *args, **kwargs)
         self._pipette_chooser = PipetteChooser()
         self._input_plate_slot = input_plate_slot
@@ -369,7 +369,9 @@ class LibraryStation(CovidseqBaseStation):
                            last_transfer_volume_ratio=0.1,
                            side_top_ratio=1,
                            side_bottom_ratio=0.2,
-                           stage_name="rem sup"):
+                           stage_name="rem sup",
+                           supernatant_flow_rate="supernatant removal",
+                           discard_flow_rate="supernatant discard"):
         """ Supernatant removal.
             :param side_top_ratio: the value to multipy with the well length to calculate the side movement in the top of the well
             :param side_bottom_ratio: the value to multipy with the well length to calculate the side movement in the bottom of the well
@@ -428,6 +430,8 @@ class LibraryStation(CovidseqBaseStation):
             if last_phase:
                 destination = destination.move(Point(x=waste.length*0.4))
 
+            self.apply_flow_rate(pip, discard_flow_rate)
+
             pip.move_to(source_well.top(), speed=self._slow_vertical_speed)
             pip.air_gap(self._pipette_chooser.get_air_gap(pip))
 
@@ -451,7 +455,7 @@ class LibraryStation(CovidseqBaseStation):
                 aspirate_volume = first_phase_volume / first_phase_steps
                 self.logger.info("Aspirating {} volume per time".format(aspirate_volume))
 
-                self.apply_flow_rate(pipette)
+                self.apply_flow_rate(pipette, supernatant_flow_rate)
                 self.pick_up(pipette)
 
                 side_direction = get_side_direction(s)
@@ -487,7 +491,8 @@ class LibraryStation(CovidseqBaseStation):
                 points = [s.bottom(h).move(Point(x=side)) for h, side in zip(heights, side_offsets)]
 
                 self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
-                self.apply_flow_rate(pipette, 0.5)
+                self.apply_flow_rate(pipette, supernatant_flow_rate, 0.5)
+                
                 for p in reversed(points):
                     pipette.move_to(p, speed=self._very_slow_vertical_speed)
                     pipette.aspirate(last_phase_volume_per_step)
@@ -555,20 +560,18 @@ class LibraryStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.delay_wait_to_elapse(minutes=3)
 
-        self.save_flow_rate(10, None, None)
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 50)
         self.disengage_magnets()
 
-        self.save_flow_rate()
+        self.load_flow_rate()
         self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1")
         self.engage_magnets()
         self.delay(mins=3)
 
-        self.save_flow_rate(10, None, None)
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
         self.disengage_magnets()
 
-        self.save_flow_rate()
+        self.load_flow_rate()
         self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2")
 
         # for now make plate available for user interaction now.

@@ -152,6 +152,37 @@ class ConfigFile:
         return self.__dict__[f"{name}"]
 
 
+class FlowRatesException(Exception):
+    pass
+
+
+class FlowRates:
+    def __init__(self, logger=None):
+        self._logger = logger or logging.getLogger(self.__class__.__name__)
+        self._logger.info("Initializing FlowRates class")
+        self._flow_rates = None
+
+    def load_from_file(self, filepath):
+        self._logger.info("Opening flow rates from json: {}".format(filepath))
+        with open(filepath, "r") as f:
+            self._flow_rates = json.load(f)
+        self._logger.info("Loaded flow rates: {}".format(self._flow_rates))
+
+    def get(self, flow_rate_name):
+        if self._flow_rates is None:
+            self._logger.warning("Requested flow rate {} but no flow rates loaded.".format(flow_rate_name))
+            return self.default_flow_rate
+
+        if flow_rate_name not in self._flow_rates:
+            raise FlowRatesException("Flow rate {} not found.".format(flow_rate_name))
+
+        return self._flow_rates[flow_rate_name]
+
+    @property
+    def default_flow_rate(self):
+        return {"aspirate": None, "dispense": None, "blow_out": None}
+
+
 class CovidseqBaseStation(RobotStationABC, ABC):
     """ Base class that has shared information about Covidseq protocol.
         Covidseq is executed by two robot:
@@ -173,6 +204,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
                  column_offset_cov2: int = 6,
+                 flow_rate_json_filepath=None,
                  offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
                  config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
                  labware_load_offset: bool = False,
@@ -201,6 +233,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._task_name = ""
         self._offsets = []
         self._current_flow_rate = {'aspirate': None, 'dispense': None, 'blow_out': None}
+        self._flow_rates = FlowRates()
+        if flow_rate_json_filepath is not None:
+            self._flow_rates.load_from_file(self.check_and_get_absolute_path(flow_rate_json_filepath))
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
@@ -278,20 +313,27 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self.logger.debug("Absolute path: File {} returning path {}".format(filename, abspath))
         return abspath
 
-    def save_flow_rate(self, aspirate=None, dispense=None, blow_out=None):
-        self._current_flow_rate = {'aspirate': aspirate, 'dispense': dispense, 'blow_out': blow_out}
+    def load_flow_rate(self, name=None):
+        """ Load a defined flow rate configuration
+            Data is stored in the json file passed to the *load_from_json* function of the FlowRates class.
+            :param name: the identifier of the flow rate in the json file.
+        """
+        self._current_flow_rate = self._flow_rates.default_flow_rate if name is None else self._flow_rates.get(name)
 
-    def apply_flow_rate(self, pipette, multiplier=1.0):
+    def apply_flow_rate(self, pipette, name=None, multiplier=1.0):
         """ Apply the saved flow rate multiplied by *multiplier* to the passed pipette;
-            :param pipette: the pipette to apply the flow rates to
+            :param pipette: the pipette to apply the flow rates to;
+            :param name: the identifier of the flow rate in the json file;
             :param multiplier: a multiplier for the saved flow rate in order to have percentages of saved flow rates.
         """
         pipette.flow_rate.set_defaults(self._ctx.api_version)
-        for f in self._current_flow_rate:
-            self.logger.info("Applying flow rate {}: {}".format(f, self._current_flow_rate[f]))
-            if self._current_flow_rate[f] is not None:
-                setattr(pipette.flow_rate, f, self._current_flow_rate[f] * multiplier)
 
+        flow_rate = self._current_flow_rate if name is None else self._flow_rates.get(name)
+
+        for f in flow_rate:
+            self.logger.info("Applying flow rate {}: {}".format(f, flow_rate[f]))
+            if flow_rate[f] is not None:
+                setattr(pipette.flow_rate, f, (flow_rate[f]) * multiplier)
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
