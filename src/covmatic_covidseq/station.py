@@ -200,6 +200,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._labware_load_offset = labware_load_offset
         self._task_name = ""
         self._offsets = []
+        self._current_flow_rate = {'aspirate': None, 'dispense': None, 'blow_out': None}
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
@@ -252,6 +253,10 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                 else:
                     raise Exception("None or multiple offset definition found for labware {}: {}".format(labware.load_name, offset))
 
+    def load_json_from_file(self, filepath):
+        self.logger.info("Opening file for json: {}".format(filepath))
+        with open(filepath, "r") as f:
+            return json.load(f)
 
     @property
     def current_directory(self):
@@ -272,6 +277,21 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             abspath = filename
         self.logger.debug("Absolute path: File {} returning path {}".format(filename, abspath))
         return abspath
+
+    def save_flow_rate(self, aspirate=None, dispense=None, blow_out=None):
+        self._current_flow_rate = {'aspirate': aspirate, 'dispense': dispense, 'blow_out': blow_out}
+
+    def apply_flow_rate(self, pipette, multiplier=1.0):
+        """ Apply the saved flow rate multiplied by *multiplier* to the passed pipette;
+            :param pipette: the pipette to apply the flow rates to
+            :param multiplier: a multiplier for the saved flow rate in order to have percentages of saved flow rates.
+        """
+        pipette.flow_rate.set_defaults(self._ctx.api_version)
+        for f in self._current_flow_rate:
+            self.logger.info("Applying flow rate {}: {}".format(f, self._current_flow_rate[f]))
+            if self._current_flow_rate[f] is not None:
+                setattr(pipette.flow_rate, f, self._current_flow_rate[f] * multiplier)
+
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
