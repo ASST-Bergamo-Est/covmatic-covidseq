@@ -21,8 +21,10 @@ def mix_well(pipette,
              min_z_difference=1.0,
              travel_speed=25.0,
              onto_beads=False,
-             side_ratio=0.6,
-             logger=logging.getLogger()):
+             beads_height: float = 8,
+             side_top_ratio=1.0,
+             side_bottom_ratio=0.4,
+             logger=logging.getLogger("mix_well")):
     """ Mix a well
         :param pipette: pipette object to use
         :param well: well to mix
@@ -32,33 +34,37 @@ def mix_well(pipette,
         :param min_z_difference: the minimum difference to have in the vertical axis
         :param travel_speed: the speed between different positions.
         :param onto_beads: if dispense directly onto beads to help resuspension.
-        :param side_ratio: float from 0 to 1, the ratio of side movement; 0 means no movement; 1 means entire well length
+        :param beads_height: the expected height of beads in well.
+        :param side_top_ratio: float from 0 to 1, the amount of side movement in percentage of well length at the top of the well.
+                               if 1.0 will touch the border of the well at the top.
+        :param side_bottom_ratio: float from 0 to 1, the amount of side movement in percentage of well length at the bottom of the well.
+                               if 0.0 will touch the center of the well at the bottom.
     """
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
 
     well_with_volume = WellWithVolume(well, headroom_height=0)
     height_min = well_with_volume.height
-    logger.info("Mix height min: {}".format(height_min))
 
     well_with_volume.fill(volume)
-    height_max = max(well_with_volume.height, height_min + min_z_difference, well.depth / 2 if onto_beads else 0)
-    logger.info("Mix height max: {}".format(height_max))
-    side_movement = (well.diameter or well.length) / 2 * side_ratio
+    height_max = max(well_with_volume.height, height_min + min_z_difference)
 
     aspirate_pos = [well.bottom((height_min + height_max)/2)]
     if onto_beads:
-        dispense_heights = [height_max]
+        dispense_heights = [beads_height]
         direction = get_magnets_direction(well)
         dispense_xy_directions = [(direction, 0), (direction, 1), (direction, -1)]
     else:
         dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
         dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
 
-    dispense_pos_center = [well.bottom(h) for h in islice(cycle(dispense_heights), repetitions)]
+    limited_dispense_heights = list(map(lambda x: min(x, well.depth-2), dispense_heights))
+    logger.info("Dispensing at height: {}".format(limited_dispense_heights))
 
-    dispense_pos_side = [w.move(Point(x=x_side * side_movement, y=y_side * side_movement))
-                         for w, (x_side, y_side) in zip(dispense_pos_center, cycle(dispense_xy_directions))]
+    well_bottom_and_side_amount = [(well.bottom(h), get_side_movement(well, h, side_top_ratio, side_bottom_ratio)) for h in islice(cycle(limited_dispense_heights), repetitions)]
+    dispense_pos_center = [w for (w, s) in well_bottom_and_side_amount]
+    dispense_pos_side = [w.move(Point(x=x_side * side_amount, y=y_side * side_amount))
+                         for (w, side_amount), (x_side, y_side) in zip(well_bottom_and_side_amount, cycle(dispense_xy_directions))]
 
     for i, (a, d_center, d_side) in enumerate(zip(cycle(aspirate_pos), dispense_pos_center, dispense_pos_side)):
         if i == (repetitions - 1) and last_dispense_flow_rate is not None:
@@ -92,6 +98,30 @@ def get_magnets_direction(well: Well):
     """
     return -get_magnets_opposite_direction(well)
 
+
+def get_side_movement(well, height,
+                      side_top_ratio=1.0,
+                      side_bottom_ratio=0.4) -> float:
+    """ Get the horizontal displacement from the center of the well incrementally:
+        - at top height will be well length * side_top_ratio,
+        - at bottom height will be length * side_bottom_ratio
+        - at passed height it will be the linear function between top and bottom;
+        :param well the well to extract the data from;
+        :param height: height in which to calculate the horizontal displacement;
+        :param side_top_ratio: the value to multipy with the well length to calculate the side movement in the top of the well
+        :param side_bottom_ratio: the value to multipy with the well length to calculate the side movement in the bottom of the well
+        :return the horizontal displacement corrisponding to the height passed. Limited always to half of the well lenght
+
+    """
+    depth = well.depth
+    length = well.diameter or well.length
+    side_top = side_top_ratio * length / 2
+    side_bottom = side_bottom_ratio * length / 2
+    ret = min(length / 2, side_bottom + (side_top - side_bottom) * height / depth)
+    print("Side top {}; side bottom {}; returning {}".format(side_top, side_bottom, ret))
+    return ret
+
+
 class LibraryStation(CovidseqBaseStation):
     def __init__(self,
                  ot_name="OT2",
@@ -106,6 +136,8 @@ class LibraryStation(CovidseqBaseStation):
                  skip_mix: bool = False,
                  mag_height=15,
                  flow_rate_json_filepath="library_flow_rates.json",
+                 beads_expected_height=10.0,
+                 slow_speed=25.0,
                  *args, **kwargs):
         super().__init__(
             ot_name=ot_name,
@@ -122,6 +154,8 @@ class LibraryStation(CovidseqBaseStation):
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
         self._mag_height = mag_height
+        self._beads_expected_height = beads_expected_height
+        self._slow_speed = slow_speed
         self._reagents_mts = []
 
     @labware_loader(0, "_tipracks300")
@@ -288,7 +322,7 @@ class LibraryStation(CovidseqBaseStation):
 
     def distribute_dirty(self, recipe_name, dest_labware,
                          pipette=None, mix_times=0, mix_volume=0, stage_name=None,
-                         onto_beads=False, side_ratio=0.6):
+                         onto_beads=False, side_top_ratio=1.0, side_bottom_ratio=0.4):
         recipe = self.get_recipe(recipe_name)
         reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
 
@@ -335,18 +369,22 @@ class LibraryStation(CovidseqBaseStation):
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)
-                    side_movement = (dest_well.length or dest_well.diameter) / 2 * side_ratio * get_magnets_direction(dest_well) if onto_beads else 0
-                    dest_central = dest_well.bottom(max(dest_well_with_volume.height, dest_well.depth / 2 if onto_beads else 0))
+                    height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads else dest_well_with_volume.height
+                    side_movement = get_side_movement(dest_well, height, side_top_ratio, side_bottom_ratio) if onto_beads else 0
+                    dest_central = dest_well.bottom(height)
                     dest_side = dest_central.move(Point(x=side_movement))
 
                     pipette.move_to(dest_central)
-                    pipette.dispense(volume_to_transfer, dest_side)
-                    pipette.move_to(dest_central)
+                    pipette.move_to(dest_side, speed=self._slow_speed)
+                    pipette.dispense(volume_to_transfer)
+                    pipette.move_to(dest_central, speed=self._slow_speed)
 
                     volume -= volume_to_transfer
 
                 if mix_volume != 0 and mix_times != 0:
-                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times), onto_beads=onto_beads, side_ratio=side_ratio)
+                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times),
+                             onto_beads=onto_beads, beads_height=self._beads_expected_height,
+                             side_top_ratio=side_top_ratio, side_bottom_ratio=side_bottom_ratio)
 
                 pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
                 pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
@@ -406,8 +444,8 @@ class LibraryStation(CovidseqBaseStation):
                            last_steps=3,
                            last_steps_min_height=0.1,
                            last_transfer_volume_ratio=0.1,
-                           side_top_ratio=1,
-                           side_bottom_ratio=0.2,
+                           side_top_ratio=1.0,
+                           side_bottom_ratio=0.4,
                            stage_name="rem sup",
                            supernatant_flow_rate="supernatant removal",
                            discard_flow_rate="supernatant discard"):
@@ -429,22 +467,6 @@ class LibraryStation(CovidseqBaseStation):
         self.logger.info("First phase needs {} steps".format(first_phase_steps))
 
         sources = self.get_samples_first_row_for_labware(labware)
-
-        def get_side_movement(well, height) -> float:
-            """ Get the horizontal displacement from the center of the well incrementally:
-                - at top height will be well length * side_top_ratio,
-                - at bottom height will be length * side_bottom_ratio
-                - at passed height it will be the linear function between top and bottom;
-                :param well the well to extract the data from;
-                :param height: height in which to calculate the horizontal displacement;
-                :return the horizontal displacement corrisponding to the height passed. Limited always to half of the well lenght
-
-            """
-            depth = well.depth
-            length = well.diameter or well.length
-            side_top = side_top_ratio * length
-            side_bottom = side_bottom_ratio * length
-            return min(length/2, side_bottom + (side_top-side_bottom) * height / depth)
 
         def discard_liquid(pip, source_well, last_phase=False, top_height=-5):
             """ Discard the supernatant in the waste well.
@@ -496,9 +518,9 @@ class LibraryStation(CovidseqBaseStation):
                                        available_volume - pipette.current_volume - self._pipette_chooser.get_air_gap(pipette))
 
                     self.logger.info("Aspirating at {:.1f} volume {:.1f}".format(current_height, current_volume))
-                    side_offset = side_direction * get_side_movement(s, current_height)
+                    side_offset = side_direction * get_side_movement(s, current_height, side_top_ratio, side_bottom_ratio)
                     self.logger.info("Side movement is {}".format(side_offset))
-                    pipette.move_to(s.bottom(current_height).move(Point(x=side_offset)), speed=self._slow_vertical_speed)
+                    pipette.move_to(s.bottom(current_height).move(Point(x=side_offset)), speed=self._very_slow_vertical_speed)
                     pipette.aspirate(current_volume)
                     remaining_volume -= current_volume
 

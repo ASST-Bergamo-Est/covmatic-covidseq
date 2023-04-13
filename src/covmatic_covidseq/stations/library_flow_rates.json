@@ -1,0 +1,12 @@
+{
+  "supernatant removal": {
+    "aspirate": 10,
+    "dispense": null,
+    "blow_out": null
+  },
+  "supernatant discard": {
+    "aspirate": null,
+    "dispense": null,
+    "blow_out": null
+  }
+}
