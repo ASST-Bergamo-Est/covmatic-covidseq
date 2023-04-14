@@ -341,6 +341,8 @@ class LibraryStation(CovidseqBaseStation):
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette)
 
+        mix_enabled = mix_volume != 0 and mix_times != 0
+
         for i, (dest_well) in enumerate(destinations):
             volume = recipe.volume_final
             num_transfers = math.ceil(volume / pipette_available_volume)
@@ -369,7 +371,7 @@ class LibraryStation(CovidseqBaseStation):
                         source.aspirate(pipette)
 
                     dest_well_with_volume.fill(volume_to_transfer)
-                    height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads else dest_well_with_volume.height
+                    height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads and not mix_enabled else dest_well_with_volume.height
                     side_movement = get_side_movement(dest_well, height, side_top_ratio, side_bottom_ratio) if onto_beads else 0
                     dest_central = dest_well.bottom(height)
                     dest_side = dest_central.move(Point(x=side_movement))
@@ -381,7 +383,7 @@ class LibraryStation(CovidseqBaseStation):
 
                     volume -= volume_to_transfer
 
-                if mix_volume != 0 and mix_times != 0:
+                if mix_enabled:
                     mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times),
                              onto_beads=onto_beads, beads_height=self._beads_expected_height,
                              side_top_ratio=side_top_ratio, side_bottom_ratio=side_bottom_ratio)
