@@ -395,6 +395,19 @@ class LibraryStation(CovidseqBaseStation):
             else:
                 source.use_volume_only(volume)
 
+    def mix_dirty(self, locations, mix_volume, mix_times, stage_name="mix", pipette=None):
+        if pipette is None:
+            pipette = self._pipette_chooser.get_pipette(mix_volume, True)
+        self.logger.info("Mixing {} volume {}, times {} with pipette {}".format(stage_name, mix_volume, mix_times, pipette))
+
+        for i, location in enumerate(locations):
+            if self.run_stage(self.build_stage("{} {}/{}".format(stage_name, i+1, len(locations)))):
+                self.pick_up(pipette)
+                pipette.move_to(location.top())
+                mix_well(pipette, location, mix_volume, mix_times)
+                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+                self.drop(pipette)
+
     def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
         sources = self.get_samples_first_row_for_labware(source_labware)
         destinations = self.get_samples_first_row_for_labware(destination_labware)
@@ -588,7 +601,8 @@ class LibraryStation(CovidseqBaseStation):
         sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._work_plate)
         destinations = self.get_samples_first_row_for_labware(self._mag_plate)
         self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
-        self.transfer_dirty(sources_cov2, destinations, volume=10, mix_times=5, mix_volume=20, stage_name="COV2")
+        self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
+        self.mix_dirty(destinations, mix_volume=40, mix_times=10, stage_name="mix")
 
         self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "COV12_TRASH")
         self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
@@ -603,7 +617,8 @@ class LibraryStation(CovidseqBaseStation):
 
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
-        self.distribute_dirty("ST2", self._mag_plate, mix_times=10, mix_volume=20)
+        self.distribute_dirty("ST2", self._mag_plate)
+        self.mix_dirty(self.get_samples_first_row_for_labware(self._mag_plate), mix_volume=50, mix_times=10, stage_name="mix")
 
         self.engage_magnets()
         self.delay_start_count()
