@@ -457,7 +457,7 @@ class LibraryStation(CovidseqBaseStation):
                            pipette=None,
                            min_steps=3,
                            last_steps=3,
-                           last_steps_min_height=0.1,
+                           last_steps_min_height=0.0,
                            last_transfer_volume_ratio=0.1,
                            side_top_ratio=1.0,
                            side_bottom_ratio=0.4,
