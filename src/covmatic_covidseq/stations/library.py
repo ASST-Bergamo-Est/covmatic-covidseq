@@ -627,7 +627,7 @@ class LibraryStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.delay_wait_to_elapse(minutes=3)
 
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 50)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
         self.disengage_magnets()
 
         self.load_flow_rate()
