@@ -1,6 +1,6 @@
 {
   "supernatant removal": {
-    "aspirate": 10,
+    "aspirate": 5,
     "dispense": null,
     "blow_out": null
   },
