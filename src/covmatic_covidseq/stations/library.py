@@ -493,7 +493,7 @@ class LibraryStation(CovidseqBaseStation):
             destination = waste.top(top_height)
 
             if last_phase:
-                destination = destination.move(Point(x=waste.length*0.4))
+                destination = destination.move(Point(x=waste.length*0.3))
 
             self.apply_flow_rate(pip, discard_flow_rate)
 
