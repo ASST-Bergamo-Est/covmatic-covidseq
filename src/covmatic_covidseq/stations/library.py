@@ -405,6 +405,7 @@ class LibraryStation(CovidseqBaseStation):
                 self.pick_up(pipette)
                 pipette.move_to(location.top())
                 mix_well(pipette, location, mix_volume, mix_times)
+                pipette.move_to(location.top(), speed=self._slow_vertical_speed)
                 pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
                 self.drop(pipette)
 
@@ -644,6 +645,8 @@ class LibraryStation(CovidseqBaseStation):
         # for now make plate available for user interaction now.
         self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
                                            "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
+
+        self.engage_magnets()
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:
