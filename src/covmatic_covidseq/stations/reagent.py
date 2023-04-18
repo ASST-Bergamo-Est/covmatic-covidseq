@@ -376,6 +376,5 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
 
 
-
 if __name__ == "__main__":
     ReagentStation(num_samples=96, metadata={'apiLevel': '2.7'}).simulate()

@@ -184,15 +184,6 @@ class FlowRates:
 
 
 class CovidseqBaseStation(RobotStationABC, ABC):
-    """ Base class that has shared information about Covidseq protocol.
-        Covidseq is executed by two robot:
-        - REAGENT OT: prepares solutions from reagents
-        - LIBRARY OT: dispenses solutions prepared to the samples.
-        Between these two robot we've a reagent plate going back and forth,
-        so a common class that assigns everything shared is helpful.
-
-        Note: this is an abstract class because each OT will have its own implementation.
-    """
     def __init__(self,
                  robot_manager_host: str = None,
                  robot_manager_port: int = None,
@@ -209,7 +200,14 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
                  labware_load_offset: bool = False,
                  *args, **kwargs):
-        """ Class initialization.
+        """ Base class that has shared information about Covidseq protocol.
+            Covidseq is executed by two robot:
+            - REAGENT OT: prepares solutions from reagents
+            - LIBRARY OT: dispenses solutions prepared to the samples.
+            Between these two robot we've a reagent plate going back and forth,
+            so a common class that assigns everything shared is helpful.
+            **Note**: this is an abstract class because each OT will have its own implementation.
+
             :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
         """
         self._config = ConfigFile(config_json_filepath)
