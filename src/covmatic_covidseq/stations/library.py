@@ -458,15 +458,20 @@ class LibraryStation(CovidseqBaseStation):
                            pipette=None,
                            volume_overhead=0.05,
                            min_steps=3,
-                           last_steps=3,
-                           last_steps_min_height=0.0,
-                           last_transfer_volume_ratio=0.1,
+                           deep_steps=0,
+                           deep_steps_min_height=0.0,
+                           deep_transfer_volume_ratio=0.1,
                            side_top_ratio=1.0,
                            side_bottom_ratio=0.4,
                            stage_name="rem sup",
                            supernatant_flow_rate="supernatant removal",
                            discard_flow_rate="supernatant discard"):
         """ Supernatant removal.
+            :param volume_overhead: additional fraction of *volume* to be aspirated;
+                   it has been seen that aspirating at very low speed will aspirate less than expected.
+            :param deep_steps: number of steps to reach the deep_steps_min_height and back; for deep removal;
+            :param deep_steps_min_height: minimum height to reach during the deep removal phase;
+            :param deep_transfer_volume_ratio: the volume to reserve for the deep step phase
             :param side_top_ratio: the value to multipy with the well length to calculate the side movement in the top of the well
             :param side_bottom_ratio: the value to multipy with the well length to calculate the side movement in the bottom of the well
         """
@@ -477,10 +482,11 @@ class LibraryStation(CovidseqBaseStation):
 
         available_volume = self._pipette_chooser.get_max_volume(pipette, consider_air_gap=True)
 
-        first_phase_volume = volume * (1-last_transfer_volume_ratio)
         volume = volume * (1 + volume_overhead)
         self.logger.info("Volume with overhead is {}".format(volume))
 
+        deep_phase_volume = volume * deep_transfer_volume_ratio if deep_steps > 0 else 0
+        first_phase_volume = volume - deep_phase_volume
         self.logger.info("First phase volume is: {}".format(first_phase_volume))
 
         first_phase_steps = max(min_steps, math.ceil(first_phase_volume/available_volume))
@@ -547,28 +553,29 @@ class LibraryStation(CovidseqBaseStation):
                     if pipette.current_volume == available_volume:
                         discard_liquid(pipette, s)
 
-                last_phase_total_volume = min(available_volume, volume * last_transfer_volume_ratio * last_steps)
-                last_phase_volume_per_step = last_phase_total_volume / last_steps
-                self.logger.info("Last phase volume per step: {}".format(last_phase_volume_per_step))
+                if deep_steps > 0:
+                    last_phase_total_volume = min(available_volume, volume * deep_transfer_volume_ratio * deep_steps)
+                    last_phase_volume_per_step = last_phase_total_volume / deep_steps
+                    self.logger.info("Last phase volume per step: {}".format(last_phase_volume_per_step))
 
-                if (available_volume - pipette.current_volume) < last_phase_total_volume:
-                    discard_liquid(pipette, s)
+                    if (available_volume - pipette.current_volume) < last_phase_total_volume:
+                        discard_liquid(pipette, s)
 
-                start_height = source_with_volume.height
+                    start_height = source_with_volume.height
 
-                heights = [last_steps_min_height + (start_height-last_steps_min_height) / last_steps * i for i in range(last_steps)]
-                side_offsets = [side_direction * get_side_movement(s, h) for h in heights]
-                points = [s.bottom(h).move(Point(x=side)) for h, side in zip(heights, side_offsets)]
+                    heights = [deep_steps_min_height + (start_height - deep_steps_min_height) / deep_steps * i for i in range(deep_steps)]
+                    side_offsets = [side_direction * get_side_movement(s, h) for h in heights]
+                    points = [s.bottom(h).move(Point(x=side)) for h, side in zip(heights, side_offsets)]
 
-                self.logger.info("Last phase needs {} steps at heights: {}".format(last_steps, heights))
-                self.apply_flow_rate(pipette, supernatant_flow_rate, 0.5)
+                    self.logger.info("Last phase needs {} steps at heights: {}".format(deep_steps, heights))
+                    self.apply_flow_rate(pipette, supernatant_flow_rate, 0.5)
 
-                for p in reversed(points):
-                    pipette.move_to(p, speed=self._very_slow_vertical_speed)
-                    pipette.aspirate(last_phase_volume_per_step)
+                    for p in reversed(points):
+                        pipette.move_to(p, speed=self._very_slow_vertical_speed)
+                        pipette.aspirate(last_phase_volume_per_step)
 
-                for p in points:
-                    pipette.move_to(p, speed=self._very_slow_vertical_speed)
+                    for p in points:
+                        pipette.move_to(p, speed=self._very_slow_vertical_speed)
 
                 discard_liquid(pipette, s, last_phase=True)
 
