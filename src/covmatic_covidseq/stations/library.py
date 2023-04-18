@@ -134,7 +134,7 @@ class LibraryStation(CovidseqBaseStation):
                  magdeck_slot=7,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
-                 mag_height=15,
+                 mag_height=14,
                  flow_rate_json_filepath="library_flow_rates.json",
                  beads_expected_height=10.0,
                  slow_speed=25.0,
@@ -666,7 +666,7 @@ class LibraryStation(CovidseqBaseStation):
             self.logger.info("Skipped thermal cycle {} because no previous step run.".format(cycle_name))
 
     def engage_magnets(self, height=None):
-        self._magdeck.engage(height or self._mag_height)
+        self._magdeck.engage(height_from_base=height or self._mag_height)
 
     def disengage_magnets(self):
         self._magdeck.disengage()
