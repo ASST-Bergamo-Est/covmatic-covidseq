@@ -199,6 +199,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
                  config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
                  labware_load_offset: bool = False,
+                 drop_loc_l: float = -10,
+                 drop_loc_r: float = 20,
                  *args, **kwargs):
         """ Base class that has shared information about Covidseq protocol.
             Covidseq is executed by two robot:
@@ -209,10 +211,13 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             **Note**: this is an abstract class because each OT will have its own implementation.
 
             :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
+            :param drop_loc_l: offset for dropping to the left side (should be positive) in mm
+            :param drop_loc_r: offset for dropping to the right side (should be negative) in mm
         """
         self._config = ConfigFile(config_json_filepath)
         super().__init__(robot_manager_host=robot_manager_host or self._config.robot_manager_host,
                          robot_manager_port=robot_manager_port or self._config.robot_manager_port,
+                         drop_loc_l=drop_loc_l, drop_loc_r=drop_loc_r,
                          *args, **kwargs)
         self._reagent_plate_labware_name = reagent_plate_labware_name
         self._reagent_plate_max_volume = reagent_plate_max_volume
