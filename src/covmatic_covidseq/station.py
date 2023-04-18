@@ -316,6 +316,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def load_flow_rate(self, name=None):
         """ Load a defined flow rate configuration
             Data is stored in the json file passed to the *load_from_json* function of the FlowRates class.
+            **Note**: you must use *apply_flow_rate* to make the loaded flow rate effective
             :param name: the identifier of the flow rate in the json file.
         """
         self._current_flow_rate = self._flow_rates.default_flow_rate if name is None else self._flow_rates.get(name)

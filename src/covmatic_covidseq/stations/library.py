@@ -456,6 +456,7 @@ class LibraryStation(CovidseqBaseStation):
                            waste,
                            volume,
                            pipette=None,
+                           volume_overhead=0.05,
                            min_steps=3,
                            last_steps=3,
                            last_steps_min_height=0.0,
@@ -477,6 +478,9 @@ class LibraryStation(CovidseqBaseStation):
         available_volume = self._pipette_chooser.get_max_volume(pipette, consider_air_gap=True)
 
         first_phase_volume = volume * (1-last_transfer_volume_ratio)
+        volume = volume * (1 + volume_overhead)
+        self.logger.info("Volume with overhead is {}".format(volume))
+
         self.logger.info("First phase volume is: {}".format(first_phase_volume))
 
         first_phase_steps = max(min_steps, math.ceil(first_phase_volume/available_volume))
