@@ -25,15 +25,19 @@ class ReagentPlateHelper:
         :param well_volume_limit: [ul] maximum allowable volume in a well. Used to calculate where to dispense reagents
         :param logger: optional, a logger object
     """
-    def __init__(self, labware, samples_per_row, well_volume_limit: float = 100, logger=logging.getLogger(__name__)):
+    def __init__(self, samples_per_row, num_rows=8, num_cols=12, well_volume_limit: float = 100, logger=logging.getLogger(__name__)):
         if len(samples_per_row) != 8:
             raise ReagentPlateException("Samples per row passed {} values; expected 8".format(len(samples_per_row)))
+        self._logger = logger
         self._well_volume_limit = well_volume_limit
-        self._labware = labware
+        self._num_rows = num_rows
+        self._num_cols = num_cols
         self._samples_per_row = samples_per_row
+        self._all_columns = list(range(self._num_cols))
+        self._logger.info("all columns are {}".format(self._all_columns))
         self._assigned_columns = []
         self._reagents = {}
-        self._logger = logger
+
 
 
     @property
@@ -56,9 +60,9 @@ class ReagentPlateHelper:
         if volume_available_per_sample is None:
             volume_available_per_sample = volume_with_overhead_per_sample
 
-        self._logger.info("Labware {} has {} rows".format(self._labware, len(self._labware.rows())))
+        self._logger.info("Labware has {} rows".format(self._num_rows))
 
-        if len(self._labware.rows()) == 1:              # 1-well reservoirs
+        if self._num_rows == 1:              # 1-well reservoirs
             total_volumes = [volume_with_overhead_per_sample * sum(self._samples_per_row)]
         else:                                           # 8-well reservoirs
             total_volumes = [s * volume_with_overhead_per_sample for s in self._samples_per_row]
@@ -68,8 +72,6 @@ class ReagentPlateHelper:
         wells_needed = [math.ceil(t/self._well_volume_limit) for t in total_volumes]
         num_columns = max(wells_needed)
         free_column_index = self._next_free_column_index
-        columns = self._labware.columns()[free_column_index:free_column_index + num_columns]
-        available_wells = [w for c in columns for w in c]
 
         base_volume = max(total_volumes) / max(wells_needed)
         self._logger.debug("Base volume is: {}".format(base_volume))
@@ -83,22 +85,33 @@ class ReagentPlateHelper:
                 v = v-dispensed_volume
             rows.append(row)
 
-        volumes = [v for r in zip(*rows) for v in r]
-        self._logger.debug("Available wells: {}".format(available_wells))
-        self._logger.debug("Dispensed vols: {}".format(volumes))
-        wells_with_volume = [(w, v) for w, v in zip(available_wells, volumes) if v > 0]
+        for i, r in enumerate(rows):
+            self._logger.info("Row {}: {}".format(i, r))
 
-        volume_fraction = volume_available_per_sample / volume_with_overhead_per_sample
-        self._logger.info("Volume fraction is {}".format(volume_fraction))
-
-        wells_available_volume = [(w, v*volume_fraction) for w, v in wells_with_volume]
-
+        columns = self._all_columns[free_column_index:free_column_index + num_columns]
+        volumes_in_columns = list(zip(*rows))
         self._assigned_columns.append({
             "name": reagent_name,
-            "columns": columns,
-            "wells": wells_with_volume,
-            "wells_available_volume": wells_available_volume
+            "columns": [{c: volumes_in_columns[i]} for i, c in enumerate(columns)]
         })
+        self._logger.info("Assigned columns: {}".format(self._assigned_columns))
+        # available_wells = [w for c in columns for w in c]
+        # volumes = [v for r in zip(*rows) for v in r]
+        # self._logger.debug("Available wells: {}".format(available_wells))
+        # self._logger.debug("Dispensed vols: {}".format(volumes))
+        # wells_with_volume = [(w, v) for w, v in zip(available_wells, volumes) if v > 0]
+        #
+        # volume_fraction = volume_available_per_sample / volume_with_overhead_per_sample
+        # self._logger.info("Volume fraction is {}".format(volume_fraction))
+        #
+        # wells_available_volume = [(w, v*volume_fraction) for w, v in wells_with_volume]
+        #
+        # self._assigned_columns.append({
+        #     "name": reagent_name,
+        #     "columns": columns,
+        #     "wells": wells_with_volume,
+        #     "wells_available_volume": wells_available_volume
+        # })
         self._logger.info("Assigned: {}".format(self._assigned_columns[-1]))
 
     def get_columns_for_reagent(self, reagent_name: str):
@@ -391,7 +404,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def load_reagent_plate_in_slot(self, slot):
         self.logger.info("Initializing Reagent plate helper on slot {}".format(slot))
         plate = self.load_labware_with_offset(self._reagent_plate_labware_name, slot, "Shared reagent plate")
-        self._reagent_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._reagent_plate_max_volume)
+        self._reagent_plate_helper = ReagentPlateHelper(self.num_samples_in_rows, well_volume_limit=self._reagent_plate_max_volume)
         for r in self.recipes:
             if r.use_reagent_plate:
                 self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
@@ -400,7 +413,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def load_wash_plate_in_slot(self, slot):
         self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
         plate = self.load_labware_with_offset(self._wash_plate_labware_name, slot, "Shared wash plate")
-        self._wash_plate_helper = ReagentPlateHelper(plate, self.num_samples_in_rows, self._wash_plate_max_volume)
+        self._wash_plate_helper = ReagentPlateHelper(self.num_samples_in_rows, num_rows=1, well_volume_limit=self._wash_plate_max_volume)
         for r in self.recipes:
             if r.use_wash_plate:
                 self._wash_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
