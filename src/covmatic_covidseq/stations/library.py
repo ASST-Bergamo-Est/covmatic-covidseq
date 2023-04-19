@@ -122,16 +122,46 @@ def get_side_movement(well, height,
     return ret
 
 
+class PlateManager:
+    def __init__(self, plate_name, ctx, logger=None):
+        self._logger = logger or logging.getLogger(self.__class__.__name__)
+        self._ctx = ctx
+        self._plate_name = plate_name
+        self._current_slot = None
+
+    @property
+    def current_plate(self):
+        return self._ctx.loaded_labwares[self._current_slot]
+
+    @property
+    def current_slot(self):
+        if self._current_slot is None:
+            raise Exception("{} plate is not loaded.".format(self._plate_name))
+        return self._current_slot
+
+    @current_slot.setter
+    def current_slot(self, slot):
+        if (self._current_slot is None) != (self._current_slot is None):
+            if self._current_slot is None:
+                message = "{} plate not loaded yet and unloading requested."
+            else:
+                message = "{} plate already loaded."
+            message += " Current plate slot is {}; requested slot is {}."
+            raise Exception(message.format(self._plate_name, self._current_slot, slot))
+        self.logger.info("Loading {} plate in slot: {}".format(self._plate_name, slot))
+        self._current_slot = slot
+
+
 class LibraryStation(CovidseqBaseStation):
     def __init__(self,
                  ot_name="OT2",
-                 tipracks20_slots: Tuple[str, ...] = ("9", "6", "3"),
-                 tipracks300_slots: Tuple[str, ...] = ("2",),
-                 input_plate_slot=10,
-                 reagent_plate_slot=1,
-                 wash_plate_slot=5,
-                 work_plate_slot=4,
-                 magdeck_slot=7,
+                 tipracks20_slots: Tuple[str, ...] = ("4", "5"),
+                 tipracks300_slots: Tuple[str, ...] = ("6",),
+                 input_plate_slot=1,
+                 # reagent_plate_slot=1,
+                 wash_plate_slot=9,
+                 # work_plate_slot=4,
+                 magdeck_slot=1,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
                  mag_height=14,
@@ -145,9 +175,9 @@ class LibraryStation(CovidseqBaseStation):
             *args, **kwargs)
         self._pipette_chooser = PipetteChooser()
         self._input_plate_slot = input_plate_slot
-        self._reagent_plate_slot = reagent_plate_slot
+        # self._reagent_plate_slot = reagent_plate_slot
         self._wash_plate_slot = wash_plate_slot
-        self._work_plate_slot = work_plate_slot
+        # self._work_plate_slot = work_plate_slot
         self._magdeck_slot = magdeck_slot
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._skip_mix = skip_mix
@@ -157,6 +187,8 @@ class LibraryStation(CovidseqBaseStation):
         self._beads_expected_height = beads_expected_height
         self._slow_speed = slow_speed
         self._reagents_mts = []
+        self._reagent_plate_manager = PlateManager("reagent", self._ctx)
+        self._sample_plate_manager = PlateManager("sample", self._ctx)
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -189,57 +221,82 @@ class LibraryStation(CovidseqBaseStation):
         self._mag_plate = self._magdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Mag plate")
         self.apply_offset_to_labware(self._mag_plate)
 
-    @labware_loader(3, '_work_plate')
-    def load_work_plate(self):
-        self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
-                                                  self._work_plate_slot,
-                                                  "Work plate")
-        self.apply_offset_to_labware(self._work_plate)
-
+    # @labware_loader(3, '_work_plate')
+    # def load_work_plate(self):
+    #     self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
+    #                                               self._work_plate_slot,
+    #                                               "Work plate")
+    #     self.apply_offset_to_labware(self._work_plate)
+    #
     @labware_loader(4, '_reagent_plate')
     def load_reagent_plate(self):
-        self._reagent_plate = self.load_reagent_plate_in_slot(self._reagent_plate_slot)
+        self._reagent_plate = self.load_reagent_plate_in_slot(2)
 
     @labware_loader(4, '_wash_plate')
     def load_wash_plate(self):
         self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
 
-    @labware_loader(5, '_input_plate')
-    def load_input_plate(self):
-        self._input_plate = self.load_labware_with_offset("nest_96_wellplate_100ul_pcr_full_skirt",
-                                                   self._input_plate_slot,
-                                                   "Sample input plate")
+    # @labware_loader(5, '_input_plate')
+    # def load_input_plate(self):
+    #     self._input_plate = self.load_labware_with_offset("nest_96_wellplate_100ul_pcr_full_skirt",
+    #                                                self._input_plate_slot,
+    #                                                "Sample input plate")
 
-    @labware_loader(99, '_reagents_mts')
-    def load_reagents_mts(self):
-        """ Loads reagents as MultiTubeSource to be used in distribute functions """
-        self.logger.info("Loading recipes multi tube sources")
-        for recipe in filter(lambda x: x.use_wash_plate or x.use_reagent_plate, self.recipes):
-            self.logger.info("Loading recipe {}".format(recipe.name))
-            if recipe.use_wash_plate:
-                helper = self.wash_plate_helper
-            else:
-                helper = self.reagent_plate_helper
+    # @labware_loader(99, '_reagents_mts')
+    # def load_reagents_mts(self):
+    #     """ Loads reagents as MultiTubeSource to be used in distribute functions """
+    #     self.logger.info("Loading recipes multi tube sources")
+    #     for recipe in filter(lambda x: x.use_wash_plate or x.use_reagent_plate, self.recipes):
+    #         self.logger.info("Loading recipe {}".format(recipe.name))
+    #         if recipe.use_wash_plate:
+    #             helper = self.wash_plate_helper
+    #         else:
+    #             helper = self.reagent_plate_helper
+    #
+    #         source_wells = helper.get_mts_8_channel_for_labware(recipe.name, self._mag_plate)
+    #         self.logger.info("Recipe {} source wells are: {}".format(recipe.name, source_wells))
+    #
+    #         source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
+    #         for w, v in source_wells:
+    #             source.append_tube_with_vol(w, v)
+    #
+    #         self.logger.info("Now source is: {}".format(source))
+    #         self._reagents_mts.append({"recipe_name": recipe.name,
+    #                                    "multi_tube_source": source,
+    #                                    "rows_count": helper.get_rows_count()})
 
-            source_wells = helper.get_first_row_available_volume(recipe.name)
-            self.logger.info("Recipe {} source wells are: {}".format(recipe.name, source_wells))
 
-            source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
-            for w, v in source_wells:
-                source.append_tube_with_vol(w, v)
 
-            self.logger.info("Now source is: {}".format(source))
-            self._reagents_mts.append({"recipe_name": recipe.name,
-                                       "multi_tube_source": source,
-                                       "rows_count": helper.get_rows_count(recipe.name)})
+    def pick_reagent_plate(self, plate_name="REAGENT_EMPTY"):
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_manager.current_slot), plate_name)
+        self._reagent_plate_manager.current_slot = None
 
-    def get_reagent_mts_for_recipe(self, recipe_name):
-        recipes = list(filter(lambda x: x['recipe_name'] == recipe_name, self._reagents_mts))
+    def drop_reagent_plate_in_slot(self, slot, plate_name="REAGENT_FULL"):
+        self._reagent_plate_manager.current_slot = slot
+        self.robot_drop_plate(slot, plate_name)
 
-        if len(recipes) < 1 or len(recipes) > 1:
-            raise Exception("None or multiple recipe found for name {}: {}".format(recipe_name, recipes))
+    def pick_sample_plate(self, plate_name="SAMPLES"):
+        self.robot_pick_plate("SLOT{}".format(self._sample_plate_manager.current_slot), plate_name)
+        self._reagent_plate_manager.current_slot = None
 
-        return recipes[0]
+    def drop_sample_plate_in_slot(self, slot, plate_name="SAMPLES"):
+        self._sample_plate_manager.current_slot = slot
+        self.robot_drop_plate(slot, plate_name)
+
+    def get_recipe_mts(self, recipe_name, labware):
+        recipe = self.get_recipe(recipe_name)
+
+        if recipe.use_wash_plate:
+            helper = self.wash_plate_helper
+            labware = self._wash_plate
+        else:
+            helper = self.reagent_plate_helper
+            labware = self.current_reagent_plate
+
+        return {
+            "multi_tube_source": helper.get_mts_8_channel_for_labware(recipe_name, labware),
+            "rows_count": helper.get_rows_count()
+        }
 
     def _tipracks(self) -> dict:
         return {
@@ -259,7 +316,7 @@ class LibraryStation(CovidseqBaseStation):
                                    If None it is set to the half of the pipette minimum volume
                """
         recipe = self.get_recipe(recipe_name)
-        reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
+        reagent_mts = self.get_recipe_mts(recipe_name)
 
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
@@ -324,7 +381,7 @@ class LibraryStation(CovidseqBaseStation):
                          pipette=None, mix_times=0, mix_volume=0, stage_name=None,
                          onto_beads=False, side_top_ratio=1.0, side_bottom_ratio=0.4):
         recipe = self.get_recipe(recipe_name)
-        reagent_mts = self.get_reagent_mts_for_recipe(recipe_name)
+        reagent_mts = self.get_recipe_mts(recipe_name)
 
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(recipe.volume_final)
@@ -589,75 +646,79 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle(self._work_plate, "ANNEAL")
 
     def first_strand_cdna(self):
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        self.thermal_cycle(self._work_plate, "FSS")
+        pass
+        # self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        # self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
+        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        # self.thermal_cycle(self._work_plate, "FSS")
 
     def amplify_cdna(self):
-        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_FULL")
-        sources = self.get_samples_first_row_for_labware(self._work_plate)
-        destinations_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
-        destinations_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
-        self.transfer_dirty(sources, destinations_cov1, volume=5, mix_times=5, mix_volume=20, stage_name="COV1")
-        self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
-
-        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
-        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-                                           "SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
-        self.thermal_cycle(self._work_plate, "PCR")
+        pass
+        # self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_FULL")
+        # sources = self.get_samples_first_row_for_labware(self._work_plate)
+        # destinations_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
+        # destinations_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
+        # self.transfer_dirty(sources, destinations_cov1, volume=5, mix_times=5, mix_volume=20, stage_name="COV1")
+        # self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
+        #
+        # self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
+        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+        #                                    "SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
+        # self.thermal_cycle(self._work_plate, "PCR")
 
     def tagment_pcr_amplicons(self):
-        self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_FULL")
-        sources_cov1 = self.get_samples_first_row_for_labware(self._work_plate)
-        sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._work_plate)
-        destinations = self.get_samples_first_row_for_labware(self._mag_plate)
-        self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
-        self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
-        self.mix_dirty(destinations, mix_volume=40, mix_times=10, stage_name="mix")
-
-        self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "COV12_TRASH")
-        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-                                           "SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
-        self.thermal_cycle(self._work_plate, "TAG")
+        pass
+        # self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_FULL")
+        # sources_cov1 = self.get_samples_first_row_for_labware(self._work_plate)
+        # sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._work_plate)
+        # destinations = self.get_samples_first_row_for_labware(self._mag_plate)
+        # self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
+        # self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
+        # self.mix_dirty(destinations, mix_volume=40, mix_times=10, stage_name="mix")
+        #
+        # self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "COV12_TRASH")
+        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+        #                                    "SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
+        # self.thermal_cycle(self._work_plate, "TAG")
 
     def post_tagmentation_cleanup(self):
-        self.disengage_magnets()
-
-        self.robot_transfer_plate_internal("SLOT{}".format(self._work_plate_slot),
-                                           "SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
-
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-
-        self.distribute_dirty("ST2", self._mag_plate)
-        self.mix_dirty(self.get_samples_first_row_for_labware(self._mag_plate), mix_volume=50, mix_times=10, stage_name="mix")
-
-        self.engage_magnets()
-        self.delay_start_count()
-
-        self.robot_drop_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        self.delay_wait_to_elapse(minutes=3)
-
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
-        self.disengage_magnets()
-
-        self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1", onto_beads=True)
-        self.engage_magnets()
-        self.delay(mins=3)
-
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
-        self.disengage_magnets()
-
-        self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2", onto_beads=True)
-
-        # for now make plate available for user interaction now.
-        self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-                                           "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
-
-        self.engage_magnets()
+        pass
+        # self.disengage_magnets()
+        #
+        # self.robot_transfer_plate_internal("SLOT{}".format(self._work_plate_slot),
+        #                                    "SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
+        #
+        # self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        #
+        # self.distribute_dirty("ST2", self._mag_plate)
+        # self.mix_dirty(self.get_samples_first_row_for_labware(self._mag_plate), mix_volume=50, mix_times=10, stage_name="mix")
+        #
+        # self.engage_magnets()
+        # self.delay_start_count()
+        #
+        # self.robot_drop_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
+        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        # self.delay_wait_to_elapse(minutes=3)
+        #
+        # self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
+        # self.disengage_magnets()
+        #
+        # self.load_flow_rate()
+        # self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1", onto_beads=True)
+        # self.engage_magnets()
+        # self.delay(mins=3)
+        #
+        # self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
+        # self.disengage_magnets()
+        #
+        # self.load_flow_rate()
+        # self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2", onto_beads=True)
+        #
+        # # for now make plate available for user interaction now.
+        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
+        #                                    "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
+        #
+        # self.engage_magnets()
 
     def thermal_cycle(self, labware, cycle_name):
         if self._run_stage:

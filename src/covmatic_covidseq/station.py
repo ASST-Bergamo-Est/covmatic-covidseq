@@ -8,10 +8,21 @@ from typing import Optional
 from covmatic_robotstation.robot_station import RobotStationABC, instrument_loader, labware_loader
 from abc import ABC, abstractmethod
 
+from covmatic_stations.multi_tube_source import MultiTubeSource
 from opentrons import types
 from opentrons.protocol_api.labware import Labware
 
 from .recipe import Recipe
+
+
+class UpdatableMultiTubeSource(MultiTubeSource):
+    def update_wells(self, wells_list):
+        if len(wells_list) != len(self._source_tubes_and_vol):
+            raise Exception("wells must have same length as original tube sources.")
+
+        for i, source_and_vol in enumerate(self._source_tubes_and_vol):
+            self.logger.info("MTS {}: updating source {} with {}".format(self._name, i, wells_list[i]))
+            source_and_vol["source"] = wells_list[i]
 
 
 class ReagentPlateException(Exception):
@@ -90,28 +101,35 @@ class ReagentPlateHelper:
 
         columns = self._all_columns[free_column_index:free_column_index + num_columns]
         volumes_in_columns = list(zip(*rows))
+
+
+        # available_wells = [w for c in columns for w in c]
+        volumes = [v for r in zip(*rows) for v in r]
+        first_row_volumes = [r[0] for r in zip(*rows)]
+        self._logger.info("First row volumes: {}".format(first_row_volumes))
+
+        # self._logger.debug("Available wells: {}".format(available_wells))
+        self._logger.debug("Dispensed vols: {}".format(volumes))
+        dispensed_volumes = [v for v in volumes if v > 0]
+
+        volume_fraction = volume_available_per_sample / volume_with_overhead_per_sample
+        self._logger.info("Volume fraction is {}".format(volume_fraction))
+
+        available_volumes = [v*volume_fraction for v in dispensed_volumes]
+        first_row_available_volumes = [v*volume_fraction for v in first_row_volumes]
+
+        mts_8_channel = UpdatableMultiTubeSource(reagent_name)
+        for v in first_row_available_volumes:
+            mts_8_channel.append_tube_with_vol(None, v)
+        self._logger.info("MultiTubeSource has: {}".format(mts_8_channel.locations_and_vol))
+
         self._assigned_columns.append({
             "name": reagent_name,
-            "columns": [{c: volumes_in_columns[i]} for i, c in enumerate(columns)]
+            "columns": [{c: volumes_in_columns[i]} for i, c in enumerate(columns)],
+            "volumes": dispensed_volumes,
+            "available_volumes": available_volumes,
+            "mts_8_channel": mts_8_channel
         })
-        self._logger.info("Assigned columns: {}".format(self._assigned_columns))
-        # available_wells = [w for c in columns for w in c]
-        # volumes = [v for r in zip(*rows) for v in r]
-        # self._logger.debug("Available wells: {}".format(available_wells))
-        # self._logger.debug("Dispensed vols: {}".format(volumes))
-        # wells_with_volume = [(w, v) for w, v in zip(available_wells, volumes) if v > 0]
-        #
-        # volume_fraction = volume_available_per_sample / volume_with_overhead_per_sample
-        # self._logger.info("Volume fraction is {}".format(volume_fraction))
-        #
-        # wells_available_volume = [(w, v*volume_fraction) for w, v in wells_with_volume]
-        #
-        # self._assigned_columns.append({
-        #     "name": reagent_name,
-        #     "columns": columns,
-        #     "wells": wells_with_volume,
-        #     "wells_available_volume": wells_available_volume
-        # })
         self._logger.info("Assigned: {}".format(self._assigned_columns[-1]))
 
     def get_columns_for_reagent(self, reagent_name: str):
@@ -131,15 +149,19 @@ class ReagentPlateHelper:
             return list(filter(lambda x: x[0] in first_row, data["wells"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-    def get_first_row_available_volume(self, reagent_name: str):
+    def get_mts_8_channel_for_labware(self, reagent_name: str, labware):
         if reagent_name in self._assigned_reagents:
             data = self._assigned_columns[self._assigned_reagents.index(reagent_name)]
-            first_row = [c[0] for c in data["columns"]]
-            return list(filter(lambda x: x[0] in first_row, data["wells_available_volume"]))
+            first_row_wells = []
+            for column in data['columns']:
+                column_index = list(column.keys())[0]
+                first_row_wells.append(labware.columns()[column_index][0])
+            data["mts_8_channel"].update_wells(first_row_wells)
+            return data["mts_8_channel"]
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-    def get_rows_count(self, reagent_name: str):
-        return len(self.get_columns_for_reagent(reagent_name)[0])
+    def get_rows_count(self):
+        return self._num_rows
 
 
 class ConfigFileException(Exception):
