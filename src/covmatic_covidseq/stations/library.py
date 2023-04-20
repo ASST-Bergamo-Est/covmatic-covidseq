@@ -127,6 +127,7 @@ class PlateManager:
         self._ctx = protocol_context
         self._plate_name = plate_name
         self._current_slot = None
+        self._logger.info("Plate manager initialized plate {}".format(plate_name))
 
     @property
     def current_plate(self):
@@ -242,7 +243,7 @@ class LibraryStation(CovidseqBaseStation):
 
     @labware_loader(4, '_hs_plate')
     def load_hs_plate(self):
-        self._hs_plate = self._hsdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Shaker plate")
+        self._hs_plate = self._hsdeck.load_labware("opentrons_96_pcr_adapter_nest_wellplate_100ul_pcr_full_skirt", "Shaker plate")
         self.apply_offset_to_labware(self._hs_plate)
 
 
@@ -253,11 +254,8 @@ class LibraryStation(CovidseqBaseStation):
     #                                               "Work plate")
     #     self.apply_offset_to_labware(self._work_plate)
     #
-    @labware_loader(4, '_reagent_plate')
-    def load_reagent_plate(self):
-        self._reagent_plate = self.load_reagent_plate_in_slot(2)
 
-    @labware_loader(4, '_wash_plate')
+    @labware_loader(5, '_wash_plate')
     def load_wash_plate(self):
         self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
 
