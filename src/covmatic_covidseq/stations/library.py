@@ -118,20 +118,19 @@ def get_side_movement(well, height,
     side_top = side_top_ratio * length / 2
     side_bottom = side_bottom_ratio * length / 2
     ret = min(length / 2, side_bottom + (side_top - side_bottom) * height / depth)
-    print("Side top {}; side bottom {}; returning {}".format(side_top, side_bottom, ret))
     return ret
 
 
 class PlateManager:
-    def __init__(self, plate_name, ctx, logger=None):
+    def __init__(self, plate_name, protocol_context=None, logger=None):
         self._logger = logger or logging.getLogger(self.__class__.__name__)
-        self._ctx = ctx
+        self._ctx = protocol_context
         self._plate_name = plate_name
         self._current_slot = None
 
     @property
     def current_plate(self):
-        return self._ctx.loaded_labwares[self._current_slot]
+        return self.ctx.loaded_labwares[self.current_slot]
 
     @property
     def current_slot(self):
@@ -148,8 +147,18 @@ class PlateManager:
                 message = "{} plate already loaded."
             message += " Current plate slot is {}; requested slot is {}."
             raise Exception(message.format(self._plate_name, self._current_slot, slot))
-        self.logger.info("Loading {} plate in slot: {}".format(self._plate_name, slot))
+        self._logger.info("Loading {} plate in slot: {}".format(self._plate_name, slot))
         self._current_slot = slot
+
+    @property
+    def ctx(self):
+        if self._ctx is None:
+            raise Exception("Protocol context is not set or is None. Please set ctx before using {}".format(self.__class__.__name__))
+        return self._ctx
+
+    @ctx.setter
+    def ctx(self, protocol_context):
+        self._ctx = protocol_context
 
 
 class LibraryStation(CovidseqBaseStation):
@@ -187,8 +196,13 @@ class LibraryStation(CovidseqBaseStation):
         self._beads_expected_height = beads_expected_height
         self._slow_speed = slow_speed
         self._reagents_mts = []
-        self._reagent_plate_manager = PlateManager("reagent", self._ctx)
-        self._sample_plate_manager = PlateManager("sample", self._ctx)
+        self._reagent_plate_manager = PlateManager("reagent")
+        self._sample_plate_manager = PlateManager("sample")
+
+    def pre_loaders_initializations(self):
+        super().pre_loaders_initializations()
+        self._reagent_plate_manager.ctx = self._ctx
+        self._sample_plate_manager.ctx = self._ctx
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -265,25 +279,38 @@ class LibraryStation(CovidseqBaseStation):
     #                                    "multi_tube_source": source,
     #                                    "rows_count": helper.get_rows_count()})
 
+    def _chech_and_open_hs_if_needed(self, slot):
+        if slot == self._hsdeck_slot:
+            self._hsdeck.open_labware_latch()
 
+    def _chech_and_close_hs_if_needed(self, slot):
+        if slot == self._hsdeck_slot:
+            self._hsdeck.close_labware_latch()
+
+    def _pick_managed_plate(self, manager: PlateManager, plate_name: str):
+        self._chech_and_open_hs_if_needed(manager.current_slot)
+        self.robot_pick_plate("SLOT{}".format(manager.current_slot), plate_name)
+        manager.current_slot = None
+
+    def _drop_managed_plate(self, manager: PlateManager, slot, plate_name: str):
+        manager.current_slot = slot
+        self._chech_and_open_hs_if_needed(manager.current_slot)
+        self.robot_drop_plate(manager.current_slot, plate_name)
+        self._chech_and_close_hs_if_needed(manager.current_slot)
 
     def pick_reagent_plate(self, plate_name="REAGENT_EMPTY"):
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_manager.current_slot), plate_name)
-        self._reagent_plate_manager.current_slot = None
+        self._pick_managed_plate(self._reagent_plate_manager, plate_name)
 
     def drop_reagent_plate_in_slot(self, slot, plate_name="REAGENT_FULL"):
-        self._reagent_plate_manager.current_slot = slot
-        self.robot_drop_plate(slot, plate_name)
+        self._drop_managed_plate(self._reagent_plate_manager, slot, plate_name)
 
     def pick_sample_plate(self, plate_name="SAMPLES"):
-        self.robot_pick_plate("SLOT{}".format(self._sample_plate_manager.current_slot), plate_name)
-        self._reagent_plate_manager.current_slot = None
+        self._pick_managed_plate(self._sample_plate_manager, plate_name)
 
     def drop_sample_plate_in_slot(self, slot, plate_name="SAMPLES"):
-        self._sample_plate_manager.current_slot = slot
-        self.robot_drop_plate(slot, plate_name)
+        self._drop_managed_plate(self._sample_plate_manager, slot, plate_name)
 
-    def get_recipe_mts(self, recipe_name, labware):
+    def get_recipe_mts(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
 
         if recipe.use_wash_plate:
@@ -291,7 +318,7 @@ class LibraryStation(CovidseqBaseStation):
             labware = self._wash_plate
         else:
             helper = self.reagent_plate_helper
-            labware = self.current_reagent_plate
+            labware = self._reagent_plate_manager.current_plate
 
         return {
             "multi_tube_source": helper.get_mts_8_channel_for_labware(recipe_name, labware),
@@ -639,11 +666,11 @@ class LibraryStation(CovidseqBaseStation):
                 self.drop(pipette)
 
     def anneal_rna(self):
-        if self.run_stage("load samples"):
-            self.pause("Load sample plate on slot {}".format(self._input_plate_slot), home=False)
-        self.robot_drop_plate("SLOT{}".format(self._work_plate_slot), "CDNA1_FULL")
-        self.transfer_samples(8.5, self._input_plate, self._work_plate, mix_times=5, mix_volume=16)
-        self.thermal_cycle(self._work_plate, "ANNEAL")
+        if self.run_stage("load input plate"):
+            self.pause("Load input plate on slot {}".format(self._magdeck_slot), home=False)
+        self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
+        self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate, mix_times=5, mix_volume=16)
+        # self.thermal_cycle(self._work_plate, "ANNEAL")
 
     def first_strand_cdna(self):
         pass
