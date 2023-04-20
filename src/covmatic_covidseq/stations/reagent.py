@@ -118,7 +118,8 @@ class ReagentStation(CovidseqBaseStation):
 
     @labware_loader(2, '_reagent_plate')
     def load_reagent_plate(self):
-        self._reagent_plate = self.load_reagent_plate_in_slot(self._reagent_plate_slot)
+        self._reagent_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
+                                                   self._reagent_plate_slot, 'shared reagent plate')
 
     @labware_loader(2, '_wash_plate')
     def load_wash_plate(self):
@@ -167,14 +168,14 @@ class ReagentStation(CovidseqBaseStation):
                                     If None it is set to the half of the pipette minimum volume
         """
         source = self.get_tube_for_recipe(reagent_name)
-        dest_wells_with_volume = self.reagent_plate_helper.get_wells_with_volume(reagent_name)
+        dest_wells_with_volume = self.reagent_plate_helper.get_wells_with_volume(reagent_name, self._reagent_plate)
 
         self.logger.info("Filling reagent plate with {}".format(reagent_name))
         self.fill_shared_plate(reagent_name, source, dest_wells_with_volume, pipette, disposal_volume)
 
     def fill_wash_plate(self, reagent_name, pipette=None, disposal_volume=None):
         source = self.get_tube_for_recipe(reagent_name)
-        dest_wells_with_volume = self.wash_plate_helper.get_wells_with_volume(reagent_name)
+        dest_wells_with_volume = self.wash_plate_helper.get_wells_with_volume(reagent_name, self._wash_plate)
 
         self.logger.info("Filling wash plate with {}".format(reagent_name))
         self.fill_shared_plate(reagent_name, source, dest_wells_with_volume, pipette, disposal_volume)
@@ -248,7 +249,6 @@ class ReagentStation(CovidseqBaseStation):
 
         if pipette.has_tip:
             self.drop(pipette)
-
 
     def fill_wells(self, reagent_name, wells, pipette=None, disposal_volume=None):
         """ Distribute reagent prepared for recipe passed to wells.
