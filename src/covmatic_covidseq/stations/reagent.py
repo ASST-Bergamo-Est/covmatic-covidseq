@@ -29,6 +29,7 @@ class ReagentStation(CovidseqBaseStation):
                  reagents_tempdeck_slot="10",
                  reagent_chilled_tubes_json="reagents_chilled_tubes.json",
                  reagents_wash_slot="11",
+                 disposal_volume_ratio=0.25,
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
@@ -40,6 +41,7 @@ class ReagentStation(CovidseqBaseStation):
         self._wash_plate_slot = wash_plate_slot
         self._reagents_tempdeck_slot = reagents_tempdeck_slot
         self._reagents_wash_slot = reagents_wash_slot
+        self._disposal_volume_ratio = disposal_volume_ratio
         self._pipette_chooser = PipetteChooser()
         self._tubes_list = []
         self._reagents_chilled_tubes = []
@@ -189,7 +191,7 @@ class ReagentStation(CovidseqBaseStation):
             pipette = self._pipette_chooser.get_pipette(remaining_volume_to_aspirate)
 
         if disposal_volume is None:
-            disposal_volume = pipette.min_volume / 4
+            disposal_volume = pipette.min_volume * self._disposal_volume_ratio
 
         self.logger.debug("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
 
@@ -269,7 +271,7 @@ class ReagentStation(CovidseqBaseStation):
             pipette = self._pipette_chooser.get_pipette(total_volume_to_aspirate)
 
         if disposal_volume is None:
-            disposal_volume = pipette.min_volume / 2
+            disposal_volume = pipette.min_volume * self._disposal_volume_ratio
         self.logger.debug("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
 
         pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
