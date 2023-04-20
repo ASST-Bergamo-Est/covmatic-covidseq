@@ -131,6 +131,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
         self.load_offsets()
+        self._load_reagent_plate()
 
     def load_offsets(self):
         """ Warning: offset must be loaded only for opentrons_execute.
@@ -276,14 +277,12 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self.apply_offset_to_labware(labware)
         return labware
 
-    def load_reagent_plate_in_slot(self, slot):
-        self.logger.info("Initializing Reagent plate helper on slot {}".format(slot))
-        plate = self.load_labware_with_offset(self._reagent_plate_labware_name, slot, "Shared reagent plate")
+    def _load_reagent_plate(self):
+        self.logger.info("Initializing Reagent plate helper")
         self._reagent_plate_helper = ReagentPlateHelper(self.num_samples_in_rows, well_volume_limit=self._reagent_plate_max_volume)
         for r in self.recipes:
             if r.use_reagent_plate:
                 self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
-        return plate
 
     def load_wash_plate_in_slot(self, slot):
         self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
