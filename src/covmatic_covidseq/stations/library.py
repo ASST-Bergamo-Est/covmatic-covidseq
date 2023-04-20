@@ -246,6 +246,14 @@ class LibraryStation(CovidseqBaseStation):
         self._hs_plate = self._hsdeck.load_labware("opentrons_96_pcr_adapter_nest_wellplate_100ul_pcr_full_skirt", "Shaker plate")
         self.apply_offset_to_labware(self._hs_plate)
 
+    @labware_loader(4, '_tcdeck')
+    def load_tcdeck(self):
+        self._tcdeck = self._ctx.load_module("thermocyclerModuleV2")
+
+    @labware_loader(5, '_tc_plate')
+    def load_tc_plate(self):
+        self._tc_plate = self._tcdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Thermocycler plate")
+        self.apply_offset_to_labware(self._tc_plate)
 
     # @labware_loader(3, '_work_plate')
     # def load_work_plate(self):
