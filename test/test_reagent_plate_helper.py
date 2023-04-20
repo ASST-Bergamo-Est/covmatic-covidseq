@@ -1,11 +1,9 @@
 import unittest
 
-from covmatic_stations.multi_tube_source import MultiTubeSource
-
 from .common import logger
 from unittest.mock import MagicMock
 
-from src.covmatic_covidseq.station import ReagentPlateHelper, ReagentPlateException
+from src.covmatic_covidseq.reagent_helper import ReagentPlateHelper, ReagentPlateException, MultiTubeSource
 
 COLUMN_1 = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
 COLUMN_2 = ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]

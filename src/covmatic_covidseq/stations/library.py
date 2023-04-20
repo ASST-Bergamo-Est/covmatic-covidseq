@@ -1,16 +1,14 @@
 import logging
 import math
-from itertools import repeat, cycle, islice
+from itertools import cycle, islice
 from typing import Tuple
 
 from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
 from opentrons.protocol_api.labware import Well
 from opentrons.types import Point
 
-from ..utils import get_labware_json_from_filename
 from ..pipette_chooser import PipetteChooser
 from ..station import CovidseqBaseStation, labware_loader, instrument_loader
-from covmatic_stations.multi_tube_source import MultiTubeSource
 
 
 def mix_well(pipette,
