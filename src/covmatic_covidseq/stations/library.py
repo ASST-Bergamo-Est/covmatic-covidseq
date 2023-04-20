@@ -167,10 +167,9 @@ class LibraryStation(CovidseqBaseStation):
                  tipracks20_slots: Tuple[str, ...] = ("4", "5"),
                  tipracks300_slots: Tuple[str, ...] = ("6",),
                  input_plate_slot=1,
-                 # reagent_plate_slot=1,
                  wash_plate_slot=9,
-                 # work_plate_slot=4,
                  magdeck_slot=1,
+                 heater_shaker_slot=3,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
                  mag_height=14,
@@ -188,6 +187,7 @@ class LibraryStation(CovidseqBaseStation):
         self._wash_plate_slot = wash_plate_slot
         # self._work_plate_slot = work_plate_slot
         self._magdeck_slot = magdeck_slot
+        self._hsdeck_slot = heater_shaker_slot
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._skip_mix = skip_mix
         self._tipracks20_slots = tipracks20_slots
@@ -234,6 +234,17 @@ class LibraryStation(CovidseqBaseStation):
     def load_mag_plate(self):
         self._mag_plate = self._magdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Mag plate")
         self.apply_offset_to_labware(self._mag_plate)
+
+    @labware_loader(3, '_hsdeck')
+    def load_hsdeck(self):
+        self._hsdeck = self._ctx.load_module('heaterShakerModuleV1', self._hsdeck_slot)
+        self._hsdeck.close_labware_latch()
+
+    @labware_loader(4, '_hs_plate')
+    def load_hs_plate(self):
+        self._hs_plate = self._hsdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Shaker plate")
+        self.apply_offset_to_labware(self._hs_plate)
+
 
     # @labware_loader(3, '_work_plate')
     # def load_work_plate(self):
