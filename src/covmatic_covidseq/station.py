@@ -132,14 +132,15 @@ class ReagentPlateHelper:
         })
         self._logger.info("Assigned: {}".format(self._assigned_columns[-1]))
 
-    def get_columns_for_reagent(self, reagent_name: str):
+    def get_columns_for_reagent(self, reagent_name: str, labware):
         if reagent_name in self._assigned_reagents:
-            return self._assigned_columns[self._assigned_reagents.index(reagent_name)]["columns"]
+            return [labware.columns()[k] for column in self._assigned_columns[self._assigned_reagents.index(reagent_name)]["columns"] for k in column]
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-    def get_wells_with_volume(self, reagent_name: str):
+    def get_wells_with_volume(self, reagent_name: str, labware):
         if reagent_name in self._assigned_reagents:
-            return self._assigned_columns[self._assigned_reagents.index(reagent_name)]["wells"]
+            wells = [w for c in self.get_columns_for_reagent(reagent_name, labware) for w in c]
+            return list(zip(wells, self._assigned_columns[self._assigned_reagents.index(reagent_name)]["volumes"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
     def get_first_row_dispensed_volume(self, reagent_name: str):
@@ -149,7 +150,7 @@ class ReagentPlateHelper:
             return list(filter(lambda x: x[0] in first_row, data["wells"]))
         raise ReagentPlateException("Get mapping: reagent {} not found in list.".format(reagent_name))
 
-    def get_mts_8_channel_for_labware(self, reagent_name: str, labware):
+    def get_mts_8_channel_for_labware(self, reagent_name: str, labware) -> MultiTubeSource:
         if reagent_name in self._assigned_reagents:
             data = self._assigned_columns[self._assigned_reagents.index(reagent_name)]
             first_row_wells = []
