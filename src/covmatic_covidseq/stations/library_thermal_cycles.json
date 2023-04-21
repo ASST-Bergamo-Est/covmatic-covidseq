@@ -1,0 +1,14 @@
+{
+  "ANNEAL": {
+    "lid_temperature": 105,
+    "volume": 17,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 65,
+        "seconds": 180
+      }
+    ],
+    "final_temperature": 4
+  }
+}

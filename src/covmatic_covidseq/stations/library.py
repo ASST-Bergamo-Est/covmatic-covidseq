@@ -174,6 +174,7 @@ class LibraryStation(CovidseqBaseStation):
                  skip_mix: bool = False,
                  mag_height=14,
                  flow_rate_json_filepath="library_flow_rates.json",
+                 thermal_cycles_json_filepath="library_thermal_cycles.json",
                  beads_expected_height=10.0,
                  slow_speed=25.0,
                  *args, **kwargs):
@@ -201,6 +202,7 @@ class LibraryStation(CovidseqBaseStation):
         self._sample_plate_manager = PlateManager("sample")
         self._hs_start_time = None
         self._hs_requested_seconds = None
+        self._thermal_cycles = self.load_json_from_file(self.check_and_get_absolute_path(thermal_cycles_json_filepath))
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
@@ -257,46 +259,9 @@ class LibraryStation(CovidseqBaseStation):
         self._tc_plate = self._tcdeck.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", "Thermocycler plate")
         self.apply_offset_to_labware(self._tc_plate)
 
-    # @labware_loader(3, '_work_plate')
-    # def load_work_plate(self):
-    #     self._work_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt",
-    #                                               self._work_plate_slot,
-    #                                               "Work plate")
-    #     self.apply_offset_to_labware(self._work_plate)
-    #
-
     @labware_loader(5, '_wash_plate')
     def load_wash_plate(self):
         self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
-
-    # @labware_loader(5, '_input_plate')
-    # def load_input_plate(self):
-    #     self._input_plate = self.load_labware_with_offset("nest_96_wellplate_100ul_pcr_full_skirt",
-    #                                                self._input_plate_slot,
-    #                                                "Sample input plate")
-
-    # @labware_loader(99, '_reagents_mts')
-    # def load_reagents_mts(self):
-    #     """ Loads reagents as MultiTubeSource to be used in distribute functions """
-    #     self.logger.info("Loading recipes multi tube sources")
-    #     for recipe in filter(lambda x: x.use_wash_plate or x.use_reagent_plate, self.recipes):
-    #         self.logger.info("Loading recipe {}".format(recipe.name))
-    #         if recipe.use_wash_plate:
-    #             helper = self.wash_plate_helper
-    #         else:
-    #             helper = self.reagent_plate_helper
-    #
-    #         source_wells = helper.get_mts_8_channel_for_labware(recipe.name, self._mag_plate)
-    #         self.logger.info("Recipe {} source wells are: {}".format(recipe.name, source_wells))
-    #
-    #         source = MultiTubeSource(vertical_speed=self._slow_vertical_speed)
-    #         for w, v in source_wells:
-    #             source.append_tube_with_vol(w, v)
-    #
-    #         self.logger.info("Now source is: {}".format(source))
-    #         self._reagents_mts.append({"recipe_name": recipe.name,
-    #                                    "multi_tube_source": source,
-    #                                    "rows_count": helper.get_rows_count()})
 
     def _check_and_open_hs_if_needed(self, slot):
         if slot == self._hsdeck_slot:
