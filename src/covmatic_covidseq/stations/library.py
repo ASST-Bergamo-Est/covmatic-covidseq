@@ -1,5 +1,6 @@
 import logging
 import math
+import time
 from itertools import cycle, islice
 from typing import Tuple
 
@@ -198,6 +199,8 @@ class LibraryStation(CovidseqBaseStation):
         self._reagents_mts = []
         self._reagent_plate_manager = PlateManager("reagent")
         self._sample_plate_manager = PlateManager("sample")
+        self._hs_start_time = None
+        self._hs_requested_seconds = None
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
@@ -338,6 +341,33 @@ class LibraryStation(CovidseqBaseStation):
         self._check_and_open_hs_if_needed(from_slot)
         self.robot_trash_plate(from_slot, trash_slot, plate_name)
 
+    def shake(self, speed_rpm, seconds, blocking=True):
+        self.logger.info("Requested shake at {} rpm for {} seconds".format(speed_rpm, seconds))
+        self._hsdeck.close_labware_latch()
+        self._hsdeck.set_and_wait_for_shake_speed(speed_rpm)
+        if blocking:
+            self.home()
+            self.delay(mins=seconds / 60, msg="Shaking for {:.1f} minutes at {} rpm".format(seconds / 60, speed_rpm),
+                       home=False)
+            self._hsdeck.deactivate_shaker()
+        else:
+            self._hs_start_time = time.monotonic()
+            self._hs_requested_seconds = seconds
+            self.logger.info("Shaker start time: {}".format(self._hs_start_time))
+
+    def shake_wait_for_finish(self):
+        if self._hs_requested_seconds is None or self._hs_start_time is None:
+            raise Exception("Shake function with blocking=False must be called before waiting for fininish.")
+
+        seconds_remaining = self._hs_requested_seconds - (time.monotonic() - self._hs_start_time)
+        mins_remaining = seconds_remaining / 60
+
+        self.delay(mins=mins_remaining,
+                   msg="Completing shake for {:.1f} minutes at {} rpm".format(mins_remaining, self._hsdeck.target_speed),
+                   home=False)
+
+        self._hsdeck.deactivate_shaker()
+        self._hs_requested_seconds = None
 
     def get_recipe_mts(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
@@ -698,15 +728,22 @@ class LibraryStation(CovidseqBaseStation):
         if self.run_stage("load input plate"):
             self.pause("Load input plate on slot {}".format(self._magdeck_slot), home=False)
         self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
-        self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate, mix_times=5, mix_volume=16)
-        # self.thermal_cycle(self._work_plate, "ANNEAL")
+        self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
+        self.shake(1000, 60, blocking=False)
+        self.trash_plate(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
+        self.shake_wait_for_finish()
+        self.transfer_sample_plate_internal(self._tc_slot, "CDNA1_THERMAL")
+        self.thermal_cycle("ANNEAL")
 
     def first_strand_cdna(self):
-        pass
-        # self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        # self.distribute_dirty("FS Mix", self._work_plate, mix_times=5, mix_volume=20)
-        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        # self.thermal_cycle(self._work_plate, "FSS")
+        self.transfer_sample_plate_internal(self._hsdeck_slot, "CDNA1")
+        self.drop_reagent_plate_in_slot(self._magdeck_slot, "REAGENT_FULL")
+        self.distribute_dirty("FS Mix", self._hs_plate)
+        self.shake(1000, 60, blocking=False)
+        self.pick_reagent_plate("REAGENT_EMPTY")
+        self.shake_wait_for_finish()
+        self.transfer_sample_plate_internal(self._tc_slot, "FSS_THERMAL")
+        self.thermal_cycle("FSS")
 
     def amplify_cdna(self):
         pass
