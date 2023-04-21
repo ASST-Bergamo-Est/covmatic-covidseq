@@ -91,6 +91,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  drop_loc_r: float = 20,
                  *args, **kwargs):
         """ Base class that has shared information about Covidseq protocol.
+            **Note**: you must stop opentrons-robot-server service before starting this protocol to avoid
+                      problems with modules.
+            
             Covidseq is executed by two robot:
             - REAGENT OT: prepares solutions from reagents
             - LIBRARY OT: dispenses solutions prepared to the samples.
@@ -105,7 +108,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._config = ConfigFile(config_json_filepath)
         super().__init__(robot_manager_host=robot_manager_host or self._config.robot_manager_host,
                          robot_manager_port=robot_manager_port or self._config.robot_manager_port,
-                         drop_loc_l=drop_loc_l, drop_loc_r=drop_loc_r,
+                         drop_loc_l=drop_loc_l, drop_loc_r=drop_loc_r, dummy_lights=False,
                          *args, **kwargs)
         self._reagent_plate_labware_name = reagent_plate_labware_name
         self._reagent_plate_max_volume = reagent_plate_max_volume
@@ -132,6 +135,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         super().pre_loaders_initializations()
         self.load_offsets()
         self._load_reagent_plate()
+        self._ctx.set_rail_lights(True)
 
     def load_offsets(self):
         """ Warning: offset must be loaded only for opentrons_execute.
