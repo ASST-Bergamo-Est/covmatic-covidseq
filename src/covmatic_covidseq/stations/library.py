@@ -187,6 +187,7 @@ class LibraryStation(CovidseqBaseStation):
         # self._work_plate_slot = work_plate_slot
         self._magdeck_slot = magdeck_slot
         self._hsdeck_slot = heater_shaker_slot
+        self._tc_slot = 7       # Fixed, thermocycler cannot be in another position
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._skip_mix = skip_mix
         self._tipracks20_slots = tipracks20_slots
@@ -294,24 +295,24 @@ class LibraryStation(CovidseqBaseStation):
     #                                    "multi_tube_source": source,
     #                                    "rows_count": helper.get_rows_count()})
 
-    def _chech_and_open_hs_if_needed(self, slot):
+    def _check_and_open_hs_if_needed(self, slot):
         if slot == self._hsdeck_slot:
             self._hsdeck.open_labware_latch()
 
-    def _chech_and_close_hs_if_needed(self, slot):
+    def _check_and_close_hs_if_needed(self, slot):
         if slot == self._hsdeck_slot:
             self._hsdeck.close_labware_latch()
 
     def _pick_managed_plate(self, manager: PlateManager, plate_name: str):
-        self._chech_and_open_hs_if_needed(manager.current_slot)
+        self._check_and_open_hs_if_needed(manager.current_slot)
         self.robot_pick_plate("SLOT{}".format(manager.current_slot), plate_name)
         manager.current_slot = None
 
     def _drop_managed_plate(self, manager: PlateManager, slot, plate_name: str):
         manager.current_slot = slot
-        self._chech_and_open_hs_if_needed(manager.current_slot)
+        self._check_and_open_hs_if_needed(manager.current_slot)
         self.robot_drop_plate(manager.current_slot, plate_name)
-        self._chech_and_close_hs_if_needed(manager.current_slot)
+        self._check_and_close_hs_if_needed(manager.current_slot)
 
     def pick_reagent_plate(self, plate_name="REAGENT_EMPTY"):
         self._pick_managed_plate(self._reagent_plate_manager, plate_name)
@@ -324,6 +325,19 @@ class LibraryStation(CovidseqBaseStation):
 
     def drop_sample_plate_in_slot(self, slot, plate_name="SAMPLES"):
         self._drop_managed_plate(self._sample_plate_manager, slot, plate_name)
+
+    def transfer_sample_plate_internal(self, to_slot, plate_name="SAMPLES"):
+        self._check_and_open_hs_if_needed(self._sample_plate_manager.current_slot)
+        self._check_and_open_hs_if_needed(to_slot)
+        self.robot_transfer_plate_internal(self._sample_plate_manager.current_slot, to_slot, plate_name)
+        self._sample_plate_manager.current_slot = None
+        self._sample_plate_manager.current_slot = to_slot
+        self._check_and_close_hs_if_needed(to_slot)
+
+    def trash_plate(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
+        self._check_and_open_hs_if_needed(from_slot)
+        self.robot_trash_plate(from_slot, trash_slot, plate_name)
+
 
     def get_recipe_mts(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
@@ -762,9 +776,9 @@ class LibraryStation(CovidseqBaseStation):
         #
         # self.engage_magnets()
 
-    def thermal_cycle(self, labware, cycle_name):
+    def thermal_cycle(self, cycle_name):
         if self._run_stage:
-            self.dual_pause("Transfer plate {} to the thermal cycler and execute cycle: {}".format(labware, cycle_name))
+            self.dual_pause("Execute cycle: {}".format(cycle_name))
         else:
             self.logger.info("Skipped thermal cycle {} because no previous step run.".format(cycle_name))
 
