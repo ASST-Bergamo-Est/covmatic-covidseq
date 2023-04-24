@@ -775,7 +775,7 @@ class LibraryStation(CovidseqBaseStation):
         self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
         self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
         self.shake(1000, 60, blocking=False)
-        self.trash_plate(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
+        self.trash_plate_with_checks(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
         self.shake_wait_for_finish()
         self.transfer_sample_plate_internal(self._tc_slot, "CDNA1_THERMAL")
         self.thermal_cycle("ANNEAL")
@@ -791,33 +791,46 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle("FSS")
 
     def amplify_cdna(self):
-        pass
-        # self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "COV12_FULL")
-        # sources = self.get_samples_first_row_for_labware(self._work_plate)
-        # destinations_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
-        # destinations_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
-        # self.transfer_dirty(sources, destinations_cov1, volume=5, mix_times=5, mix_volume=20, stage_name="COV1")
-        # self.transfer_dirty(sources, destinations_cov2, volume=5, mix_times=5, mix_volume=20, stage_name="COV2")
-        #
-        # self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "CDNA_TRASH")
-        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-        #                                    "SLOT{}".format(self._work_plate_slot), "COV12_THERMAL")
-        # self.thermal_cycle(self._work_plate, "PCR")
+        self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1")
+        self._drop_plate_with_checks(self._hsdeck_slot, "COV12_FULL")
+
+        self._sample_plate_manager.current_slot = None
+        self._sample_plate_manager.current_slot = self._hsdeck_slot
+
+        sources = self.get_samples_first_row_for_labware(self._mag_plate)
+        destinations_cov1 = self.get_samples_first_row_for_labware(self._sample_plate_manager.current_plate)
+        destinations_cov2 = self.get_samples_first_row_COV2_for_labware(self._sample_plate_manager.current_plate)
+        self.transfer_dirty(sources, destinations_cov1, volume=5, stage_name="COV1")
+        self.transfer_dirty(sources, destinations_cov2, volume=5, stage_name="COV2")
+
+        self.shake(1000, 60, blocking=False)
+        self.trash_plate_with_checks(self._magdeck_slot, plate_name="CDNA1")
+        self.shake_wait_for_finish()
+
+        self.transfer_sample_plate_internal(self._tc_slot, "COV12_THERMAL")
+        self.thermal_cycle("PCR")
 
     def tagment_pcr_amplicons(self):
-        pass
-        # self.robot_drop_plate("SLOT{}MAG".format(self._magdeck_slot), "TAG1_FULL")
-        # sources_cov1 = self.get_samples_first_row_for_labware(self._work_plate)
-        # sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._work_plate)
-        # destinations = self.get_samples_first_row_for_labware(self._mag_plate)
-        # self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
-        # self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
+        self.transfer_sample_plate_internal(self._magdeck_slot, "COV12")
+        self._drop_plate_with_checks(self._hsdeck_slot, "TAG1_FULL")
+
+        self._sample_plate_manager.current_slot = None
+        self._sample_plate_manager.current_slot = self._hsdeck_slot
+
+        sources_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
+        sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
+        destinations = self.get_samples_first_row_for_labware(self._sample_plate_manager.current_plate)
+        self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
+        self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
+
         # self.mix_dirty(destinations, mix_volume=40, mix_times=10, stage_name="mix")
-        #
-        # self.robot_trash_plate("SLOT{}".format(self._work_plate_slot), "SLOT1", "COV12_TRASH")
-        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-        #                                    "SLOT{}".format(self._work_plate_slot), "TAG1_THERMAL")
-        # self.thermal_cycle(self._work_plate, "TAG")
+        self.shake(1000, 60, blocking=False)
+        self.trash_plate_with_checks(self._magdeck_slot, plate_name="COV12")
+
+        self.shake_wait_for_finish()
+        self.transfer_sample_plate_internal(self._tc_slot, "TAG1")
+
+        self.thermal_cycle("TAG")
 
     def post_tagmentation_cleanup(self):
         pass
