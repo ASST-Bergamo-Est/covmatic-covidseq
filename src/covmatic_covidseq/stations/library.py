@@ -331,6 +331,9 @@ class LibraryStation(CovidseqBaseStation):
             self.logger.info("Requested shake at {} rpm for {} seconds".format(speed_rpm, seconds))
             self._hsdeck.close_labware_latch()
             self._hsdeck.set_and_wait_for_shake_speed(speed_rpm)
+
+            seconds = self.get_mix_seconds(seconds)
+
             if blocking:
                 self.home()
                 self.delay(mins=seconds / 60, msg="Shaking for {:.1f} minutes at {} rpm".format(seconds / 60, speed_rpm),
@@ -431,6 +434,9 @@ class LibraryStation(CovidseqBaseStation):
 
     def get_mix_times(self, requested_mix_times):
         return 1 if self._skip_mix else requested_mix_times
+
+    def get_mix_seconds(self, requested_time):
+        return 1 if self._skip_mix else requested_time
 
     def distribute_clean(self, recipe_name, dest_labware, pipette=None, disposal_volume=None):
         """ Transfer from the passed recipe from the reagent plate.
