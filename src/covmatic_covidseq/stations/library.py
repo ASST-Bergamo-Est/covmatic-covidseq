@@ -172,6 +172,7 @@ class LibraryStation(CovidseqBaseStation):
                  heater_shaker_slot=3,
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
+                 skip_thermal_cycles: bool = False,
                  mag_height=14,
                  flow_rate_json_filepath="library_flow_rates.json",
                  thermal_cycles_json_filepath="library_thermal_cycles.json",
@@ -192,6 +193,7 @@ class LibraryStation(CovidseqBaseStation):
         self._tc_slot = 7       # Fixed, thermocycler cannot be in another position
         self._pcr_plate_bottom_height = pcr_plate_bottom_height
         self._skip_mix = skip_mix
+        self._skip_thermal_cycles = skip_thermal_cycles
         self._tipracks20_slots = tipracks20_slots
         self._tipracks300_slots = tipracks300_slots
         self._mag_height = mag_height
@@ -264,11 +266,11 @@ class LibraryStation(CovidseqBaseStation):
         self._wash_plate = self.load_wash_plate_in_slot(self._wash_plate_slot)
 
     def _check_and_open_hs_if_needed(self, slot):
-        if slot == self._hsdeck_slot:
+        if slot == self._hsdeck_slot and self._run_stage:
             self._hsdeck.open_labware_latch()
 
     def _check_and_close_hs_if_needed(self, slot):
-        if slot == self._hsdeck_slot:
+        if slot == self._hsdeck_slot and self._run_stage:
             self._hsdeck.close_labware_latch()
 
     def _pick_managed_plate(self, manager: PlateManager, plate_name: str):
@@ -307,32 +309,86 @@ class LibraryStation(CovidseqBaseStation):
         self.robot_trash_plate(from_slot, trash_slot, plate_name)
 
     def shake(self, speed_rpm, seconds, blocking=True):
-        self.logger.info("Requested shake at {} rpm for {} seconds".format(speed_rpm, seconds))
-        self._hsdeck.close_labware_latch()
-        self._hsdeck.set_and_wait_for_shake_speed(speed_rpm)
-        if blocking:
-            self.home()
-            self.delay(mins=seconds / 60, msg="Shaking for {:.1f} minutes at {} rpm".format(seconds / 60, speed_rpm),
-                       home=False)
-            self._hsdeck.deactivate_shaker()
+        if self._run_stage:
+            self.logger.info("Requested shake at {} rpm for {} seconds".format(speed_rpm, seconds))
+            self._hsdeck.close_labware_latch()
+            self._hsdeck.set_and_wait_for_shake_speed(speed_rpm)
+            if blocking:
+                self.home()
+                self.delay(mins=seconds / 60, msg="Shaking for {:.1f} minutes at {} rpm".format(seconds / 60, speed_rpm),
+                           home=False)
+                self._hsdeck.deactivate_shaker()
+            else:
+                self._hs_start_time = time.monotonic()
+                self._hs_requested_seconds = seconds
+                self.logger.info("Shaker start time: {}".format(self._hs_start_time))
         else:
-            self._hs_start_time = time.monotonic()
-            self._hs_requested_seconds = seconds
-            self.logger.info("Shaker start time: {}".format(self._hs_start_time))
+            self.logger.info("Skipping shake at {} rpm for {} seconds because no previous step run.".format(speed_rpm, seconds))
 
     def shake_wait_for_finish(self):
-        if self._hs_requested_seconds is None or self._hs_start_time is None:
-            raise Exception("Shake function with blocking=False must be called before waiting for fininish.")
+        if self._run_stage:
+            if self._hs_requested_seconds is None or self._hs_start_time is None:
+                raise Exception("Shake function with blocking=False must be called before waiting for fininish.")
 
-        seconds_remaining = self._hs_requested_seconds - (time.monotonic() - self._hs_start_time)
-        mins_remaining = seconds_remaining / 60
+            seconds_remaining = self._hs_requested_seconds - (time.monotonic() - self._hs_start_time)
+            mins_remaining = seconds_remaining / 60
 
-        self.delay(mins=mins_remaining,
-                   msg="Completing shake for {:.1f} minutes at {} rpm".format(mins_remaining, self._hsdeck.target_speed),
-                   home=False)
+            self.delay(mins=mins_remaining,
+                       msg="Completing shake for {:.1f} minutes at {} rpm".format(mins_remaining, self._hsdeck.target_speed),
+                       home=False)
 
-        self._hsdeck.deactivate_shaker()
-        self._hs_requested_seconds = None
+            self._hsdeck.deactivate_shaker()
+            self._hs_requested_seconds = None
+        else:
+            self.logger.info("Skipping waiting for shake because no previous step run.")
+
+    def get_thermal_cycle(self, cycle_name):
+        self.logger.info("Requested thermal cycle {}".format(cycle_name))
+        if cycle_name in self._thermal_cycles:
+            return self._thermal_cycles[cycle_name]
+        raise Exception("Thermal cycle definition not found for cycle name: {}".format(cycle_name))
+
+    def thermal_cycle(self, cycle_name):
+        if self.run_stage(self.build_stage("Thermal cycle {}".format(cycle_name))):
+
+            cycle = self.get_thermal_cycle(cycle_name)
+
+            if self._tcdeck.lid_position != "closed":
+                self._tcdeck.close_lid()
+
+            self.msg = "Setting lid temperature to {}".format(cycle["lid_temperature"])
+
+            if self._skip_thermal_cycles:
+                self.dual_pause("Skipping thermal cycle {}".format(cycle_name))
+            else:
+                self._execute_thermal_cycle(cycle)
+
+    def _execute_thermal_cycle(self, cycle):
+
+        self.watchdog_stop()
+
+        self._tcdeck.set_lid_temperature(temperature=cycle["lid_temperature"])
+
+        for step in cycle["program"]:
+            if step["type"] == "step":
+                self.msg = "Setting block temperature to {} for {} seconds".format(
+                    step["temperature"], step["hold_time_seconds"])
+                self._tcdeck.set_block_temperature(temperature=step["temperature"],
+                                                   hold_time_seconds=step["hold_time_seconds"],
+                                                   block_max_volume=cycle["volume"])
+            elif step["type"] == "profile":
+                self.msg = "Executing profile for {} cycles".format(step["repetitions"])
+                self.logger.info("Profile: {}".format(step["profile"]))
+                self._tcdeck.execute_profile(steps=step["profile"],
+                                             repetitions=step["repetitions"],
+                                             block_max_volume=cycle["volume"])
+            else:
+                raise Exception("Thermal cycle step value not supported: {}".format(step))
+
+        self._tcdeck.set_lid_temperature(temperature=cycle["final_lid_temperature"])
+        self._tcdeck.set_block_temperature(temperature=cycle["final_temperature"], block_max_volume=cycle["volume"])
+
+        self.watchdog_start()
 
     def get_recipe_mts(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
@@ -777,12 +833,6 @@ class LibraryStation(CovidseqBaseStation):
         #                                    "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
         #
         # self.engage_magnets()
-
-    def thermal_cycle(self, cycle_name):
-        if self._run_stage:
-            self.dual_pause("Execute cycle: {}".format(cycle_name))
-        else:
-            self.logger.info("Skipped thermal cycle {} because no previous step run.".format(cycle_name))
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
