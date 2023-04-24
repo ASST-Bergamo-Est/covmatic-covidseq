@@ -6,9 +6,99 @@
       {
         "type": "step",
         "temperature": 65,
-        "seconds": 180
+        "hold_time_seconds": 180
       }
     ],
-    "final_temperature": 4
+    "final_temperature": 4,
+    "final_lid_temperature": 31
+  },
+  "FSS": {
+    "lid_temperature": 105,
+    "volume": 25,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 25,
+        "hold_time_seconds": 300
+      },
+      {
+        "type": "step",
+        "temperature": 50,
+        "hold_time_seconds": 600
+      },
+      {
+        "type": "step",
+        "temperature": 80,
+        "hold_time_seconds": 300
+      }
+    ],
+    "final_temperature": 4,
+    "final_lid_temperature": 31
+  },
+  "PCR": {
+    "lid_temperature": 105,
+    "volume": 25,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 98,
+        "hold_time_seconds": 180
+      },
+      {
+        "type": "profile",
+        "repetitions": 35,
+        "profile": [
+          { "temperature": 98, "hold_time_seconds": 15},
+          { "temperature": 63, "hold_time_seconds": 300}
+        ]
+      }
+    ],
+    "final_temperature": 4,
+    "final_lid_temperature": 31
+  },
+  "TAG": {
+    "lid_temperature": 105,
+    "volume": 50,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 55,
+        "hold_time_seconds": 300
+      }
+    ],
+    "final_temperature": 10,
+    "final_lid_temperature": 31
+  },
+  "TAG PCR": {
+    "lid_temperature": 100,
+    "volume": 50,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 72,
+        "hold_time_seconds": 180
+      },
+      {
+        "type": "step",
+        "temperature": 98,
+        "hold_time_seconds": 180
+      },
+      {
+        "type": "profile",
+        "repetitions": 7,
+        "profile": [
+          { "temperature": 98, "hold_time_seconds": 20},
+          { "temperature": 60, "hold_time_seconds": 30},
+          { "temperature": 72, "hold_time_seconds": 60}
+        ]
+      },
+      {
+        "type": "step",
+        "temperature": 72,
+        "hold_time_seconds": 180
+      }
+    ],
+    "final_temperature": 10,
+    "final_lid_temperature": 31
   }
 }
