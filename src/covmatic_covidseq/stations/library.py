@@ -273,16 +273,37 @@ class LibraryStation(CovidseqBaseStation):
         if slot == self._hsdeck_slot and self._run_stage:
             self._hsdeck.close_labware_latch()
 
-    def _pick_managed_plate(self, manager: PlateManager, plate_name: str):
-        self._check_and_open_hs_if_needed(manager.current_slot)
-        self.robot_pick_plate("SLOT{}".format(manager.current_slot), plate_name)
+    def _check_slot_is_accessible(self, slot):
+        self._check_and_open_hs_if_needed(slot)
+
+    def _check_slot_is_workable(self, slot):
+        self._check_and_close_hs_if_needed(slot)
+
+    def _check_slot_for_drop(self, slot):
+        self._check_and_open_hs_if_needed(slot)
+
+    def _pick_plate_with_checks(self, from_slot, plate_name: str):
+        self._check_slot_is_accessible(from_slot)
+        self.robot_pick_plate("SLOT{}".format(from_slot), plate_name)
+
+    def _drop_plate_with_checks(self, to_slot, plate_name: str):
+        self._check_slot_is_accessible(to_slot)
+        self.robot_drop_plate("SLOT{}".format(to_slot), plate_name)
+        self._check_slot_is_workable(to_slot)
+
+    def _transfer_plate_with_checks(self, from_slot, to_slot, plate_name):
+        self._check_slot_is_accessible(from_slot)
+        self._check_slot_is_accessible(to_slot)
+        self.robot_transfer_plate_internal(from_slot, to_slot, plate_name)
+        self._check_slot_is_workable(to_slot)
+
+    def _pick_managed_plate(self, manager, plate_name):
+        self._pick_plate_with_checks(manager.current_slot, plate_name)
         manager.current_slot = None
 
-    def _drop_managed_plate(self, manager: PlateManager, slot, plate_name: str):
-        manager.current_slot = slot
-        self._check_and_open_hs_if_needed(manager.current_slot)
-        self.robot_drop_plate(manager.current_slot, plate_name)
-        self._check_and_close_hs_if_needed(manager.current_slot)
+    def _drop_managed_plate(self, manager, to_slot, plate_name):
+        manager.current_slot = to_slot
+        self._drop_plate_with_checks(manager.current_slot, plate_name)
 
     def pick_reagent_plate(self, plate_name="REAGENT_EMPTY"):
         self._pick_managed_plate(self._reagent_plate_manager, plate_name)
@@ -297,16 +318,13 @@ class LibraryStation(CovidseqBaseStation):
         self._drop_managed_plate(self._sample_plate_manager, slot, plate_name)
 
     def transfer_sample_plate_internal(self, to_slot, plate_name="SAMPLES"):
-        self._check_and_open_hs_if_needed(self._sample_plate_manager.current_slot)
-        self._check_and_open_hs_if_needed(to_slot)
-        self.robot_transfer_plate_internal(self._sample_plate_manager.current_slot, to_slot, plate_name)
+        self._transfer_plate_with_checks(self._sample_plate_manager.current_slot, to_slot, plate_name)
         self._sample_plate_manager.current_slot = None
         self._sample_plate_manager.current_slot = to_slot
-        self._check_and_close_hs_if_needed(to_slot)
 
-    def trash_plate(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
-        self._check_and_open_hs_if_needed(from_slot)
-        self.robot_trash_plate(from_slot, trash_slot, plate_name)
+    def trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
+        self._check_slot_is_accessible(from_slot)
+        self.robot_trash_plate("SLOT{}".format(from_slot), trash_slot, plate_name)
 
     def shake(self, speed_rpm, seconds, blocking=True):
         if self._run_stage:
