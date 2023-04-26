@@ -140,13 +140,6 @@ class PlateManager:
 
     @current_slot.setter
     def current_slot(self, slot):
-        if (self._current_slot is None) != (self._current_slot is None):
-            if self._current_slot is None:
-                message = "{} plate not loaded yet and unloading requested."
-            else:
-                message = "{} plate already loaded."
-            message += " Current plate slot is {}; requested slot is {}."
-            raise Exception(message.format(self._plate_name, self._current_slot, slot))
         self._logger.info("Loading {} plate in slot: {}".format(self._plate_name, slot))
         self._current_slot = slot
 
@@ -319,7 +312,6 @@ class LibraryStation(CovidseqBaseStation):
 
     def transfer_sample_plate_internal(self, to_slot, plate_name="SAMPLES"):
         self._transfer_plate_with_checks(self._sample_plate_manager.current_slot, to_slot, plate_name)
-        self._sample_plate_manager.current_slot = None
         self._sample_plate_manager.current_slot = to_slot
 
     def trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
@@ -794,7 +786,6 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1")
         self._drop_plate_with_checks(self._hsdeck_slot, "COV12_FULL")
 
-        self._sample_plate_manager.current_slot = None
         self._sample_plate_manager.current_slot = self._hsdeck_slot
 
         sources = self.get_samples_first_row_for_labware(self._mag_plate)
@@ -814,7 +805,6 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_sample_plate_internal(self._magdeck_slot, "COV12")
         self._drop_plate_with_checks(self._hsdeck_slot, "TAG1_FULL")
 
-        self._sample_plate_manager.current_slot = None
         self._sample_plate_manager.current_slot = self._hsdeck_slot
 
         sources_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
@@ -823,7 +813,6 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources_cov1, destinations, volume=10, stage_name="COV1")
         self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
 
-        # self.mix_dirty(destinations, mix_volume=40, mix_times=10, stage_name="mix")
         self.shake(1000, 60, blocking=False)
         self.trash_plate_with_checks(self._magdeck_slot, plate_name="COV12")
 
