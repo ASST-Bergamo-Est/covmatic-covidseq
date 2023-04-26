@@ -374,8 +374,8 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
         self.fill_wash_plate("TWB")
-        self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
 
 
 if __name__ == "__main__":
