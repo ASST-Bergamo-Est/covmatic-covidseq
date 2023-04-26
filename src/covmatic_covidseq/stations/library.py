@@ -777,12 +777,20 @@ class LibraryStation(CovidseqBaseStation):
 
     def anneal_rna(self):
         if self.run_stage("load input plate"):
-            self.pause("Load input plate on slot {}".format(self._magdeck_slot), home=False)
+            self._check_slot_is_accessible(self._input_plate_slot)
+            self.pause("Load input plate on slot {}".format(self._input_plate_slot), home=False)
+
+            if self._input_plate_slot == self._hsdeck_slot:
+                self._transfer_plate_with_checks(self._input_plate_slot, self._magdeck_slot, "INPUT_SAMPLES")
+
         self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
+
         self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
+
         self.shake(1000, 60, blocking=False)
         self._trash_plate_with_checks(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
         self.shake_wait_for_finish()
+
         self.transfer_sample_plate_internal(self._tc_slot, "CDNA1_THERMAL")
         self.thermal_cycle("ANNEAL")
 
