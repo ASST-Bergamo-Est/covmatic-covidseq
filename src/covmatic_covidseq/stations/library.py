@@ -335,13 +335,13 @@ class LibraryStation(CovidseqBaseStation):
     def shake(self, speed_rpm, seconds, blocking=True):
         if self._run_stage:
             self.logger.info("Requested shake at {} rpm for {} seconds".format(speed_rpm, seconds))
+            self.home()
             self._hsdeck.close_labware_latch()
             self._hsdeck.set_and_wait_for_shake_speed(speed_rpm)
 
             seconds = self.get_mix_seconds(seconds)
 
             if blocking:
-                self.home()
                 self.delay(mins=seconds / 60, msg="Shaking for {:.1f} minutes at {} rpm".format(seconds / 60, speed_rpm),
                            home=False)
                 self._hsdeck.deactivate_shaker()
