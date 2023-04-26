@@ -266,8 +266,23 @@ class LibraryStation(CovidseqBaseStation):
         if slot == self._hsdeck_slot and self._run_stage:
             self._hsdeck.close_labware_latch()
 
-    def _check_slot_is_accessible(self, slot):
+    def _check_and_open_tc_if_needed(self, slot, for_pick_plate=False):
+        if slot == self._tc_slot and self._run_stage:
+            self._tcdeck.deactivate_lid()
+            self._tcdeck.deactivate_block()
+
+            if self._tcdeck.lid_position != "open":
+                self._tcdeck.open_lid()
+
+            if for_pick_plate:
+                self._thermocycler_release_plate()
+
+    def _thermocycler_release_plate(self):
+        self.pause("Please press the thermocycler button for 3 seconds to release the plate.")
+
+    def _check_slot_is_accessible(self, slot, for_pick_plate=False):
         self._check_and_open_hs_if_needed(slot)
+        self._check_and_open_tc_if_needed(slot, for_pick_plate)
 
     def _check_slot_is_workable(self, slot):
         self._check_and_close_hs_if_needed(slot)
@@ -276,7 +291,7 @@ class LibraryStation(CovidseqBaseStation):
         self._check_and_open_hs_if_needed(slot)
 
     def _pick_plate_with_checks(self, from_slot, plate_name: str):
-        self._check_slot_is_accessible(from_slot)
+        self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self.robot_pick_plate("SLOT{}".format(from_slot), plate_name)
 
     def _drop_plate_with_checks(self, to_slot, plate_name: str):
@@ -285,7 +300,7 @@ class LibraryStation(CovidseqBaseStation):
         self._check_slot_is_workable(to_slot)
 
     def _transfer_plate_with_checks(self, from_slot, to_slot, plate_name):
-        self._check_slot_is_accessible(from_slot)
+        self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self._check_slot_is_accessible(to_slot)
         self.robot_transfer_plate_internal(from_slot, to_slot, plate_name)
         self._check_slot_is_workable(to_slot)
@@ -315,7 +330,7 @@ class LibraryStation(CovidseqBaseStation):
         self._sample_plate_manager.current_slot = to_slot
 
     def trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
-        self._check_slot_is_accessible(from_slot)
+        self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self.robot_trash_plate("SLOT{}".format(from_slot), trash_slot, plate_name)
 
     def shake(self, speed_rpm, seconds, blocking=True):
