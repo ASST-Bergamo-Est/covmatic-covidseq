@@ -862,7 +862,7 @@ class LibraryStation(CovidseqBaseStation):
         self._drop_plate_with_checks(self._wash_plate_slot, "WASH_FULL")
         self.delay_wait_to_elapse(minutes=3)
 
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A11'], 60)
         self.disengage_magnets()
 
         self.load_flow_rate()
@@ -876,7 +876,7 @@ class LibraryStation(CovidseqBaseStation):
 
         self.engage_magnets()
         self.delay(mins=3)
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A11'], 100, stage_name="rem TWB1")
         self.disengage_magnets()
 
         self.load_flow_rate()
