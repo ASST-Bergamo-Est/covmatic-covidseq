@@ -836,43 +836,50 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle("TAG")
 
     def post_tagmentation_cleanup(self):
-        pass
-        # self.disengage_magnets()
-        #
-        # self.robot_transfer_plate_internal("SLOT{}".format(self._work_plate_slot),
-        #                                    "SLOT{}MAG".format(self._magdeck_slot), "TAG1_CLEANUP")
-        #
-        # self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        #
-        # self.distribute_dirty("ST2", self._mag_plate)
-        # self.mix_dirty(self.get_samples_first_row_for_labware(self._mag_plate), mix_volume=50, mix_times=10, stage_name="mix")
-        #
-        # self.engage_magnets()
-        # self.delay_start_count()
-        #
-        # self.robot_drop_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
-        # self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        # self.delay_wait_to_elapse(minutes=3)
-        #
-        # self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
-        # self.disengage_magnets()
-        #
-        # self.load_flow_rate()
-        # self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB1", onto_beads=True)
-        # self.engage_magnets()
-        # self.delay(mins=3)
-        #
-        # self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
-        # self.disengage_magnets()
-        #
-        # self.load_flow_rate()
-        # self.distribute_dirty("TWB", self._mag_plate, mix_times=10, mix_volume=80, stage_name="TWB2", onto_beads=True)
-        #
-        # # for now make plate available for user interaction now.
-        # self.robot_transfer_plate_internal("SLOT{}MAG".format(self._magdeck_slot),
-        #                                    "SLOT{}".format(self._work_plate_slot), "TAG1_COMPLETED")
-        #
-        # self.engage_magnets()
+        self.drop_reagent_plate_in_slot(self._magdeck_slot)
+        self.transfer_sample_plate_internal(self._hsdeck_slot, "TAG1_CLEANUP")
+
+        self.distribute_dirty("ST2", self._hs_plate)
+        self.shake(1000, 60, blocking=False)
+
+        self.pick_reagent_plate()
+        self.shake_wait_for_finish()
+
+        self.delay_start_count()
+        self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1_CLEANUP")
+        self.delay_wait_to_elapse(minutes=5)
+
+        self.engage_magnets()
+        self.delay_start_count()
+        self._drop_plate_with_checks(self._wash_plate_slot, "WASH_FULL")
+        self.delay_wait_to_elapse(minutes=3)
+
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 60)
+        self.disengage_magnets()
+
+        self.load_flow_rate()
+        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB1", onto_beads=True)
+
+        self.transfer_sample_plate_internal(self._hsdeck_slot)
+
+        self.shake(1000, 60)
+
+        self.transfer_sample_plate_internal(self._magdeck_slot)
+
+        self.engage_magnets()
+        self.delay(mins=3)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB1")
+        self.disengage_magnets()
+
+        self.load_flow_rate()
+        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB2", onto_beads=True)
+
+        self.transfer_sample_plate_internal(self._hsdeck_slot)
+        self.shake(1000, 60)
+
+        self.transfer_sample_plate_internal(self._magdeck_slot)
+        self.engage_magnets()
+        self.delay(mins=3)
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
