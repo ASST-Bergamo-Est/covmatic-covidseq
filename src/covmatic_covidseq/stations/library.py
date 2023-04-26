@@ -301,7 +301,7 @@ class LibraryStation(CovidseqBaseStation):
     def _transfer_plate_with_checks(self, from_slot, to_slot, plate_name):
         self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self._check_slot_is_accessible(to_slot)
-        self.robot_transfer_plate_internal(from_slot, to_slot, plate_name)
+        self.robot_transfer_plate_internal("SLOT{}".format(from_slot), "SLOT{}".format(to_slot), plate_name)
         self._check_slot_is_workable(to_slot)
 
     def _pick_managed_plate(self, manager, plate_name):
@@ -328,7 +328,7 @@ class LibraryStation(CovidseqBaseStation):
         self._transfer_plate_with_checks(self._sample_plate_manager.current_slot, to_slot, plate_name)
         self._sample_plate_manager.current_slot = to_slot
 
-    def trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
+    def _trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
         self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self.robot_trash_plate("SLOT{}".format(from_slot), trash_slot, plate_name)
 
@@ -781,7 +781,7 @@ class LibraryStation(CovidseqBaseStation):
         self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
         self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
         self.shake(1000, 60, blocking=False)
-        self.trash_plate_with_checks(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
+        self._trash_plate_with_checks(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
         self.shake_wait_for_finish()
         self.transfer_sample_plate_internal(self._tc_slot, "CDNA1_THERMAL")
         self.thermal_cycle("ANNEAL")
@@ -809,7 +809,7 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources, destinations_cov2, volume=5, stage_name="COV2")
 
         self.shake(1000, 60, blocking=False)
-        self.trash_plate_with_checks(self._magdeck_slot, plate_name="CDNA1")
+        self._trash_plate_with_checks(self._magdeck_slot, plate_name="CDNA1")
         self.shake_wait_for_finish()
 
         self.transfer_sample_plate_internal(self._tc_slot, "COV12_THERMAL")
@@ -828,7 +828,7 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_dirty(sources_cov2, destinations, volume=10, stage_name="COV2")
 
         self.shake(1000, 60, blocking=False)
-        self.trash_plate_with_checks(self._magdeck_slot, plate_name="COV12")
+        self._trash_plate_with_checks(self._magdeck_slot, plate_name="COV12")
 
         self.shake_wait_for_finish()
         self.transfer_sample_plate_internal(self._tc_slot, "TAG1")
