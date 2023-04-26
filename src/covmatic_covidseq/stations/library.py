@@ -238,7 +238,6 @@ class LibraryStation(CovidseqBaseStation):
     @labware_loader(3, '_hsdeck')
     def load_hsdeck(self):
         self._hsdeck = self._ctx.load_module('heaterShakerModuleV1', self._hsdeck_slot)
-        self._hsdeck.close_labware_latch()
 
     @labware_loader(4, '_hs_plate')
     def load_hs_plate(self):
