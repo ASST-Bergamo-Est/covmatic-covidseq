@@ -853,9 +853,9 @@ class LibraryStation(CovidseqBaseStation):
         self.pick_reagent_plate()
         self.shake_wait_for_finish()
 
-        self.delay_start_count()
+        self.delay(mins=5)
+
         self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1_CLEANUP")
-        self.delay_wait_to_elapse(minutes=5)
 
         self.engage_magnets()
         self.delay_start_count()
