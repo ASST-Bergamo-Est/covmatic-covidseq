@@ -412,6 +412,8 @@ class LibraryStation(CovidseqBaseStation):
             else:
                 raise Exception("Thermal cycle step value not supported: {}".format(step))
 
+        self.msg = "Setting final block temperature to {}".format(cycle["final_temperature"])
+
         self._tcdeck.set_lid_temperature(temperature=cycle["final_lid_temperature"])
         self._tcdeck.set_block_temperature(temperature=cycle["final_temperature"], block_max_volume=cycle["volume"])
 
@@ -858,6 +860,7 @@ class LibraryStation(CovidseqBaseStation):
         self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1_CLEANUP")
 
         self.engage_magnets()
+
         self.delay_start_count()
         self._drop_plate_with_checks(self._wash_plate_slot, "WASH_FULL")
         self.delay_wait_to_elapse(minutes=3)
@@ -869,13 +872,12 @@ class LibraryStation(CovidseqBaseStation):
         self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB1")
 
         self.transfer_sample_plate_internal(self._hsdeck_slot)
-
         self.shake(1000, 60)
 
         self.transfer_sample_plate_internal(self._magdeck_slot)
-
         self.engage_magnets()
         self.delay(mins=3)
+
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A11'], 100, stage_name="rem TWB1")
         self.disengage_magnets()
 
