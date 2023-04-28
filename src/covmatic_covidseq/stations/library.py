@@ -866,7 +866,7 @@ class LibraryStation(CovidseqBaseStation):
         self.disengage_magnets()
 
         self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB1", onto_beads=True)
+        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB1")
 
         self.transfer_sample_plate_internal(self._hsdeck_slot)
 
@@ -880,7 +880,7 @@ class LibraryStation(CovidseqBaseStation):
         self.disengage_magnets()
 
         self.load_flow_rate()
-        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB2", onto_beads=True)
+        self.distribute_dirty("TWB", self._mag_plate, stage_name="TWB2")
 
         self.transfer_sample_plate_internal(self._hsdeck_slot)
         self.shake(1000, 60)
