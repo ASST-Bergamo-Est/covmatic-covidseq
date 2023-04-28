@@ -896,4 +896,23 @@ class LibraryStation(CovidseqBaseStation):
         self._magdeck.disengage()
 
 
+class LibraryStationTestRobot(LibraryStation):
+    """ Class for test the robot movement inside the Library OT2 """
+    def __init__(self, num_test_repetitions=10, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._num_test_repetitions = num_test_repetitions
+
+    def _thermocycler_release_plate(self):
+        pass
+
+    def body(self):
+        self._sample_plate_manager.current_slot = self._magdeck_slot
+        for i in range(self._num_test_repetitions):
+            self.logger.info("Test {}/{}".format(i+1, self._num_test_repetitions+1))
+            self.transfer_sample_plate_internal(self._hsdeck_slot)
+            self.transfer_sample_plate_internal(self._magdeck_slot)
+            self.transfer_sample_plate_internal(self._tc_slot)
+            self._transfer_plate_with_checks(self._wash_plate_slot, self._wash_plate_slot, "Wash plate")
+
+
 
