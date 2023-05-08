@@ -891,6 +891,9 @@ class LibraryStation(CovidseqBaseStation):
         self.engage_magnets()
         self.delay(mins=3)
 
+    def amplify_tagmented_amplicons(self):
+        pass
+
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
 

@@ -349,6 +349,10 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def post_tagmentation_cleanup(self):
         pass
 
+    @abstractmethod
+    def amplify_tagmented_amplicons(self):
+        pass
+
     def body(self):
         self.set_task_name("Anneal RNA")
         self.anneal_rna()
@@ -364,3 +368,6 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
         self.set_task_name("Post Tag Cleanup")
         self.post_tagmentation_cleanup()
+
+        self.set_task_name("Amplify TAG Amplicons")
+        self.amplify_tagmented_amplicons()

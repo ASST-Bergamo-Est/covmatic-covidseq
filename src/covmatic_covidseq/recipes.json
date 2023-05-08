@@ -30,7 +30,7 @@
     "volume_final": 8,
     "headroom_fraction": 0.25
   },
-   {
+  {
     "name": "CPP1 Mix",
     "description": "PCR 1 Master Mix",
     "steps": [
@@ -125,6 +125,23 @@
     "volume_final": 100,
     "number_of_times_needed": 2,
     "use_wash_plate": true
+  },
+  {
+    "name": "PCR Mix",
+    "description": "PCR Master Mix",
+    "steps": [
+      {
+        "name": "",
+        "reagent": "EPM",
+        "vol": 24
+      },
+      {
+        "name": "",
+        "reagent": "WATER",
+        "vol": 24
+      }
+    ],
+    "volume_final": 40,
+    "headroom_fraction": 0.25
   }
-
 ]

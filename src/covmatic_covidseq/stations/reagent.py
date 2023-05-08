@@ -377,6 +377,9 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
         self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
 
+    def amplify_tagmented_amplicons(self):
+        self.prepare("PCR Mix")
+
 
 if __name__ == "__main__":
     ReagentStation(num_samples=96, metadata={'apiLevel': '2.7'}).simulate()
