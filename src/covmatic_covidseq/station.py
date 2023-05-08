@@ -89,6 +89,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  labware_load_offset: bool = False,
                  drop_loc_l: float = -10,
                  drop_loc_r: float = 20,
+                 drop_height: float = -10,
                  *args, **kwargs):
         """ Base class that has shared information about Covidseq protocol.
             **Note**: you must stop opentrons-robot-server service before starting this protocol to avoid
@@ -108,7 +109,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._config = ConfigFile(config_json_filepath)
         super().__init__(robot_manager_host=robot_manager_host or self._config.robot_manager_host,
                          robot_manager_port=robot_manager_port or self._config.robot_manager_port,
-                         drop_loc_l=drop_loc_l, drop_loc_r=drop_loc_r, dummy_lights=False,
+                         drop_loc_l=drop_loc_l, drop_loc_r=drop_loc_r, drop_height=drop_height,
+                         dummy_lights=False,
                          *args, **kwargs)
         self._reagent_plate_labware_name = reagent_plate_labware_name
         self._reagent_plate_max_volume = reagent_plate_max_volume
