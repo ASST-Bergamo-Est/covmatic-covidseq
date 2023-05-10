@@ -25,3 +25,6 @@ class CovidseqTestStation(CovidseqBaseStation):
 
     def post_tagmentation_cleanup(self):
         pass
+
+    def amplify_tagmented_amplicons(self):
+        pass
