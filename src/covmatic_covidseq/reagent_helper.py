@@ -47,7 +47,15 @@ class ReagentPlateHelper:
         columns = []
         for c in self._assigned_columns:
             columns += c["columns"]
-        return len(columns)
+        next_free_index = len(columns)
+
+        self.check_column_index(next_free_index)
+        return next_free_index
+
+    def check_column_index(self, index):
+        if index >= len(self._all_columns):
+            raise ReagentPlateException("Columns not available. Columns length: {}. Requested index: {}".format(
+                len(self._all_columns), index))
 
     def assign_reagent(self, reagent_name: str, volume_with_overhead_per_sample: float, volume_available_per_sample: float = None):
         self._logger.info("Assigning reagent {} with volume {}".format(reagent_name, volume_with_overhead_per_sample))
@@ -84,9 +92,9 @@ class ReagentPlateHelper:
             rows.append(row)
 
         for i, r in enumerate(rows):
-            self._logger.info("Row {}: {}".format(i, r))
+            self._logger.debug("Row {}: {}".format(i, r))
 
-        columns = self._all_columns[free_column_index:free_column_index + num_columns]
+        columns = self.get_columns(free_column_index, free_column_index + num_columns)
         volumes_in_columns = list(zip(*rows))
 
 
@@ -118,6 +126,14 @@ class ReagentPlateHelper:
             "mts_8_channel": mts_8_channel
         })
         self._logger.info("Assigned: {}".format(self._assigned_columns[-1]))
+
+    def get_columns(self, start_index, stop_index):
+        """ Safe method to access columns to be assigned or already assigned.
+            It will check also for boundaries.
+        """
+        self.check_column_index(start_index)
+        self.check_column_index(stop_index)
+        return self._all_columns[start_index:stop_index]
 
     def get_columns_for_reagent(self, reagent_name: str, labware):
         if reagent_name in self._assigned_reagents:

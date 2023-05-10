@@ -69,6 +69,9 @@ single_well_labware_mock.rows.return_value = [[SINGLE_WELL_COLUMN_1]]
 SINGLE_WELL_LABWARE_ROWS = 1
 SINGLE_WELL_LABWARE_COLUMNS = 12
 
+TOO_MUCH_VOLUME_SAMPLES_PER_ROW_REAGENT2 = [4, 4, 4, 4, 4, 4, 4, 4]
+TOO_MUCH_VOLUME_WELL_LIMIT = 100
+
 
 class BaseTestClass(unittest.TestCase):
     def setUp(self):
@@ -233,3 +236,22 @@ class TestSingleWellLabware(unittest.TestCase):
     def test_expected_volumes(self):
         well, volume = self._rp.get_wells_with_volume(REAGENT1_NAME, single_well_labware_mock)[0]
         self.assertEqual(REAGENT1_VOLUME * sum(SAMPLES_PER_ROW), volume)
+
+
+class TestColumnsNotEnough(unittest.TestCase):
+    def setUp(self):
+        self._rp = ReagentPlateHelper(TOO_MUCH_VOLUME_SAMPLES_PER_ROW_REAGENT2,
+                                      num_cols=4, well_volume_limit=TOO_MUCH_VOLUME_WELL_LIMIT)
+
+    def test_creation(self):
+        self.assertTrue(self._rp)
+
+    def test_assign_columns_not_enough_first_assign(self):
+        with self.assertRaises(ReagentPlateException):
+            self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
+
+    def test_assign_columns_not_enough_second_assign(self):
+        self._rp.assign_reagent(REAGENT1_NAME, REAGENT1_VOLUME)
+
+        with self.assertRaises(ReagentPlateException):
+            self._rp.assign_reagent(REAGENT2_NAME, REAGENT2_VOLUME)
