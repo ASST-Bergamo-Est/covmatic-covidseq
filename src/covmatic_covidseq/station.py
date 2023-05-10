@@ -83,6 +83,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
                  column_offset_cov2: int = 6,
+                 pcr_mastermix_with_index_col_offset=6,
                  flow_rate_json_filepath=None,
                  offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
                  config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
@@ -105,6 +106,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
             :param drop_loc_l: offset for dropping to the left side (should be positive) in mm
             :param drop_loc_r: offset for dropping to the right side (should be negative) in mm
+            :param drop_height: the height at which the drop tip occurs
         """
         self._config = ConfigFile(config_json_filepath)
         super().__init__(robot_manager_host=robot_manager_host or self._config.robot_manager_host,
@@ -124,6 +126,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
         self._column_offset_cov2 = column_offset_cov2
+        self._pcr_mastermix_with_index_col_offset = pcr_mastermix_with_index_col_offset
         self._offsets_json_filepath = offsets_json_filepath
         self._labware_load_offset = labware_load_offset
         self._task_name = ""
@@ -285,7 +288,12 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
     def _load_reagent_plate(self):
         self.logger.info("Initializing Reagent plate helper")
-        self._reagent_plate_helper = ReagentPlateHelper(self.num_samples_in_rows, well_volume_limit=self._reagent_plate_max_volume)
+        available_cols_for_reagent = max(0, 12-self._pcr_mastermix_with_index_col_offset)
+        self.logger.info("Reagent plate has {} columns available.".format(available_cols_for_reagent))
+        
+        self._reagent_plate_helper = ReagentPlateHelper(self.num_samples_in_rows,
+                                                        well_volume_limit=self._reagent_plate_max_volume,
+                                                        num_cols=available_cols_for_reagent)
         for r in self.recipes:
             if r.use_reagent_plate:
                 self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
@@ -328,6 +336,12 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
     def get_samples_first_row_COV2_for_labware(self, labware):
         return [c[0] for c in self.get_columns_for_samples(labware, self._column_offset_cov2)]
+
+    def get_pcr_mastermix_with_index_for_labware(self, labware):
+        return [w for c in self.get_columns_for_samples(labware, self._pcr_mastermix_with_index_col_offset) for w in c][:self._num_samples]
+
+    def get_pcr_mastermix_with_index_first_row_for_labware(self, labware):
+        return [c[0] for c in self.get_columns_for_samples(labware, self._pcr_mastermix_with_index_col_offset)]
 
     @abstractmethod
     def anneal_rna(self):
