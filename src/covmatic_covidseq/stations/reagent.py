@@ -372,6 +372,40 @@ class ReagentStation(CovidseqBaseStation):
     def distribute(self, recipe_name, wells, pipette=None, disposal_volume=None):
         self.fill_wells(recipe_name, wells, pipette, disposal_volume=disposal_volume)
 
+    def distribute_index_to_wells(self, destination_wells, index_volume=10):
+        all_wells = self._index_plate.wells_by_name()
+        sources = [all_wells[idx] for idx in self._index_list]
+        self.logger.info("Index sources are: {}".format(sources))
+
+        pipette = self._pipette_chooser.get_pipette(index_volume, consider_air_gap=True)
+
+        well_initial_vol = self.get_recipe("PCR Mix").volume_final
+
+        for i, (s, d) in enumerate(zip(sources, destination_wells)):
+            if self.run_stage(self.build_stage("index {}/{}".format(i+1, len(destination_wells)))):
+                dest_with_volume = WellWithVolume(d, well_initial_vol)
+
+                self.logger.info("Transferring index from {} to {}".format(s, d))
+
+                self.pick_up(pipette)
+                pipette.move_to(s.top())
+                pipette.move_to(s.bottom(0.5), speed=self._very_slow_vertical_speed)
+                pipette.aspirate(index_volume)
+                pipette.move_to(s.top(), speed=self._very_slow_vertical_speed)
+                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+
+                pipette.move_to(d.top())
+                pipette.dispense(self._pipette_chooser.get_air_gap(pipette))
+                dest_with_volume.fill(index_volume)
+                with MoveWithSpeed(pip=pipette,
+                                   from_point=d.top(),
+                                   to_point=d.bottom(dest_with_volume.height),
+                                   speed=self._slow_vertical_speed):
+                    pipette.dispense(index_volume)
+                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+
+                self.drop(pipette)
+
     def anneal_rna(self):
         self.prepare("EPH3")
         self.distribute("EPH3", self.get_samples_wells_for_labware(self._cdna1_plate), self._p300)
@@ -406,7 +440,10 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
 
     def amplify_tagmented_amplicons(self):
+        pcr_mm_and_index_wells = self.get_pcr_mastermix_with_index_for_labware(self._reagent_plate)
         self.prepare("PCR Mix")
+        self.distribute("PCR Mix", pcr_mm_and_index_wells, self._p300)
+        self.distribute_index_to_wells(pcr_mm_and_index_wells)
 
 
 if __name__ == "__main__":
