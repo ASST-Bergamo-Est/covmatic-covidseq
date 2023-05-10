@@ -10,6 +10,7 @@ from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
 from ..recipe import Recipe
 from ..station import CovidseqBaseStation, instrument_loader, labware_loader, ReagentPlateException
 from ..pipette_chooser import PipetteChooser
+from ..utils import default_index_order
 
 
 class ReagentStationException(Exception):
@@ -26,10 +27,12 @@ class ReagentStation(CovidseqBaseStation):
                  cov12_plate_slot="3",
                  tag1_plate_slot="4",
                  wash_plate_slot="5",
+                 index_plate_slot="7",
                  reagents_tempdeck_slot="10",
                  reagent_chilled_tubes_json="reagents_chilled_tubes.json",
                  reagents_wash_slot="11",
                  disposal_volume_ratio=0.25,
+                 index_list=None,
                  *args, **kwargs):
         super().__init__(ot_name=ot_name, *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
@@ -39,6 +42,7 @@ class ReagentStation(CovidseqBaseStation):
         self._cov12_plate_slot = cov12_plate_slot
         self._tag1_plate_slot = tag1_plate_slot
         self._wash_plate_slot = wash_plate_slot
+        self._index_plate_slot = index_plate_slot
         self._reagents_tempdeck_slot = reagents_tempdeck_slot
         self._reagents_wash_slot = reagents_wash_slot
         self._disposal_volume_ratio = disposal_volume_ratio
@@ -46,6 +50,25 @@ class ReagentStation(CovidseqBaseStation):
         self._tubes_list = []
         self._reagents_chilled_tubes = []
         self.load_reagents_chilled_tubes_json(reagent_chilled_tubes_json)
+        self._index_list = index_list
+
+    def pre_loaders_initializations(self):
+        super().pre_loaders_initializations()
+        self.check_index_list()
+
+    def check_index_list(self):
+        self.logger.info("Checking index list {}".format(self._index_list))
+
+        if self._index_list is None or len(self._index_list) < self._num_samples:
+            if self._ctx.is_simulating():
+                self.logger.warning("Index list passed is None or not enough; assigning default list for simulation.")
+                self._index_list = default_index_order
+            else:
+                if self._index_list is None:
+                    message = "No index list passed. You must specify at least {} index".format(self._num_samples)
+                else:
+                    message = "Not enough index passed. Passed {} index, needed {}".format(len(self._index_list), self._num_samples)
+                raise Exception(message)
 
     def load_reagents_chilled_tubes_json(self, filename):
         abspath = self.check_and_get_absolute_path(filename)
@@ -141,6 +164,11 @@ class ReagentStation(CovidseqBaseStation):
     def load_tag1_plate(self):
         self._tag1_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
                                                    self._tag1_plate_slot, 'empty plate for TAG1')
+
+    @labware_loader(6, '_index_plate')
+    def load_index_plate(self):
+        self._index_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
+                                                         self._index_plate_slot, 'Index plate')
 
     def _tipracks(self) -> dict:
         return {
