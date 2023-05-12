@@ -449,10 +449,26 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
 
     def amplify_tagmented_amplicons(self):
+        """ We prepare a solution wiht PCR Mastermix and index.
+            The solution is prepared in a volume slightly higher than final volume needed, since the OT library
+            will need to transfer the solution in the sample plate.
+        """
+        final_index_volume = 10
+        recipe_name = "PCR Mix"
+
         pcr_mm_and_index_wells = self.get_pcr_mastermix_with_index_for_labware(self._reagent_plate)
-        self.prepare("PCR Mix")
-        self.distribute("PCR Mix", pcr_mm_and_index_wells, self._p300)
-        self.distribute_index_to_wells(pcr_mm_and_index_wells)
+        recipe = self.get_recipe(recipe_name)
+
+        self.prepare(recipe_name)
+
+        self.fill_wells(self.get_tube_for_recipe(recipe_name),
+                        recipe.volume_to_distribute,
+                        pcr_mm_and_index_wells, self._p300,
+                        stage="Distr. {}".format(recipe.name))
+
+        distribute_index_volume = (1 + (recipe.volume_to_distribute - recipe.volume_final)/recipe.volume_final) * final_index_volume
+        self.logger.info("Using {} ul of index for {} of {}".format(distribute_index_volume, recipe.volume_to_distribute, recipe.name))
+        self.distribute_index_to_wells(pcr_mm_and_index_wells, distribute_index_volume)
 
 
 if __name__ == "__main__":
