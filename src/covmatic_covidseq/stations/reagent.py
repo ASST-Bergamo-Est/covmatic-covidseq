@@ -28,6 +28,14 @@ class TransferManager:
         self._vertical_speed = 0
 
     def setup_transfer(self, pipette, pipette_max_volume, pipette_air_gap, total_volume_to_transfer, vertical_speed):
+        """ Setup a new group of transfers. This function must be called before the *transfer* function.
+            :param pipette: the pipette that will be used for transfers;
+            :param pipette_max_volume: the maximum volume the pipette can aspirate;
+            :param pipette_air_gap: the air gap to use if needed;
+            :param total_volume_to_transfer: the expected total amount of liquid to be transferred. It is used to
+                                             calculate how much volume to aspirate;
+            :param vertical_speed: the speed to use in vertical movement to avoid drops at the bottom of the tip.
+        """
         self._pipette = pipette
         self._total_volume_to_transfer = total_volume_to_transfer
         self._pipette_max_volume = pipette_max_volume
@@ -379,7 +387,8 @@ class ReagentStation(CovidseqBaseStation):
     def distribute(self, recipe_name, wells, pipette=None, disposal_volume=None):
         source = self.get_tube_for_recipe(recipe_name)
         recipe = self.get_recipe(recipe_name)
-        self.fill_wells(source, recipe.volume_final, wells, pipette, disposal_volume=disposal_volume)
+        self.fill_wells(source, recipe.volume_final, wells, pipette,
+                        disposal_volume=disposal_volume, stage="Dist. {}".format(recipe.name))
 
     def distribute_index_to_wells(self, destination_wells, index_volume=10):
         all_wells = self._index_plate.wells_by_name()
@@ -449,8 +458,8 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
 
     def amplify_tagmented_amplicons(self):
-        """ We prepare a solution wiht PCR Mastermix and index.
-            The solution is prepared in a volume slightly higher than final volume needed, since the OT library
+        """ We prepare a solution with PCR Mastermix and index.
+            The solution is prepared with an overhead since the OT library
             will need to transfer the solution in the sample plate.
         """
         final_index_volume = 10
@@ -468,6 +477,7 @@ class ReagentStation(CovidseqBaseStation):
 
         distribute_index_volume = (1 + (recipe.volume_to_distribute - recipe.volume_final)/recipe.volume_final) * final_index_volume
         self.logger.info("Using {} ul of index for {} of {}".format(distribute_index_volume, recipe.volume_to_distribute, recipe.name))
+
         self.distribute_index_to_wells(pcr_mm_and_index_wells, distribute_index_volume)
 
 
