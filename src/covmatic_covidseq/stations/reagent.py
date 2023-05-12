@@ -109,6 +109,7 @@ class TransferManager:
                            speed=self._vertical_speed, move_close=False):
             self._pipette.aspirate(volume)
 
+
 class ReagentStationException(Exception):
     pass
 
@@ -345,7 +346,7 @@ class ReagentStation(CovidseqBaseStation):
             :param disposal_volume: the volume to be kept in pipette to have an equal volume in each well.
                                     If None it is set to the half of the pipette minimum volume
         """
-        self.logger.info("Filling wells {} using {}".format(source, wells))
+        self.logger.info("Filling wells {} using {}".format(wells, source))
 
         total_volume_to_aspirate = len(wells) * volume
         self.logger.debug("Total volume for {} wells is {}".format(len(wells), total_volume_to_aspirate))
@@ -479,6 +480,8 @@ class ReagentStation(CovidseqBaseStation):
         self.logger.info("Using {} ul of index for {} of {}".format(distribute_index_volume, recipe.volume_to_distribute, recipe.name))
 
         self.distribute_index_to_wells(pcr_mm_and_index_wells, distribute_index_volume)
+
+        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
 
 if __name__ == "__main__":
