@@ -1,0 +1,756 @@
+{
+    "data": {
+        "id": "1c7b470b-74e8-4014-9123-c545a6f2b1a1",
+        "createdAt": "2023-05-15T10:04:18.037900+00:00",
+        "status": "stopped",
+        "current": false,
+        "actions": [
+            {
+                "id": "abeec705-c5dc-4560-96a5-d71d818f2962",
+                "createdAt": "2023-05-15T10:27:38.291757+00:00",
+                "actionType": "play"
+            },
+            {
+                "id": "21aa9776-697e-4d71-8454-7b6d1840e8ca",
+                "createdAt": "2023-05-15T10:28:23.666777+00:00",
+                "actionType": "play"
+            },
+            {
+                "id": "502359e0-adf4-45d7-bde0-1f57c66c94a4",
+                "createdAt": "2023-05-15T10:28:25.527067+00:00",
+                "actionType": "pause"
+            },
+            {
+                "id": "27a1af68-e98e-4129-a0b7-350ccfc5a05f",
+                "createdAt": "2023-05-15T10:28:25.830739+00:00",
+                "actionType": "stop"
+            }
+        ],
+        "errors": [],
+        "pipettes": [
+            {
+                "id": "pipette-0",
+                "pipetteName": "p1000_single_gen2",
+                "mount": "left"
+            },
+            {
+                "id": "pipette-1",
+                "pipetteName": "p300_single_gen2",
+                "mount": "right"
+            }
+        ],
+        "modules": [
+            {
+                "id": "module-0",
+                "model": "temperatureModuleV2",
+                "location": {
+                    "slotName": "10"
+                },
+                "serialNumber": "TDV20P20200616B06"
+            }
+        ],
+        "labware": [
+            {
+                "id": "fixedTrash",
+                "loadName": "opentrons_1_trash_1100ml_fixed",
+                "definitionUri": "opentrons/opentrons_1_trash_1100ml_fixed/1",
+                "location": {
+                    "slotName": "12"
+                }
+            },
+            {
+                "id": "labware-0",
+                "loadName": "opentrons_24_tuberack_generic_2ml_screwcap",
+                "definitionUri": "opentrons/opentrons_24_tuberack_generic_2ml_screwcap/1",
+                "location": {
+                    "slotName": "6"
+                },
+                "offsetId": "9be72ebc-7298-45f4-b9d0-20081dc4499e",
+                "displayName": "empty tubes rack"
+            },
+            {
+                "id": "labware-1",
+                "loadName": "opentrons_96_filtertiprack_1000ul",
+                "definitionUri": "opentrons/opentrons_96_filtertiprack_1000ul/1",
+                "location": {
+                    "slotName": "8"
+                },
+                "offsetId": "363805a3-8324-4f76-bcb0-a01b3e48b422",
+                "displayName": "1000ul filter tiprack"
+            },
+            {
+                "id": "labware-2",
+                "loadName": "opentrons_96_filtertiprack_200ul",
+                "definitionUri": "opentrons/opentrons_96_filtertiprack_200ul/1",
+                "location": {
+                    "slotName": "9"
+                },
+                "offsetId": "a32b1458-903f-4c34-9efa-d4677da9ba37",
+                "displayName": "200ul filter tiprack"
+            },
+            {
+                "id": "labware-3",
+                "loadName": "opentrons_24_aluminumblock_generic_2ml_screwcap",
+                "definitionUri": "opentrons/opentrons_24_aluminumblock_generic_2ml_screwcap/1",
+                "location": {
+                    "moduleId": "module-0"
+                },
+                "offsetId": "03c0945c-3b47-4692-a553-9f696212d30f",
+                "displayName": "Reagents tube"
+            },
+            {
+                "id": "labware-4",
+                "loadName": "opentrons_6_tuberack_falcon_50ml_conical",
+                "definitionUri": "opentrons/opentrons_6_tuberack_falcon_50ml_conical/1",
+                "location": {
+                    "slotName": "11"
+                },
+                "offsetId": "aca88119-27ef-477e-b401-c2920dd0dfa7",
+                "displayName": "wash reagents tubes"
+            },
+            {
+                "id": "labware-5",
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "1"
+                },
+                "offsetId": "75ed37db-ea9a-4db5-80ca-73b76a32f3bc",
+                "displayName": "shared reagent plate"
+            },
+            {
+                "id": "labware-6",
+                "loadName": "nest_12_reservoir_15ml",
+                "definitionUri": "opentrons/nest_12_reservoir_15ml/1",
+                "location": {
+                    "slotName": "5"
+                },
+                "offsetId": "51baf0e9-ea73-4e3c-882d-5b40578b63fc",
+                "displayName": "Shared wash plate"
+            },
+            {
+                "id": "labware-7",
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "2"
+                },
+                "offsetId": "a9b1080a-afdd-48c8-87fd-8baaf890aad9",
+                "displayName": "empty plate for CDNA1"
+            },
+            {
+                "id": "labware-8",
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "3"
+                },
+                "offsetId": "45347486-bedf-4559-959d-9ee295919ee2",
+                "displayName": "empty plate for COV1 COV2"
+            },
+            {
+                "id": "labware-9",
+                "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "4"
+                },
+                "offsetId": "f8b93deb-4f96-4747-89e5-d5dda9b30d62",
+                "displayName": "empty plate for TAG1"
+            }
+        ],
+        "liquids": [],
+        "labwareOffsets": [
+            {
+                "id": "a32b1458-903f-4c34-9efa-d4677da9ba37",
+                "createdAt": "2023-05-15T10:16:07.042087+00:00",
+                "definitionUri": "opentrons/opentrons_96_filtertiprack_200ul/1",
+                "location": {
+                    "slotName": "9"
+                },
+                "vector": {
+                    "x": 0.6000000000001364,
+                    "y": 0,
+                    "z": 0
+                }
+            },
+            {
+                "id": "363805a3-8324-4f76-bcb0-a01b3e48b422",
+                "createdAt": "2023-05-15T10:16:07.052925+00:00",
+                "definitionUri": "opentrons/opentrons_96_filtertiprack_1000ul/1",
+                "location": {
+                    "slotName": "8"
+                },
+                "vector": {
+                    "x": -0.19999999999998863,
+                    "y": 1.700000000000415,
+                    "z": -0.5
+                }
+            },
+            {
+                "id": "9be72ebc-7298-45f4-b9d0-20081dc4499e",
+                "createdAt": "2023-05-15T10:16:07.063243+00:00",
+                "definitionUri": "opentrons/opentrons_24_tuberack_generic_2ml_screwcap/1",
+                "location": {
+                    "slotName": "6"
+                },
+                "vector": {
+                    "x": 0.20000000000004547,
+                    "y": 0.4999999999999716,
+                    "z": 0.39999999999997726
+                }
+            },
+            {
+                "id": "03c0945c-3b47-4692-a553-9f696212d30f",
+                "createdAt": "2023-05-15T10:16:07.076087+00:00",
+                "definitionUri": "opentrons/opentrons_24_aluminumblock_generic_2ml_screwcap/1",
+                "location": {
+                    "slotName": "10",
+                    "moduleModel": "temperatureModuleV2"
+                },
+                "vector": {
+                    "x": 0.8000000000000114,
+                    "y": 1.7000000000003865,
+                    "z": -0.39999999999997726
+                }
+            },
+            {
+                "id": "aca88119-27ef-477e-b401-c2920dd0dfa7",
+                "createdAt": "2023-05-15T10:16:07.124935+00:00",
+                "definitionUri": "opentrons/opentrons_6_tuberack_falcon_50ml_conical/1",
+                "location": {
+                    "slotName": "11"
+                },
+                "vector": {
+                    "x": 0,
+                    "y": 1.0000000000002274,
+                    "z": -0.29999999999998295
+                }
+            },
+            {
+                "id": "75ed37db-ea9a-4db5-80ca-73b76a32f3bc",
+                "createdAt": "2023-05-15T10:16:07.136059+00:00",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "1"
+                },
+                "vector": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 6.499999999999993
+                }
+            },
+            {
+                "id": "51baf0e9-ea73-4e3c-882d-5b40578b63fc",
+                "createdAt": "2023-05-15T10:16:07.244457+00:00",
+                "definitionUri": "opentrons/nest_12_reservoir_15ml/1",
+                "location": {
+                    "slotName": "5"
+                },
+                "vector": {
+                    "x": 0.8999999999999488,
+                    "y": 0,
+                    "z": 5.400000000000009
+                }
+            },
+            {
+                "id": "a9b1080a-afdd-48c8-87fd-8baaf890aad9",
+                "createdAt": "2023-05-15T10:16:07.255385+00:00",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "2"
+                },
+                "vector": {
+                    "x": 0.19999999999998863,
+                    "y": 0.09999999999999432,
+                    "z": 6.200000000000003
+                }
+            },
+            {
+                "id": "45347486-bedf-4559-959d-9ee295919ee2",
+                "createdAt": "2023-05-15T10:16:07.267552+00:00",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "3"
+                },
+                "vector": {
+                    "x": 0.20000000000004547,
+                    "y": 0,
+                    "z": 6.200000000000003
+                }
+            },
+            {
+                "id": "f8b93deb-4f96-4747-89e5-d5dda9b30d62",
+                "createdAt": "2023-05-15T10:16:07.277837+00:00",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "4"
+                },
+                "vector": {
+                    "x": 0,
+                    "y": 0.29999999999998295,
+                    "z": 6.899999999999999
+                }
+            },
+            {
+                "id": "5202e631-67ad-42c6-a36a-003a79a374de",
+                "createdAt": "2023-05-15T10:16:07.340623+00:00",
+                "definitionUri": "opentrons/nest_96_wellplate_100ul_pcr_full_skirt/1",
+                "location": {
+                    "slotName": "7"
+                },
+                "vector": {
+                    "x": 0,
+                    "y": 1.200000000000017,
+                    "z": 6.999999999999986
+                }
+            }
+        ],
+        "protocolId": "a195420f-b4ac-4d4f-83c2-0dcb99adb437",
+        "completedAt": "2023-05-15T10:28:57.454818+00:00",
+        "startedAt": "2023-05-15T10:28:04.635764+00:00"
+    },
+    "commands": {
+        "data": [
+            {
+                "id": "command.COMMENT-21",
+                "key": "command.COMMENT-21",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:06.616989+00:00",
+                "startedAt": "2023-05-15T10:28:06.616989+00:00",
+                "completedAt": "2023-05-15T10:28:06.675627+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Recipe TWB assigned to tube: A1 of wash reagents tubes on 11; volume: 10560",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-5",
+                "key": "commands.LOAD_LABWARE-5",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:06.717345+00:00",
+                "startedAt": "2023-05-15T10:28:06.717345+00:00",
+                "completedAt": "2023-05-15T10:28:06.717345+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "1"
+                    },
+                    "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "shared reagent plate"
+                }
+            },
+            {
+                "id": "command.COMMENT-22",
+                "key": "command.COMMENT-22",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:06.832140+00:00",
+                "startedAt": "2023-05-15T10:28:06.832140+00:00",
+                "completedAt": "2023-05-15T10:28:06.890753+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_96_wellplate_100ul_pcr_full_skirt",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-23",
+                "key": "command.COMMENT-23",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:06.901019+00:00",
+                "startedAt": "2023-05-15T10:28:06.901019+00:00",
+                "completedAt": "2023-05-15T10:28:06.957830+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Initializing Wash plate helper on slot 5",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-6",
+                "key": "commands.LOAD_LABWARE-6",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:06.974442+00:00",
+                "startedAt": "2023-05-15T10:28:06.974442+00:00",
+                "completedAt": "2023-05-15T10:28:06.974442+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "5"
+                    },
+                    "loadName": "nest_12_reservoir_15ml",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "Shared wash plate"
+                }
+            },
+            {
+                "id": "command.COMMENT-24",
+                "key": "command.COMMENT-24",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:07.002453+00:00",
+                "startedAt": "2023-05-15T10:28:07.002453+00:00",
+                "completedAt": "2023-05-15T10:28:07.060845+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_12_reservoir_15ml",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-7",
+                "key": "commands.LOAD_LABWARE-7",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:07.112965+00:00",
+                "startedAt": "2023-05-15T10:28:07.112965+00:00",
+                "completedAt": "2023-05-15T10:28:07.112965+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "2"
+                    },
+                    "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "empty plate for CDNA1"
+                }
+            },
+            {
+                "id": "command.COMMENT-25",
+                "key": "command.COMMENT-25",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:07.227843+00:00",
+                "startedAt": "2023-05-15T10:28:07.227843+00:00",
+                "completedAt": "2023-05-15T10:28:07.290382+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_96_wellplate_100ul_pcr_full_skirt",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-8",
+                "key": "commands.LOAD_LABWARE-8",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:07.348978+00:00",
+                "startedAt": "2023-05-15T10:28:07.348978+00:00",
+                "completedAt": "2023-05-15T10:28:07.348978+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "3"
+                    },
+                    "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "empty plate for COV1 COV2"
+                }
+            },
+            {
+                "id": "command.COMMENT-26",
+                "key": "command.COMMENT-26",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:07.512467+00:00",
+                "startedAt": "2023-05-15T10:28:07.512467+00:00",
+                "completedAt": "2023-05-15T10:28:07.590159+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_96_wellplate_100ul_pcr_full_skirt",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-9",
+                "key": "commands.LOAD_LABWARE-9",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:07.629844+00:00",
+                "startedAt": "2023-05-15T10:28:07.629844+00:00",
+                "completedAt": "2023-05-15T10:28:07.629844+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "4"
+                    },
+                    "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "empty plate for TAG1"
+                }
+            },
+            {
+                "id": "command.COMMENT-27",
+                "key": "command.COMMENT-27",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:07.759009+00:00",
+                "startedAt": "2023-05-15T10:28:07.759009+00:00",
+                "completedAt": "2023-05-15T10:28:07.815965+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_96_wellplate_100ul_pcr_full_skirt",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_LABWARE-10",
+                "key": "commands.LOAD_LABWARE-10",
+                "commandType": "loadLabware",
+                "createdAt": "2023-05-15T10:28:07.861383+00:00",
+                "startedAt": "2023-05-15T10:28:07.861383+00:00",
+                "completedAt": "2023-05-15T10:28:07.861383+00:00",
+                "status": "succeeded",
+                "params": {
+                    "location": {
+                        "slotName": "7"
+                    },
+                    "loadName": "nest_96_wellplate_100ul_pcr_full_skirt",
+                    "namespace": "opentrons",
+                    "version": 1,
+                    "displayName": "Index plate"
+                }
+            },
+            {
+                "id": "command.COMMENT-28",
+                "key": "command.COMMENT-28",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:07.976127+00:00",
+                "startedAt": "2023-05-15T10:28:07.976127+00:00",
+                "completedAt": "2023-05-15T10:28:08.037093+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Searching offset for labware: nest_96_wellplate_100ul_pcr_full_skirt",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "commands.LOAD_PIPETTE-0",
+                "key": "commands.LOAD_PIPETTE-0",
+                "commandType": "loadPipette",
+                "createdAt": "2023-05-15T10:28:09.968825+00:00",
+                "startedAt": "2023-05-15T10:28:09.968825+00:00",
+                "completedAt": "2023-05-15T10:28:09.968825+00:00",
+                "status": "succeeded",
+                "params": {
+                    "pipetteName": "p1000_single_gen2",
+                    "mount": "left"
+                }
+            },
+            {
+                "id": "commands.LOAD_PIPETTE-1",
+                "key": "commands.LOAD_PIPETTE-1",
+                "commandType": "loadPipette",
+                "createdAt": "2023-05-15T10:28:11.896942+00:00",
+                "startedAt": "2023-05-15T10:28:11.896942+00:00",
+                "completedAt": "2023-05-15T10:28:11.896942+00:00",
+                "status": "succeeded",
+                "params": {
+                    "pipetteName": "p300_single_gen2",
+                    "mount": "right"
+                }
+            },
+            {
+                "id": "command.COMMENT-29",
+                "key": "command.COMMENT-29",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:11.922641+00:00",
+                "startedAt": "2023-05-15T10:28:11.922641+00:00",
+                "completedAt": "2023-05-15T10:28:11.980684+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "logging tip info in /var/lib/jupyter/notebooks/outputs/tip_log.json",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-30",
+                "key": "command.COMMENT-30",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:12.466789+00:00",
+                "startedAt": "2023-05-15T10:28:12.466789+00:00",
+                "completedAt": "2023-05-15T10:28:12.526151+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "[x] Stage: Anneal RNA",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-31",
+                "key": "command.COMMENT-31",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:12.535826+00:00",
+                "startedAt": "2023-05-15T10:28:12.535826+00:00",
+                "completedAt": "2023-05-15T10:28:12.595419+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "[x] Stage: Anneal RNA Prep. EPH3",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-32",
+                "key": "command.COMMENT-32",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:12.607388+00:00",
+                "startedAt": "2023-05-15T10:28:12.607388+00:00",
+                "completedAt": "2023-05-15T10:28:12.682128+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Getting tube for recipe EPH3",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-33",
+                "key": "command.COMMENT-33",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:12.724958+00:00",
+                "startedAt": "2023-05-15T10:28:12.724958+00:00",
+                "completedAt": "2023-05-15T10:28:12.786068+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Found Well A1 of Reagents tube on Temperature Module GEN2 on 10 with volume 480",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-34",
+                "key": "command.COMMENT-34",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:12.812066+00:00",
+                "startedAt": "2023-05-15T10:28:12.812066+00:00",
+                "completedAt": "2023-05-15T10:28:12.870257+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Place tube EPH3 in Well A1 of Reagents tube on Temperature Module GEN2 on 10 with volume 480",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.PAUSE-0",
+                "key": "command.PAUSE-0",
+                "commandType": "waitForResume",
+                "createdAt": "2023-05-15T10:28:12.929374+00:00",
+                "startedAt": "2023-05-15T10:28:12.929374+00:00",
+                "completedAt": "2023-05-15T10:28:13.001162+00:00",
+                "status": "succeeded",
+                "params": {
+                    "message": "Place tube EPH3 in Well A1 of Reagents tube on Temperature Module GEN2 on 10 with volume 480"
+                }
+            },
+            {
+                "id": "command.DELAY-0",
+                "key": "command.DELAY-0",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:13.013285+00:00",
+                "startedAt": "2023-05-15T10:28:13.013285+00:00",
+                "completedAt": "2023-05-15T10:28:23.793912+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Delaying for 0 minutes and 0.1 seconds",
+                    "legacyCommandType": "command.DELAY"
+                }
+            },
+            {
+                "id": "command.COMMENT-35",
+                "key": "command.COMMENT-35",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:24.027632+00:00",
+                "startedAt": "2023-05-15T10:28:24.027632+00:00",
+                "completedAt": "2023-05-15T10:28:24.088224+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Getting tube for recipe EPH3",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-36",
+                "key": "command.COMMENT-36",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:24.099345+00:00",
+                "startedAt": "2023-05-15T10:28:24.099345+00:00",
+                "completedAt": "2023-05-15T10:28:24.157714+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Found Well A1 of Reagents tube on Temperature Module GEN2 on 10 with volume 480",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-37",
+                "key": "command.COMMENT-37",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:24.170880+00:00",
+                "startedAt": "2023-05-15T10:28:24.170880+00:00",
+                "completedAt": "2023-05-15T10:28:24.228405+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Filling wells [A1 of empty plate for CDNA1 on 2, B1 of empty plate for CDNA1 on 2, C1 of empty plate for CDNA1 on 2, D1 of empty plate for CDNA1 on 2, E1 of empty plate for CDNA1 on 2, F1 of empty plate for CDNA1 on 2, G1 of empty plate for CDNA1 on 2, H1 of empty plate for CDNA1 on 2, A2 of empty plate for CDNA1 on 2, B2 of empty plate for CDNA1 on 2, C2 of empty plate for CDNA1 on 2, D2 of empty plate for CDNA1 on 2, E2 of empty plate for CDNA1 on 2, F2 of empty plate for CDNA1 on 2, G2 of empty plate for CDNA1 on 2, H2 of empty plate for CDNA1 on 2, A3 of empty plate for CDNA1 on 2, B3 of empty plate for CDNA1 on 2, C3 of empty plate for CDNA1 on 2, D3 of empty plate for CDNA1 on 2, E3 of empty plate for CDNA1 on 2, F3 of empty plate for CDNA1 on 2, G3 of empty plate for CDNA1 on 2, H3 of empty plate for CDNA1 on 2, A4 of empty plate for CDNA1 on 2, B4 of empty plate for CDNA1 on 2, C4 of empty plate for CDNA1 on 2, D4 of empty plate for CDNA1 on 2, E4 of empty plate for CDNA1 on 2, F4 of empty plate for CDNA1 on 2, G4 of empty plate for CDNA1 on 2, H4 of empty plate for CDNA1 on 2, A5 of empty plate for CDNA1 on 2, B5 of empty plate for CDNA1 on 2, C5 of empty plate for CDNA1 on 2, D5 of empty plate for CDNA1 on 2, E5 of empty plate for CDNA1 on 2, F5 of empty plate for CDNA1 on 2, G5 of empty plate for CDNA1 on 2, H5 of empty plate for CDNA1 on 2, A6 of empty plate for CDNA1 on 2, B6 of empty plate for CDNA1 on 2, C6 of empty plate for CDNA1 on 2, D6 of empty plate for CDNA1 on 2, E6 of empty plate for CDNA1 on 2, F6 of empty plate for CDNA1 on 2, G6 of empty plate for CDNA1 on 2, H6 of empty plate for CDNA1 on 2] using Well A1 of Reagents tube on Temperature Module GEN2 on 10 with volume 480",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.COMMENT-38",
+                "key": "command.COMMENT-38",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:24.242269+00:00",
+                "startedAt": "2023-05-15T10:28:24.242269+00:00",
+                "completedAt": "2023-05-15T10:28:24.295657+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "[x] Stage: Anneal RNA Dist. EPH3 1/48",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            },
+            {
+                "id": "command.PICK_UP_TIP-0",
+                "key": "command.PICK_UP_TIP-0",
+                "commandType": "pickUpTip",
+                "createdAt": "2023-05-15T10:28:24.369391+00:00",
+                "startedAt": "2023-05-15T10:28:24.369391+00:00",
+                "completedAt": "2023-05-15T10:28:26.097480+00:00",
+                "status": "failed",
+                "error": {
+                    "id": "c287480b-c576-4bec-8ee1-8c9116ba84b8",
+                    "errorType": "LegacyContextCommandError",
+                    "createdAt": "2023-05-15T10:28:26.097480+00:00",
+                    "detail": "SmoothieAlarm: None returned ALARM: Kill button pressed - reset or M999 to continue"
+                },
+                "params": {
+                    "labwareId": "labware-2",
+                    "wellName": "G1",
+                    "wellLocation": {
+                        "origin": "top",
+                        "offset": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        }
+                    },
+                    "pipetteId": "pipette-1"
+                }
+            },
+            {
+                "id": "command.COMMENT-39",
+                "key": "command.COMMENT-39",
+                "commandType": "custom",
+                "createdAt": "2023-05-15T10:28:26.102806+00:00",
+                "startedAt": "2023-05-15T10:28:26.102806+00:00",
+                "completedAt": "2023-05-15T10:28:26.159398+00:00",
+                "status": "succeeded",
+                "params": {
+                    "legacyCommandText": "Exception occurred during protocol: SmoothieAlarm: None returned ALARM: Kill button pressed - reset or M999 to continue",
+                    "legacyCommandType": "command.COMMENT"
+                }
+            }
+        ],
+        "links": {},
+        "meta": {
+            "cursor": 387,
+            "totalLength": 417
+        }
+    }
+}
