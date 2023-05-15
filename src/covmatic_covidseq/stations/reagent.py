@@ -484,5 +484,30 @@ class ReagentStation(CovidseqBaseStation):
         self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
 
 
+class ReagentStationCalibration(ReagentStation):
+    """ ReagentStationClass used for calibration.
+        Since OT app v6.0.0 offsets are extracted from the runlog of the OT App run, but in this case we must not apply
+        any offset to labware. Then offsets are saved in the json file *labware_offsets* and recalled in the protocol
+        executed using ssh.
+        Step to calibrate a protocol:
+        1. load the *station_reagent_calibration.py* protocol in OT App;
+        2. launch the Labware Position Check and calibrate the labware as described in the app;
+        3. Run the protocol. As soon as the protocol has started you can stop it and cancel the run.
+        4. Download the runlog of the executed run: offsets are stored in this file.
+        5. Copy the runlog file on the robot (folder */var/lib/jupyter/notebooks/config*) using Jupyter or ssh
+        6. Open a command line on the robot in the folder */var/lib/jupyter/notebooks/config*
+        7. Execute the offset extractor */var/user-packages/usr/bin/covmatic-covidseq-genoffset*
+        8. When requested insert the runlog filename;
+        9. When requested insert the output filename *labware_offsets.json*
+           The utility will create a offset json file that will be loaded when executing the ReagentStation protocol.
+    """
+    def __init__(self,
+                 labware_load_offset=False,
+                 index_list=default_index_order,
+                 *args, **argv):
+        super().__init__(labware_load_offset=labware_load_offset,
+                         index_list=index_list,
+                         *args, **argv)
+
 if __name__ == "__main__":
     ReagentStation(num_samples=96, metadata={'apiLevel': '2.7'}).simulate()
