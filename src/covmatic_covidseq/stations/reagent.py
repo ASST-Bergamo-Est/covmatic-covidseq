@@ -391,12 +391,15 @@ class ReagentStation(CovidseqBaseStation):
         self.fill_wells(source, recipe.volume_final, wells, pipette,
                         disposal_volume=disposal_volume, stage="Dist. {}".format(recipe.name))
 
-    def distribute_index_to_wells(self, destination_wells, index_volume=10):
+    def distribute_index_to_wells(self, destination_wells, index_volume=10, air_gap_volume=5):
         all_wells = self._index_plate.wells_by_name()
         sources = [all_wells[idx] for idx in self._index_list]
         self.logger.info("Index sources are: {}".format(sources))
 
         pipette = self._pipette_chooser.get_pipette(index_volume, consider_air_gap=True)
+        
+        if not air_gap_volume:
+            air_gap_volume = self._pipette_chooser.get_air_gap(pipette)
 
         well_initial_vol = self.get_recipe("PCR Mix").volume_final
 
@@ -411,17 +414,17 @@ class ReagentStation(CovidseqBaseStation):
                 pipette.move_to(s.bottom(0.5), speed=self._very_slow_vertical_speed)
                 pipette.aspirate(index_volume)
                 pipette.move_to(s.top(), speed=self._very_slow_vertical_speed)
-                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+                pipette.air_gap(air_gap_volume)
 
                 pipette.move_to(d.top())
-                pipette.dispense(self._pipette_chooser.get_air_gap(pipette))
+                pipette.dispense(air_gap_volume)
                 dest_with_volume.fill(index_volume)
                 with MoveWithSpeed(pip=pipette,
                                    from_point=d.top(),
                                    to_point=d.bottom(dest_with_volume.height),
                                    speed=self._slow_vertical_speed):
                     pipette.dispense(index_volume)
-                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
+                pipette.air_gap(air_gap_volume)
 
                 self.drop(pipette)
 
