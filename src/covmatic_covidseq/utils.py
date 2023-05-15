@@ -24,6 +24,10 @@ def parse_v6_log_and_create_labware_offsets_json(log_filepath: str=None, output_
     with open(log_filepath, "r") as f:
         log_dict = json.load(f)
 
+    # from v6.3.0 run log has offsets inside the *data* key
+    if "data" in log_dict:
+        log_dict = log_dict["data"]
+
     output_offsets = []
 
     our_offsets_id = [l['offsetId'] for l in filter(lambda x: 'offsetId' in x, log_dict['labware'])]
