@@ -767,11 +767,11 @@ class LibraryStation(CovidseqBaseStation):
                     self.apply_flow_rate(pipette, supernatant_flow_rate, 0.5)
 
                     for p in reversed(points):
-                        pipette.move_to(p, speed=self._very_slow_vertical_speed)
+                        pipette.move_to(p, speed=self._very_slow_vertical_speed, publish=False)
                         pipette.aspirate(last_phase_volume_per_step)
 
                     for p in points:
-                        pipette.move_to(p, speed=self._very_slow_vertical_speed)
+                        pipette.move_to(p, speed=self._very_slow_vertical_speed, publish=False)
 
                 discard_liquid(pipette, s, last_phase=True)
 
