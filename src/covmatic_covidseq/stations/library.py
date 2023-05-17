@@ -10,114 +10,9 @@ from opentrons.types import Point
 
 from ..pipette_chooser import PipetteChooser
 from ..station import CovidseqBaseStation, labware_loader, instrument_loader
+from ..transfer_manager import TransferManager, get_side_movement, get_magnets_direction, get_magnets_opposite_direction
 
 
-def mix_well(pipette,
-             well: Well,
-             volume,
-             repetitions,
-             last_dispense_flow_rate=None,
-             min_z_difference=1.0,
-             travel_speed=25.0,
-             onto_beads=False,
-             beads_height: float = 8,
-             side_top_ratio=1.0,
-             side_bottom_ratio=0.4,
-             logger=logging.getLogger("mix_well")):
-    """ Mix a well
-        :param pipette: pipette object to use
-        :param well: well to mix
-        :param volume: volume to mix
-        :param repetitions: number of mix (aspirate-dispense) cycles
-        :param last_dispense_flow_rate: flow rate to use in the last dispense to avoid leaving liquid in tip
-        :param min_z_difference: the minimum difference to have in the vertical axis
-        :param travel_speed: the speed between different positions.
-        :param onto_beads: if dispense directly onto beads to help resuspension.
-        :param beads_height: the expected height of beads in well.
-        :param side_top_ratio: float from 0 to 1, the amount of side movement in percentage of well length at the top of the well.
-                               if 1.0 will touch the border of the well at the top.
-        :param side_bottom_ratio: float from 0 to 1, the amount of side movement in percentage of well length at the bottom of the well.
-                               if 0.0 will touch the center of the well at the bottom.
-    """
-    logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
-                                                                                              repetitions, volume))
-
-    well_with_volume = WellWithVolume(well, headroom_height=0)
-    height_min = well_with_volume.height
-
-    well_with_volume.fill(volume)
-    height_max = max(well_with_volume.height, height_min + min_z_difference)
-
-    aspirate_pos = [well.bottom((height_min + height_max)/2)]
-    if onto_beads:
-        dispense_heights = [beads_height]
-        direction = get_magnets_direction(well)
-        dispense_xy_directions = [(direction, 0), (direction, 1), (direction, -1)]
-    else:
-        dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
-        dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
-
-    limited_dispense_heights = list(map(lambda x: min(x, well.depth-2), dispense_heights))
-    logger.info("Dispensing at height: {}".format(limited_dispense_heights))
-
-    well_bottom_and_side_amount = [(well.bottom(h), get_side_movement(well, h, side_top_ratio, side_bottom_ratio)) for h in islice(cycle(limited_dispense_heights), repetitions)]
-    dispense_pos_center = [w for (w, s) in well_bottom_and_side_amount]
-    dispense_pos_side = [w.move(Point(x=x_side * side_amount, y=y_side * side_amount))
-                         for (w, side_amount), (x_side, y_side) in zip(well_bottom_and_side_amount, cycle(dispense_xy_directions))]
-
-    for i, (a, d_center, d_side) in enumerate(zip(cycle(aspirate_pos), dispense_pos_center, dispense_pos_side)):
-        if i == (repetitions - 1) and last_dispense_flow_rate is not None:
-            pipette.flow_rate.dispense = last_dispense_flow_rate
-        pipette.move_to(a, speed=travel_speed, publish=False)
-        pipette.aspirate(volume)
-        pipette.move_to(d_center, speed=travel_speed, publish=False)
-        pipette.move_to(d_side, speed=travel_speed, publish=False)
-        pipette.dispense(volume)
-        pipette.move_to(d_center, speed=travel_speed, publish=False)
-    pipette.move_to(well.bottom(height_max), speed=travel_speed, publish=False)
-
-
-def get_magnets_opposite_direction(well: Well):
-    """ Calculates the correct horizontal direction that multiplied by a horizontal positive distance will
-        keep the tip away from magnets when plate is onto magnetic module.
-        (Magnets are between each couple of columns, eg. 1-2 and 3-4)
-    """
-    for idx, c in enumerate(well.parent.columns()):
-        if well in c:
-            return -1 if (idx % 2 == 0) else 1
-    else:
-        logging.getLogger().warning("Side direction not found for well {}".format(well))
-        return 0
-
-
-def get_magnets_direction(well: Well):
-    """ Calculates the correct horizontal direction that multiplied by a horizontal positive distance will
-        keep the tip close to magnets when plate is onto magnetic module.
-        (Magnets are between each couple of columns, eg. 1-2 and 3-4)
-    """
-    return -get_magnets_opposite_direction(well)
-
-
-def get_side_movement(well, height,
-                      side_top_ratio=1.0,
-                      side_bottom_ratio=0.4) -> float:
-    """ Get the horizontal displacement from the center of the well incrementally:
-        - at top height will be well length * side_top_ratio,
-        - at bottom height will be length * side_bottom_ratio
-        - at passed height it will be the linear function between top and bottom;
-        :param well the well to extract the data from;
-        :param height: height in which to calculate the horizontal displacement;
-        :param side_top_ratio: the value to multipy with the well length to calculate the side movement in the top of the well
-        :param side_bottom_ratio: the value to multipy with the well length to calculate the side movement in the bottom of the well
-        :return the horizontal displacement corrisponding to the height passed. Limited always to half of the well lenght
-
-    """
-    depth = well.depth
-    length = well.diameter or well.length
-    side_top = side_top_ratio * length / 2
-    side_bottom = side_bottom_ratio * length / 2
-    ret = min(length / 2, side_bottom + (side_top - side_bottom) * height / depth)
-    return ret
 
 
 class PlateManager:
@@ -198,6 +93,7 @@ class LibraryStation(CovidseqBaseStation):
         self._hs_start_time = None
         self._hs_requested_seconds = None
         self._thermal_cycles = self.load_json_from_file(self.check_and_get_absolute_path(thermal_cycles_json_filepath))
+        self._transfer_manager = TransferManager(self.pick_up, self.drop)
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
@@ -472,46 +368,46 @@ class LibraryStation(CovidseqBaseStation):
 
         self.logger.info("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
 
-        pipette_available_volume = self._pipette_chooser.get_max_volume(pipette) - disposal_volume
-
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
+        self._transfer_manager.setup_transfer(pipette,
+                                              self._pipette_chooser.get_max_volume(pipette),
+                                              self._pipette_chooser.get_air_gap(pipette),
+                                              len(destinations) * recipe.volume_final,
+                                              self._very_slow_vertical_speed,
+                                              source_tip_per_row)
+
         for i, (dest_well) in enumerate(destinations):
-            volume = recipe.volume_final
-            num_transfers = math.ceil(volume / pipette_available_volume)
-            self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, pipette_available_volume))
-
-            dest_well_with_volume = WellWithVolume(dest_well, 0)
-
             if self.run_stage(self.build_stage("add {} {}/{}".format(recipe_name, i+1, len(destinations)))):
-                while volume > 0:
-                    self.logger.debug("Remaining volume: {:1f}".format(volume))
-                    volume_to_transfer = min(volume, pipette_available_volume)
-                    self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
-
-                    if not pipette.has_tip:
-                        self.pick_up(pipette)
-
-                    if (pipette.current_volume - disposal_volume) < volume_to_transfer:
-                        total_remaining_volume = min(pipette_available_volume,
-                                                     (len(destinations)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
-                        self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
-
-                        source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
-                        source.prepare_aspiration(total_remaining_volume)
-                        source.aspirate(pipette)
-
-                    dest_well_with_volume.fill(volume_to_transfer)
-                    with MoveWithSpeed(pipette,
-                                       from_point=dest_well.bottom(dest_well_with_volume.height + 5),
-                                       to_point=dest_well.bottom(dest_well_with_volume.height),
-                                       speed=self._very_slow_vertical_speed, move_close=False):
-                        pipette.dispense(volume_to_transfer)
-                    volume -= volume_to_transfer
-                self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, disposal_volume=disposal_volume)
+                # while volume > 0:
+                #     self.logger.debug("Remaining volume: {:1f}".format(volume))
+                #     volume_to_transfer = min(volume, pipette_available_volume)
+                #     self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+                #
+                #     if not pipette.has_tip:
+                #         self.pick_up(pipette)
+                #
+                #     if (pipette.current_volume - disposal_volume) < volume_to_transfer:
+                #         total_remaining_volume = min(pipette_available_volume,
+                #                                      (len(destinations)-i) * recipe.volume_final) - (pipette.current_volume - disposal_volume)
+                #         self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+                #
+                #         source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
+                #         source.prepare_aspiration(total_remaining_volume)
+                #         source.aspirate(pipette)
+                #
+                #     dest_well_with_volume.fill(volume_to_transfer)
+                #     with MoveWithSpeed(pipette,
+                #                        from_point=dest_well.bottom(dest_well_with_volume.height + 5),
+                #                        to_point=dest_well.bottom(dest_well_with_volume.height),
+                #                        speed=self._very_slow_vertical_speed, move_close=False):
+                #         pipette.dispense(volume_to_transfer)
+                #     volume -= volume_to_transfer
+                # self.logger.info("Final volume in tip: {}ul".format(pipette.current_volume))
             else:
-                source.use_volume_only(volume)
+                source.use_volume_only(recipe.volume_final)
 
         if pipette.has_tip:
             self.drop(pipette)
@@ -528,56 +424,69 @@ class LibraryStation(CovidseqBaseStation):
         self.apply_flow_rate(pipette)
 
         source = reagent_mts['multi_tube_source']
-        source_tip_per_row = math.ceil(pipette.channels/reagent_mts['rows_count'])
+        source_tips_per_row = math.ceil(pipette.channels/reagent_mts['rows_count'])
         self.logger.info("Source is: {}".format(source))
-        self.logger.info("We have {} tips for each source row".format(source_tip_per_row))
+        self.logger.info("We have {} tips for each source row".format(source_tips_per_row))
 
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
-        pipette_available_volume = self._pipette_chooser.get_max_volume(pipette)
+        # pipette_available_volume = self._pipette_chooser.get_max_volume(pipette)
 
-        mix_enabled = mix_volume != 0 and mix_times != 0
+        self._transfer_manager.setup_transfer(pipette,
+                                              self._pipette_chooser.get_max_volume(pipette),
+                                              self._pipette_chooser.get_air_gap(pipette),
+                                              total_volume_to_transfer=recipe.volume_final,
+                                              vertical_speed=self._slow_vertical_speed,
+                                              source_tips_per_row=source_tips_per_row)
+        self._transfer_manager.setup_onto_beads(beads_expected_height=self._beads_expected_height,
+                                                side_top_ratio=side_top_ratio,
+                                                side_bottom_ratio=side_bottom_ratio)
+        self._transfer_manager.setup_mix(mix_times=self.get_mix_times(mix_times), mix_volume=mix_volume)
 
         for i, (dest_well) in enumerate(destinations):
-            volume = recipe.volume_final
-            num_transfers = math.ceil(volume / pipette_available_volume)
-            self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, pipette_available_volume))
-
-            dest_well_with_volume = WellWithVolume(dest_well, 0, headroom_height=0)
+            # volume = recipe.volume_final
+            # num_transfers = math.ceil(volume / pipette_available_volume)
+            # self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, pipette_available_volume))
+            #
+            # dest_well_with_volume = WellWithVolume(dest_well, 0, headroom_height=0)
 
             if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
-                while volume > 0:
-                    self.logger.debug("Remaining volume: {:1f}".format(volume))
-                    volume_to_transfer = min(volume, pipette_available_volume)
-                    self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+                if pipette.has_tip:
+                    self.drop(pipette)                      # Multiple transfer needed, but change tip requested
 
-                    if pipette.has_tip:
-                        self.drop(pipette)                      # Multiple transfer needed, but change tip requested
+                if not pipette.has_tip:
+                    self.pick_up(pipette)
 
-                    if not pipette.has_tip:
-                        self.pick_up(pipette)
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=False)
 
-                    if pipette.current_volume < volume_to_transfer:
-                        total_remaining_volume = volume - pipette.current_volume
-                        self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
-
-                        source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
-                        source.prepare_aspiration(total_remaining_volume)
-                        source.aspirate(pipette)
-
-                    dest_well_with_volume.fill(volume_to_transfer)
-                    height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads and not mix_enabled else dest_well_with_volume.height
-                    side_movement = get_side_movement(dest_well, height, side_top_ratio, side_bottom_ratio) if onto_beads else 0
-                    dest_central = dest_well.bottom(height)
-                    dest_side = dest_central.move(Point(x=side_movement))
-
-                    pipette.move_to(dest_central)
-                    pipette.move_to(dest_side, speed=self._slow_speed)
-                    pipette.dispense(volume_to_transfer)
-                    pipette.move_to(dest_central, speed=self._slow_speed)
-
-                    volume -= volume_to_transfer
+                # while volume > 0:
+                #     self.logger.debug("Remaining volume: {:1f}".format(volume))
+                #     volume_to_transfer = min(volume, pipette_available_volume)
+                #     self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
+                #
+                #
+                #
+                #     if pipette.current_volume < volume_to_transfer:
+                #         total_remaining_volume = volume - pipette.current_volume
+                #         self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
+                #
+                #         source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
+                #         source.prepare_aspiration(total_remaining_volume)
+                #         source.aspirate(pipette)
+                #
+                #     dest_well_with_volume.fill(volume_to_transfer)
+                #     height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads and not mix_enabled else dest_well_with_volume.height
+                #     side_movement = get_side_movement(dest_well, height, side_top_ratio, side_bottom_ratio) if onto_beads else 0
+                #     dest_central = dest_well.bottom(height)
+                #     dest_side = dest_central.move(Point(x=side_movement))
+                #
+                #     pipette.move_to(dest_central)
+                #     pipette.move_to(dest_side, speed=self._slow_speed)
+                #     pipette.dispense(volume_to_transfer)
+                #     pipette.move_to(dest_central, speed=self._slow_speed)
+                #
+                #     volume -= volume_to_transfer
 
                 if mix_enabled:
                     mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times),
@@ -589,7 +498,7 @@ class LibraryStation(CovidseqBaseStation):
 
                 self.drop(pipette)
             else:
-                source.use_volume_only(volume)
+                source.use_volume_only(recipe.volume_final)
 
     def mix_dirty(self, locations, mix_volume, mix_times, stage_name="mix", pipette=None):
         if pipette is None:

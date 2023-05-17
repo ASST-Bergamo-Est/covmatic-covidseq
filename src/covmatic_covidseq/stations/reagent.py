@@ -215,7 +215,8 @@ class ReagentStation(CovidseqBaseStation):
         self.logger.info("Filling wash plate with {}".format(reagent_name))
         self.fill_shared_plate(reagent_name, source, dest_wells_with_volume, pipette, disposal_volume)
 
-    def fill_shared_plate(self, reagent_name, source, dest_wells_with_volume, pipette=None, disposal_volume=None):
+    def fill_shared_plate(self, reagent_name, source, dest_wells_with_volume,
+                          pipette=None, disposal_volume=None, use_air_gap=False):
         total_volume_to_aspirate = sum([v for (_, v) in dest_wells_with_volume])
         self.logger.info("Filling shared plate with reagent {}".format(reagent_name))
         self.logger.debug("Total volume for {} samples is {}".format(self._num_samples, total_volume_to_aspirate))
@@ -230,7 +231,7 @@ class ReagentStation(CovidseqBaseStation):
 
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
-                                              self._pipette_chooser.get_air_gap(pipette),
+                                              self._pipette_chooser.get_air_gap(pipette) if use_air_gap else 0,
                                               total_volume_to_aspirate,
                                               self._slow_vertical_speed)
 
@@ -245,7 +246,7 @@ class ReagentStation(CovidseqBaseStation):
         if pipette.has_tip:
             self.drop(pipette)
 
-    def fill_wells(self, source, volume, wells, pipette=None, disposal_volume=None, stage="Dist."):
+    def fill_wells(self, source, volume, wells, pipette=None, disposal_volume=None, stage="Dist.", use_air_gap=False):
         """ Distribute reagent prepared for recipe passed to wells.
             :param reagent_name: name of the recipe to be distributed
             :param wells: a list of well to fill
@@ -267,9 +268,9 @@ class ReagentStation(CovidseqBaseStation):
 
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
-                                              self._pipette_chooser.get_air_gap(pipette),
-                                              total_volume_to_aspirate,
-                                              self._slow_vertical_speed)
+                                              pipette_air_gap=self._pipette_chooser.get_air_gap(pipette) if use_air_gap else 0,
+                                              total_volume_to_transfer=total_volume_to_aspirate,
+                                              vertical_speed=self._slow_vertical_speed)
 
         for i, dest_well in enumerate(wells):
             if not self.run_stage(self.build_stage("{} {}/{}".format(stage, i + 1, len(wells)))):
