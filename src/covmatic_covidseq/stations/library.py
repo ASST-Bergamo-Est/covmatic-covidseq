@@ -10,9 +10,7 @@ from opentrons.types import Point
 
 from ..pipette_chooser import PipetteChooser
 from ..station import CovidseqBaseStation, labware_loader, instrument_loader
-from ..transfer_manager import TransferManager, get_side_movement, get_magnets_direction, get_magnets_opposite_direction
-
-
+from ..transfer_manager import TransferManager, get_side_movement, mix_well, get_magnets_opposite_direction
 
 
 class PlateManager:
@@ -431,12 +429,9 @@ class LibraryStation(CovidseqBaseStation):
         destinations = self.get_samples_first_row_for_labware(dest_labware)
         self.logger.info("Transferring to {}".format(destinations))
 
-        # pipette_available_volume = self._pipette_chooser.get_max_volume(pipette)
-
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
                                               self._pipette_chooser.get_air_gap(pipette),
-                                              total_volume_to_transfer=recipe.volume_final,
                                               vertical_speed=self._slow_vertical_speed,
                                               source_tips_per_row=source_tips_per_row)
         self._transfer_manager.setup_onto_beads(beads_expected_height=self._beads_expected_height,
@@ -445,58 +440,8 @@ class LibraryStation(CovidseqBaseStation):
         self._transfer_manager.setup_mix(mix_times=self.get_mix_times(mix_times), mix_volume=mix_volume)
 
         for i, (dest_well) in enumerate(destinations):
-            # volume = recipe.volume_final
-            # num_transfers = math.ceil(volume / pipette_available_volume)
-            # self.logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, pipette_available_volume))
-            #
-            # dest_well_with_volume = WellWithVolume(dest_well, 0, headroom_height=0)
-
             if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
-                if pipette.has_tip:
-                    self.drop(pipette)                      # Multiple transfer needed, but change tip requested
-
-                if not pipette.has_tip:
-                    self.pick_up(pipette)
-
-                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=False)
-
-                # while volume > 0:
-                #     self.logger.debug("Remaining volume: {:1f}".format(volume))
-                #     volume_to_transfer = min(volume, pipette_available_volume)
-                #     self.logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well))
-                #
-                #
-                #
-                #     if pipette.current_volume < volume_to_transfer:
-                #         total_remaining_volume = volume - pipette.current_volume
-                #         self.logger.debug("Volume not enough, aspirating {}ul".format(total_remaining_volume))
-                #
-                #         source.use_volume_only(total_remaining_volume * (source_tip_per_row - 1))
-                #         source.prepare_aspiration(total_remaining_volume)
-                #         source.aspirate(pipette)
-                #
-                #     dest_well_with_volume.fill(volume_to_transfer)
-                #     height = min(self._beads_expected_height, dest_well.depth - 2) if onto_beads and not mix_enabled else dest_well_with_volume.height
-                #     side_movement = get_side_movement(dest_well, height, side_top_ratio, side_bottom_ratio) if onto_beads else 0
-                #     dest_central = dest_well.bottom(height)
-                #     dest_side = dest_central.move(Point(x=side_movement))
-                #
-                #     pipette.move_to(dest_central)
-                #     pipette.move_to(dest_side, speed=self._slow_speed)
-                #     pipette.dispense(volume_to_transfer)
-                #     pipette.move_to(dest_central, speed=self._slow_speed)
-                #
-                #     volume -= volume_to_transfer
-
-                if mix_enabled:
-                    mix_well(pipette, dest_well, mix_volume, self.get_mix_times(mix_times),
-                             onto_beads=onto_beads, beads_height=self._beads_expected_height,
-                             side_top_ratio=side_top_ratio, side_bottom_ratio=side_bottom_ratio)
-
-                pipette.move_to(dest_well.top(), speed=self._slow_vertical_speed, publish=False)
-                pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
-
-                self.drop(pipette)
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=True)
             else:
                 source.use_volume_only(recipe.volume_final)
 
