@@ -440,7 +440,10 @@ class LibraryStation(CovidseqBaseStation):
         destinations = self.get_samples_first_row_for_labware(destination_labware)
         self.transfer_dirty(sources, destinations, volume, mix_times=mix_times, mix_volume=mix_volume, stage_name=stage_name)
 
-    def transfer_dirty(self, sources, destinations, volume, pipette=None, mix_times=0, mix_volume=0, stage_name="transfer"):
+    def transfer_dirty(self, sources, destinations, volume, pipette=None,
+                       mix_times=0, mix_volume=0,
+                       onto_beads=False, side_top_ratio=1.0, side_bottom_ratio=0.4,
+                       stage_name="transfer"):
         self.logger.info("Transferring samples stage {}".format(stage_name))
 
         if pipette is None:
@@ -458,7 +461,10 @@ class LibraryStation(CovidseqBaseStation):
                                               self._pipette_chooser.get_max_volume(pipette),
                                               self._pipette_chooser.get_air_gap(pipette),
                                               vertical_speed=self._slow_vertical_speed)
-
+        self._transfer_manager.setup_onto_beads(onto_beads=onto_beads,
+                                                beads_expected_height=self._beads_expected_height,
+                                                side_top_ratio=side_top_ratio,
+                                                side_bottom_ratio=side_bottom_ratio)
         self._transfer_manager.setup_mix(self.get_mix_times(mix_times), mix_volume)
 
         for i, (s, d) in enumerate(zip(sources, destinations)):
@@ -736,9 +742,21 @@ class LibraryStation(CovidseqBaseStation):
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB2")
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 15, stage_name="rem TWB2 deep",
                                 deep_steps=3, deep_transfer_volume_ratio=1.0)
+        self.disengage_magnets()
         self.transfer_dirty(self.get_pcr_mastermix_with_index_first_row_for_labware(self._hs_plate),
                             self.get_samples_first_row_for_labware(self._mag_plate),
-                            volume=50, stage_name="add PCR MM with index")
+                            volume=50, onto_beads=True, mix_times=4, mix_volume=40,
+                            stage_name="add PCR MM with index")
+        self.pick_reagent_plate()
+        self.transfer_sample_plate_internal(self._hsdeck_slot)
+        self.shake(1000, 60)
+        self._hsdeck.open_labware_latch()
+        self.dual_pause("Check for beads resuspension and pipette manually if necessary")
+        self.thermal_cycle("TAG PCR")
+        self.pause("Protocol completed. Please resume to open and deactivate the thermocycler")
+        self._tcdeck.open_lid()
+        self._tcdeck.deactivate_lid()
+        self._tcdeck.deactivate_block()
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
