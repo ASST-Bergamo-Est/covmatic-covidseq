@@ -141,8 +141,9 @@ class TransferManager:
 
     def setup_transfer(self, pipette,
                        pipette_max_volume, pipette_air_gap,
-                       total_volume_to_transfer, vertical_speed, source_tips_per_row=1,
-                       onto_beads=True,
+                       vertical_speed,
+                       total_volume_to_transfer=None,
+                       source_tips_per_row=1,
                        horizontal_speed=25.0):
         """ Set up a new group of transfers. This function must be called before the *transfer* function.
             :param pipette: the pipette that will be used for transfers;
@@ -226,8 +227,7 @@ class TransferManager:
                 if self._pipette_air_gap and self._pipette.current_volume >= self._pipette_air_gap:
                     self._pipette.dispense(self._pipette_air_gap, self._get_well(source).top())
 
-                self._logger.debug("Min: {}".format(min(pipette_available_volume, self._total_volume_to_transfer)))
-                total_remaining_volume = min(pipette_available_volume, self._total_volume_to_transfer) - (
+                total_remaining_volume = min(pipette_available_volume, self._total_volume_to_transfer or volume_to_transfer) - (
                         self._pipette.current_volume - disposal_volume)
                 self._logger.debug("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
                 self._aspirate(total_remaining_volume, source)
@@ -258,7 +258,8 @@ class TransferManager:
                 self._pipette.move_to(dest_central, speed=self._horizontal_speed, publish=None)
 
             volume -= volume_to_transfer
-            self._total_volume_to_transfer -= volume_to_transfer
+            if self._total_volume_to_transfer is not None:
+                self._total_volume_to_transfer -= volume_to_transfer
             self._logger.debug("Volume in tip: {}ul".format(self._pipette.current_volume))
 
             if volume > 0:      # we need to do another cycle
