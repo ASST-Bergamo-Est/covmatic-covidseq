@@ -332,6 +332,7 @@ class ReagentStation(CovidseqBaseStation):
                                    to_point=d.bottom(dest_with_volume.height),
                                    speed=self._slow_vertical_speed):
                     pipette.dispense(index_volume)
+                    pipette.mix(1, dest_with_volume.volume * 0.75)
                 pipette.air_gap(air_gap_volume)
 
                 self.drop(pipette)
