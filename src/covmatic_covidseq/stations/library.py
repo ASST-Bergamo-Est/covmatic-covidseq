@@ -409,7 +409,8 @@ class LibraryStation(CovidseqBaseStation):
                                               self._pipette_chooser.get_air_gap(pipette),
                                               vertical_speed=self._slow_vertical_speed,
                                               source_tips_per_row=source_tips_per_row)
-        self._transfer_manager.setup_onto_beads(beads_expected_height=self._beads_expected_height,
+        self._transfer_manager.setup_onto_beads(onto_beads=onto_beads,
+                                                beads_expected_height=self._beads_expected_height,
                                                 side_top_ratio=side_top_ratio,
                                                 side_bottom_ratio=side_bottom_ratio)
         self._transfer_manager.setup_mix(mix_times=self.get_mix_times(mix_times), mix_volume=mix_volume)
@@ -726,16 +727,25 @@ class LibraryStation(CovidseqBaseStation):
 
         self.transfer_sample_plate_internal(self._magdeck_slot)
         self.engage_magnets()
-        self.delay(mins=3)
 
     def amplify_tagmented_amplicons(self):
-        pass
+        self.delay_start_count()
+        self.drop_reagent_plate_in_slot(self._hsdeck_slot)
+        self.shake(500, 20)
+        self.delay_wait_to_elapse(minutes=3)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB2")
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 15, stage_name="rem TWB2 deep",
+                                deep_steps=3, deep_transfer_volume_ratio=1.0)
+        self.transfer_dirty(self.get_pcr_mastermix_with_index_first_row_for_labware(self._hs_plate),
+                            self.get_samples_first_row_for_labware(self._mag_plate),
+                            volume=50, stage_name="add PCR MM with index")
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
 
     def disengage_magnets(self):
         self._magdeck.disengage()
+
 
 class LibraryStationCalibration(LibraryStation):
     """ Class used for calibration.
