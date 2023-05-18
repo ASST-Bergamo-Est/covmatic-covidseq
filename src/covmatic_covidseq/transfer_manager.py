@@ -1,6 +1,6 @@
 import logging
 import math
-from itertools import cycle
+from itertools import cycle, islice
 from typing import Union
 
 from covmatic_stations.multi_tube_source import MultiTubeSource

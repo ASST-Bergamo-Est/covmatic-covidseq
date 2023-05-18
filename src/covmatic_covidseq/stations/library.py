@@ -1,11 +1,9 @@
 import logging
 import math
 import time
-from itertools import cycle, islice
 from typing import Tuple
 
-from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
-from opentrons.protocol_api.labware import Well
+from covmatic_stations.utils import WellWithVolume
 from opentrons.types import Point
 
 from ..pipette_chooser import PipetteChooser
