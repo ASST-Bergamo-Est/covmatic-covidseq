@@ -737,6 +737,29 @@ class LibraryStation(CovidseqBaseStation):
     def disengage_magnets(self):
         self._magdeck.disengage()
 
+class LibraryStationCalibration(LibraryStation):
+    """ Class used for calibration.
+        Since OT app v6.0.0 offsets are extracted from the runlog of the OT App run, but in this case we must not apply
+        any offset to labware. Then offsets are saved in the json file *labware_offsets* and recalled in the protocol
+        executed using ssh.
+        Step to calibrate a protocol:
+        1. load the *station_reagent_calibration.py* protocol in OT App;
+        2. launch the Labware Position Check and calibrate the labware as described in the app;
+        3. Run the protocol. As soon as the protocol has started you can stop it and cancel the run.
+        4. Download the runlog of the executed run: offsets are stored in this file.
+        5. Copy the runlog file on the robot (folder */var/lib/jupyter/notebooks/config*) using Jupyter or ssh
+        6. Open a command line on the robot in the folder */var/lib/jupyter/notebooks/config*
+        7. Execute the offset extractor */var/user-packages/usr/bin/covmatic-covidseq-genoffset*
+        8. When requested insert the runlog filename;
+        9. When requested insert the output filename *labware_offsets.json*
+           The utility will create an offset json file that will be loaded when executing the ReagentStation protocol.
+    """
+    def __init__(self,
+                 labware_load_offset=False,
+                 *args, **argv):
+        super().__init__(labware_load_offset=labware_load_offset,
+                         *args, **argv)
+
 
 class LibraryStationTestRobot(LibraryStation):
     """ Class for test the robot movement inside the Library OT2 """
@@ -757,4 +780,50 @@ class LibraryStationTestRobot(LibraryStation):
             self._transfer_plate_with_checks(self._wash_plate_slot, self._wash_plate_slot, "Wash plate")
 
 
+class LibraryStationNoThermalCycler(LibraryStation):
+    """ Class to execute protocols without thermocycler """
+    def load_tcdeck(self):
+        pass
 
+    @labware_loader(5, '_tc_plate')
+    def load_tc_plate(self):
+        self._tc_plate = self._ctx.load_labware("nest_96_wellplate_100ul_pcr_full_skirt", self._tc_slot, "Thermocycler plate")
+        self.apply_offset_to_labware(self._tc_plate)
+
+    def thermal_cycle(self, cycle_name):
+        self.dual_pause("Execute thermal cycle: {} ".format(cycle_name))
+
+    def _check_and_open_tc_if_needed(self, slot, for_pick_plate=False):
+        pass
+
+
+class LibraryStationNoHeaterShaker(LibraryStation):
+    def load_hsdeck(self):
+        pass
+
+    @labware_loader(4, '_hs_plate')
+    def load_hs_plate(self):
+        self._hs_plate = self._ctx.load_labware("opentrons_96_pcr_adapter_nest_wellplate_100ul_pcr_full_skirt",
+                                                self._hsdeck_slot,
+                                                "Shaker plate")
+        self.apply_offset_to_labware(self._hs_plate)
+
+    def shake(self, speed_rpm, seconds, blocking=True):
+        self.dual_pause("Please shake the plate at {} rpm for {} minutes".format(speed_rpm, seconds))
+
+    def shake_wait_for_finish(self):
+        pass
+
+    def _check_and_close_hs_if_needed(self, slot):
+        pass
+
+    def _check_and_open_hs_if_needed(self, slot):
+        pass
+
+
+class LibraryStationNoHSTC(LibraryStationNoHeaterShaker, LibraryStationNoThermalCycler):
+    pass
+
+
+class LibraryStationNoHSTCCalibration(LibraryStationNoHSTC, LibraryStationCalibration):
+    pass

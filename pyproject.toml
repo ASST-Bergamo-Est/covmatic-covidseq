@@ -62,7 +62,9 @@ protocols = [
   "protocols/station_reagent_start_at.py",
   "protocols/station_reagent_configfile.py",
   "protocols/station_reagent_calibration.py",
-  "protocols/station_library.py"
+  "protocols/station_library.py",
+  "protocols/station_library_noHSTC.py",
+  "protocols/station_library_noHSTC_calibration.py"
 ]
 
 [tool.coverage.run]
