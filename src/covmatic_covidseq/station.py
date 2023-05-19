@@ -66,6 +66,9 @@ class FlowRates:
 
         return self._flow_rates[flow_rate_name]
 
+    def get_defaults(self, pipette_name):
+        return self.get("defaults-{}".format(pipette_name))
+
     @property
     def default_flow_rate(self):
         return {"aspirate": None, "dispense": None, "blow_out": None}
@@ -228,14 +231,18 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             :param name: the identifier of the flow rate in the json file;
             :param multiplier: a multiplier for the saved flow rate in order to have percentages of saved flow rates.
         """
-        pipette.flow_rate.set_defaults(self._ctx.api_version)
+        self.logger.info(pipette)
 
+        defaults_flow_rate = self._flow_rates.get_defaults(pipette.name)
         flow_rate = self._current_flow_rate if name is None else self._flow_rates.get(name)
 
         for f in flow_rate:
             self.logger.info("Applying flow rate {}: {}".format(f, flow_rate[f]))
             if flow_rate[f] is not None:
-                setattr(pipette.flow_rate, f, (flow_rate[f]) * multiplier)
+                to_set = flow_rate[f] * multiplier
+            else:
+                to_set = defaults_flow_rate[f]
+            setattr(pipette.flow_rate, f, to_set)
 
     def add_recipe(self, recipe: Recipe):
         self._recipes.append(recipe)
