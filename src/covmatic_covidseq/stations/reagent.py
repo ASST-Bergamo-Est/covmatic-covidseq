@@ -232,8 +232,8 @@ class ReagentStation(CovidseqBaseStation):
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
                                               self._pipette_chooser.get_air_gap(pipette) if use_air_gap else 0,
-                                              total_volume_to_aspirate,
-                                              self._slow_vertical_speed)
+                                              vertical_speed=self._slow_vertical_speed,
+                                              total_volume_to_transfer=total_volume_to_aspirate)
 
         for i, (dest_well, volume) in enumerate(dest_wells_with_volume):
             if not self.run_stage(
