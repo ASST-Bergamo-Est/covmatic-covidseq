@@ -841,7 +841,7 @@ class LibraryStationNoHeaterShaker(LibraryStation):
         self.apply_offset_to_labware(self._hs_plate)
 
     def shake(self, speed_rpm, seconds, blocking=True):
-        self.dual_pause("Please shake the plate at {} rpm for {} minutes".format(speed_rpm, seconds))
+        self.dual_pause("Please shake the plate at {} rpm for {} seconds".format(speed_rpm, seconds))
 
     def shake_wait_for_finish(self):
         pass

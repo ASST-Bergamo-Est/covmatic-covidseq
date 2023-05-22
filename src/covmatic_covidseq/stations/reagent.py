@@ -219,8 +219,8 @@ class ReagentStation(CovidseqBaseStation):
                           pipette=None, disposal_volume=None, use_air_gap=False):
         total_volume_to_aspirate = sum([v for (_, v) in dest_wells_with_volume])
         self.logger.info("Filling shared plate with reagent {}".format(reagent_name))
-        self.logger.debug("Total volume for {} samples is {}".format(self._num_samples, total_volume_to_aspirate))
-        self.logger.debug("Destinations received: {}".format(dest_wells_with_volume))
+        self.logger.info("Total volume for {} samples is {}".format(self._num_samples, total_volume_to_aspirate))
+        self.logger.info("Destinations received: {}".format(dest_wells_with_volume))
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(total_volume_to_aspirate)
 
