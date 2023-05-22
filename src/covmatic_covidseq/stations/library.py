@@ -311,6 +311,11 @@ class LibraryStation(CovidseqBaseStation):
 
         self.watchdog_start()
 
+    def open_and_deactivate_thermocycler(self):
+        self._tcdeck.open_lid()
+        self._tcdeck.deactivate_lid()
+        self._tcdeck.deactivate_block()
+
     def get_recipe_mts(self, recipe_name):
         recipe = self.get_recipe(recipe_name)
 
@@ -752,9 +757,7 @@ class LibraryStation(CovidseqBaseStation):
         self.dual_pause("Check for beads resuspension and pipette manually if necessary")
         self.thermal_cycle("TAG PCR")
         self.pause("Protocol completed. Please resume to open and deactivate the thermocycler")
-        self._tcdeck.open_lid()
-        self._tcdeck.deactivate_lid()
-        self._tcdeck.deactivate_block()
+        self.open_and_deactivate_thermocycler()
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
@@ -818,6 +821,9 @@ class LibraryStationNoThermalCycler(LibraryStation):
 
     def thermal_cycle(self, cycle_name):
         self.dual_pause("Execute thermal cycle: {} ".format(cycle_name))
+
+    def open_and_deactivate_thermocycler(self):
+        pass
 
     def _check_and_open_tc_if_needed(self, slot, for_pick_plate=False):
         pass
