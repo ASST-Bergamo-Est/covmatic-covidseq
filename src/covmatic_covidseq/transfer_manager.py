@@ -242,7 +242,7 @@ class TransferManager:
             height = min(self._beads_expected_height, destination.depth - 2) if self._onto_beads else dest_well_with_volume.height
             side_movement = get_side_movement(destination, height, self._side_top_ratio, self._side_bottom_ratio) if self._onto_beads else 0
             dest_central = destination.bottom(height)
-            dest_above = destination.bottom(height + 2.5)
+            dest_above = destination.bottom(height + 5)
             dest_side = dest_central.move(Point(x=side_movement))
 
             if self._pipette_air_gap:
