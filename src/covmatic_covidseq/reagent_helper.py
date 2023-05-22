@@ -57,7 +57,10 @@ class ReagentPlateHelper:
             raise ReagentPlateException("Columns not available. Columns length: {}. Requested index: {}".format(
                 len(self._all_columns), index))
 
-    def assign_reagent(self, reagent_name: str, volume_with_overhead_per_sample: float, volume_available_per_sample: float = None):
+    def assign_reagent(self, reagent_name: str,
+                       volume_with_overhead_per_sample: float,
+                       volume_available_per_sample: float = None,
+                       vertical_speed: float = None):
         self._logger.info("Assigning reagent {} with volume {}".format(reagent_name, volume_with_overhead_per_sample))
 
         if reagent_name in self._assigned_reagents:
@@ -113,7 +116,7 @@ class ReagentPlateHelper:
         available_volumes = [v*volume_fraction for v in dispensed_volumes]
         first_row_available_volumes = [v*volume_fraction for v in first_row_volumes]
 
-        mts_8_channel = UpdatableMultiTubeSource(reagent_name)
+        mts_8_channel = UpdatableMultiTubeSource(reagent_name, vertical_speed=vertical_speed)
         for v in first_row_available_volumes:
             mts_8_channel.append_tube_with_vol(None, v)
         self._logger.info("MultiTubeSource has: {}".format(mts_8_channel.locations_and_vol))

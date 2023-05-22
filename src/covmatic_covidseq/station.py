@@ -303,7 +303,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                                                         num_cols=available_cols_for_reagent)
         for r in self.recipes:
             if r.use_reagent_plate:
-                self._reagent_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
+                self._reagent_plate_helper.assign_reagent(r.name,
+                                                          r.volume_to_distribute, r.volume_available,
+                                                          vertical_speed=self._slow_vertical_speed)
 
     def load_wash_plate_in_slot(self, slot):
         self.logger.info("Initializing Wash plate helper on slot {}".format(slot))
@@ -311,7 +313,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._wash_plate_helper = ReagentPlateHelper(self.num_samples_in_rows, num_rows=1, well_volume_limit=self._wash_plate_max_volume)
         for r in self.recipes:
             if r.use_wash_plate:
-                self._wash_plate_helper.assign_reagent(r.name, r.volume_to_distribute, r.volume_available)
+                self._wash_plate_helper.assign_reagent(r.name,
+                                                       r.volume_to_distribute, r.volume_available,
+                                                       vertical_speed=self._slow_vertical_speed)
         return plate
 
     @property
