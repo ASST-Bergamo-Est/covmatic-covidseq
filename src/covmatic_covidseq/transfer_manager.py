@@ -123,6 +123,10 @@ def get_side_movement(well, height,
     return ret
 
 
+class TransferManagerException(Exception):
+    pass
+
+
 class TransferManager:
     def __init__(self, pick_function, drop_function, logger=None):
         self._logger = logger or logging.getLogger(self.__class__.__name__)
@@ -201,7 +205,7 @@ class TransferManager:
         return self._mix_volume != 0 and self._mix_times != 0
 
     def transfer(self, source: Union[Well, MultiTubeSource],
-                 destination: Well,
+                 destination: Union[Well, WellWithVolume],
                  volume: float,
                  disposal_volume: float = 0,
                  change_tip: bool = False):
@@ -215,7 +219,12 @@ class TransferManager:
         num_transfers = math.ceil(volume / pipette_available_volume)
         self._logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, self._pipette_max_volume))
 
-        dest_well_with_volume = WellWithVolume(destination, 0)
+        if isinstance(destination, WellWithVolume):
+            dest_well_with_volume = destination
+        elif isinstance(destination, Well):
+            dest_well_with_volume = WellWithVolume(destination, 0)
+        else:
+            raise TransferManagerException("Destination passed is not of expected type: {} of type {}.".format(destination, type(destination)))
 
         while volume > 0:
             if change_tip and self._pipette.has_tip:
@@ -226,7 +235,7 @@ class TransferManager:
 
             self._logger.debug("Remaining volume: {:1f}".format(volume))
             volume_to_transfer = min(volume, pipette_available_volume)
-            self._logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, destination))
+            self._logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well_with_volume.well))
             if (self._pipette.current_volume - self._pipette_air_gap - disposal_volume) < volume_to_transfer:
                 if self._pipette_air_gap and self._pipette.current_volume >= self._pipette_air_gap:
                     self._pipette.dispense(self._pipette_air_gap, self._get_well(source).top())
@@ -243,14 +252,14 @@ class TransferManager:
             self._logger.debug("Volume in tip before dispensing: {}ul".format(self._pipette.current_volume))
             self._logger.debug("Dispensing at {}".format(dest_well_with_volume.height))
 
-            height = min(self._beads_expected_height, destination.depth - 2) if self._onto_beads else dest_well_with_volume.height
-            side_movement = get_side_movement(destination, height, self._side_top_ratio, self._side_bottom_ratio) if self._onto_beads else 0
-            dest_central = destination.bottom(height)
-            dest_above = destination.bottom(height + 5)
+            height = min(self._beads_expected_height, dest_well_with_volume.well.depth - 2) if self._onto_beads else dest_well_with_volume.height
+            side_movement = get_side_movement(dest_well_with_volume.well, height, self._side_top_ratio, self._side_bottom_ratio) if self._onto_beads else 0
+            dest_central = dest_well_with_volume.well.bottom(height)
+            dest_above = dest_well_with_volume.well.bottom(height + 5)
             dest_side = dest_central.move(Point(x=side_movement))
 
             if self._pipette_air_gap:
-                self._pipette.move_to(destination.top(), publish=None)
+                self._pipette.move_to(dest_well_with_volume.well.top(), publish=None)
                 self._pipette.dispense(self._pipette_air_gap)
 
             with MoveWithSpeed(self._pipette,
@@ -272,10 +281,11 @@ class TransferManager:
 
         self._logger.debug("Checking for mix")
         if self._mix_enabled:
-            mix_well(self._pipette, destination, self._mix_volume, self._mix_times,
+            mix_well(self._pipette, dest_well_with_volume,
+                     min(self._mix_volume, self._pipette_max_volume), self._mix_times,
                      travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
                      beads_height=self._beads_expected_height, side_top_ratio=self._side_top_ratio, side_bottom_ratio=self._side_bottom_ratio)
-            self._pipette.move_to(destination.top(), speed=self._vertical_speed, publish=False)
+            self._pipette.move_to(dest_well_with_volume.well.top(), speed=self._vertical_speed, publish=False)
 
         self._logger.debug("Checking for air gap")
         if self._pipette_air_gap:
