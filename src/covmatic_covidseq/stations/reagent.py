@@ -33,7 +33,7 @@ class ReagentStation(CovidseqBaseStation):
                  wash_plate_slot="5",
                  index_plate_slot="7",
                  reagents_tempdeck_slot="10",
-                 reagent_chilled_tubes_json="reagents_chilled_tubes.json",
+                 reagent_json="reagents.json",
                  reagents_wash_slot="11",
                  disposal_volume_ratio=0.25,
                  index_list=None,
@@ -52,8 +52,8 @@ class ReagentStation(CovidseqBaseStation):
         self._disposal_volume_ratio = disposal_volume_ratio
         self._pipette_chooser = PipetteChooser()
         self._tubes_list = []
-        self._reagents_chilled_tubes = []
-        self.load_reagents_chilled_tubes_json(reagent_chilled_tubes_json)
+        self._reagents_tubes = []
+        self.load_reagents_tubes_json(reagent_json)
         self._index_list = index_list
         self._transfer_manager = TransferManager(self.pick_up, self.drop)
 
@@ -75,12 +75,12 @@ class ReagentStation(CovidseqBaseStation):
                     message = "Not enough index passed. Passed {} index, needed {}".format(len(self._index_list), self._num_samples)
                 raise Exception(message)
 
-    def load_reagents_chilled_tubes_json(self, filename):
+    def load_reagents_tubes_json(self, filename):
         abspath = self.check_and_get_absolute_path(filename)
         self.logger.info("Loading reagents chilled tubes from {}".format(abspath))
 
         with open(abspath, "r") as f:
-            self._reagents_chilled_tubes = json.load(f)
+            self._reagents_tubes = json.load(f)
 
     @labware_loader(0, "_tipracks300")
     def load_tipracks300(self):
@@ -127,24 +127,18 @@ class ReagentStation(CovidseqBaseStation):
         self.logger.info("Recipe {} assigned to tube: {}; volume: {}".format(r.name, well, volume))
         self._tubes_list.append({"recipe": recipe_name, "tube": WellWithVolume(well, volume)})
 
-    @labware_loader(1, '_reagents_tubes')
-    def load_reagents_tubes(self):
+    @labware_loader(2, '_reagents_chilled')
+    def load_reagents_chilled(self):
         self._reagents_chilled = self._reagents_tempdeck.load_labware('opentrons_24_aluminumblock_generic_2ml_screwcap',
                                                                     'Reagents tube')
-
         self.apply_offset_to_labware(self._reagents_chilled)
 
-        for rct in self._reagents_chilled_tubes:
-            recipe = self.get_recipe(rct["name"])
-            if not recipe.needs_empty_tube:
-                self.append_tube_for_recipe(recipe.name, self._reagents_chilled.wells_by_name()[rct["well"]])
-
-    @labware_loader(1, '_reagents_wash_tubes')
+    @labware_loader(2, '_reagents_wash_tubes')
     def load_reagents_wash_tubes(self):
         self._reagents_wash = self.load_labware_with_offset('opentrons_6_tuberack_falcon_50ml_conical',
                                                      self._reagents_wash_slot,
                                                      'wash reagents tubes')
-        self.append_tube_for_recipe("TWB", self._reagents_wash.wells_by_name()['A1'])
+        # self.append_tube_for_recipe("TWB", self._reagents_wash.wells_by_name()['A1'])
 
     @labware_loader(2, '_reagent_plate')
     def load_reagent_plate(self):
@@ -173,13 +167,48 @@ class ReagentStation(CovidseqBaseStation):
     @labware_loader(6, '_index_plate')
     def load_index_plate(self):
         self._index_plate = self.load_labware_with_offset('nest_96_wellplate_100ul_pcr_full_skirt',
-                                                         self._index_plate_slot, 'Index plate')
+                                                          self._index_plate_slot, 'Index plate')
 
     def _tipracks(self) -> dict:
         return {
             '_tipracks300': '_p300',
             '_tipracks1000': '_p1000'
         }
+
+    def load_reagent_tubes_for_recipe(self, recipe):
+        self.logger.info("Loading reagents for recipe {}".format(recipe.name))
+        if recipe.needs_empty_tube:
+            pass
+            # for step in recipe.steps:
+            #     self.
+        else:
+            self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
+
+    def load_tubes(self):
+        for recipe in self.recipes:
+            self.load_reagent_tubes_for_recipe(recipe)
+
+    def _get_reagent_tube_from_name(self, name):
+        found_tubes = list(filter(lambda x: x["name"] == name, self._reagents_tubes))
+
+        if len(found_tubes) > 1:
+            raise Exception("Multiple reagent tubes found for reagent {}: {}".format(name, found_tubes))
+        if len(found_tubes) < 1:
+            raise Exception("None reagent tubes found for reagent {}".format(name, found_tubes))
+
+        well_position = found_tubes[0]["well"]
+
+        if found_tubes[0]["plate"] == "chilled tubes":
+            plate = self._reagents_chilled
+        elif found_tubes[0]["plate"] == "wash":
+            plate = self._reagents_wash
+        else:
+            raise Exception("Plate {} unknown".format(found_tubes[0]["plate"]))
+
+        well = plate.wells_by_name()[well_position]
+
+        self.logger.info("Reagent {} returning well {}".format(name, well))
+        return well
 
     def get_tube_for_recipe(self, recipe):
         """ Get reagent for prepared mix """
@@ -359,6 +388,10 @@ class ReagentStation(CovidseqBaseStation):
 
                 self.drop(pipette)
 
+    def body(self):
+        self.load_tubes()
+        super().body()
+        
     def anneal_rna(self):
         self.prepare("EPH3")
         self.distribute("EPH3", self.get_samples_wells_for_labware(self._cdna1_plate), self._p300)

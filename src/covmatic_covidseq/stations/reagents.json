@@ -1,0 +1,27 @@
+[
+  {
+    "name": "EPH3",
+    "plate": "chilled tubes",
+    "well": "A1"
+  },
+  {
+    "name": "FSM",
+    "plate": "chilled tubes",
+    "well": "B1"
+  },
+  {
+    "name": "RTV",
+    "plate": "chilled tubes",
+    "well": "C1"
+  },
+  {
+    "name": "ST2",
+    "plate": "chilled tubes",
+    "well": "D1"
+  },
+  {
+    "name": "TWB",
+    "plate": "wash",
+    "well": "A1"
+  }
+]
