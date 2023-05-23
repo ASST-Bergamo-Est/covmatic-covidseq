@@ -285,10 +285,32 @@ class ReagentStation(CovidseqBaseStation):
     def prepare(self, recipe_name):
         if self.run_stage(self.build_stage("Prep. {}".format(recipe_name))):
             recipe = self.get_recipe(recipe_name)
-            tube = self.get_tube_for_recipe(recipe_name)
+            destination_tube = self.get_tube_for_recipe(recipe_name)
+            mix_times = 10
+
             if recipe.needs_empty_tube:
-                tube.fill(recipe.total_prepared_vol * self._num_samples)            # We should prepare recipe here
-            self.pause("Place tube {} in {}".format(recipe_name, tube), home=False)
+                for i, step in enumerate(recipe.steps):
+                    last_step = (i == (len(recipe.steps) - 1))
+                    volume_to_transfer = step["vol"] * self._num_samples
+                    source_tube = self.get_tube_for_recipe(recipe.name)
+
+                    pipette = self._pipette_chooser.get_pipette(volume_to_transfer)
+
+                    self._transfer_manager.setup_transfer(
+                        pipette=pipette,
+                        pipette_max_volume=self._pipette_chooser.get_max_volume(pipette),
+                        pipette_air_gap=0,
+                        vertical_speed=self._slow_vertical_speed,
+                        total_volume_to_transfer=volume_to_transfer
+                    )
+                    if last_step:
+                        self._transfer_manager.setup_mix(mix_times=mix_times,
+                                                         mix_volume=recipe.total_prepared_vol * self._num_samples * 0.8)
+
+                    self._transfer_manager.transfer(source_tube, destination_tube, volume_to_transfer)
+
+                # destination_tube.fill(recipe.total_prepared_vol * self._num_samples)
+            self.pause("Place tube {} in {}".format(recipe_name, destination_tube), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette)
