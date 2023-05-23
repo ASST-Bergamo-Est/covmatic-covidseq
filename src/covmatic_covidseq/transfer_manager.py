@@ -12,7 +12,7 @@ from opentrons.types import Point
 # General use functions
 
 def mix_well(pipette,
-             well: Well,
+             well: Union[Well, WellWithVolume],
              volume,
              repetitions,
              last_dispense_flow_rate=None,
@@ -41,25 +41,29 @@ def mix_well(pipette,
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
 
-    well_with_volume = WellWithVolume(well, headroom_height=0)
+    if isinstance(well, WellWithVolume):
+        well_with_volume = well
+    else:
+        well_with_volume = WellWithVolume(well, headroom_height=0)
+
     height_min = well_with_volume.height
 
     well_with_volume.fill(volume)
     height_max = max(well_with_volume.height, height_min + min_z_difference)
 
-    aspirate_pos = [well.bottom((height_min + height_max)/2)]
+    aspirate_pos = [well_with_volume.well.bottom((height_min + height_max)/2)]
     if onto_beads:
         dispense_heights = [beads_height]
-        direction = get_magnets_direction(well)
+        direction = get_magnets_direction(well_with_volume.well)
         dispense_xy_directions = [(direction, 0), (direction, 1), (direction, -1)]
     else:
         dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
         dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
 
-    limited_dispense_heights = list(map(lambda x: min(x, well.depth-2), dispense_heights))
+    limited_dispense_heights = list(map(lambda x: min(x, well_with_volume.well.depth-2), dispense_heights))
     logger.info("Dispensing at height: {}".format(limited_dispense_heights))
 
-    well_bottom_and_side_amount = [(well.bottom(h), get_side_movement(well, h, side_top_ratio, side_bottom_ratio)) for h in islice(cycle(limited_dispense_heights), repetitions)]
+    well_bottom_and_side_amount = [(well_with_volume.well.bottom(h), get_side_movement(well_with_volume.well, h, side_top_ratio, side_bottom_ratio)) for h in islice(cycle(limited_dispense_heights), repetitions)]
     dispense_pos_center = [w for (w, s) in well_bottom_and_side_amount]
     dispense_pos_side = [w.move(Point(x=x_side * side_amount, y=y_side * side_amount))
                          for (w, side_amount), (x_side, y_side) in zip(well_bottom_and_side_amount, cycle(dispense_xy_directions))]
@@ -73,7 +77,7 @@ def mix_well(pipette,
         pipette.move_to(d_side, speed=travel_speed, publish=False)
         pipette.dispense(volume)
         pipette.move_to(d_center, speed=travel_speed, publish=False)
-    pipette.move_to(well.bottom(height_max), speed=travel_speed, publish=False)
+    pipette.move_to(well_with_volume.well.bottom(height_max), speed=travel_speed, publish=False)
 
 
 def get_magnets_opposite_direction(well: Well):
