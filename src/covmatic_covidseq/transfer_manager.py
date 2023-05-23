@@ -46,8 +46,7 @@ def mix_well(pipette,
     else:
         well_with_volume = WellWithVolume(well, headroom_height=0)
 
-    height_min = well_with_volume.height
-
+    height_min = well_with_volume.extract_vol_and_get_height(volume)
     well_with_volume.fill(volume)
     height_max = max(well_with_volume.height, height_min + min_z_difference)
 
@@ -219,12 +218,7 @@ class TransferManager:
         num_transfers = math.ceil(volume / pipette_available_volume)
         self._logger.debug("We need {} transfer with {:.1f}ul pipette".format(num_transfers, self._pipette_max_volume))
 
-        if isinstance(destination, WellWithVolume):
-            dest_well_with_volume = destination
-        elif isinstance(destination, Well):
-            dest_well_with_volume = WellWithVolume(destination, 0)
-        else:
-            raise TransferManagerException("Destination passed is not of expected type: {} of type {}.".format(destination, type(destination)))
+        dest_well_with_volume = self._get_well_with_volume(destination)
 
         while volume > 0:
             if change_tip and self._pipette.has_tip:
@@ -331,3 +325,33 @@ class TransferManager:
         else:
             ret = source
         return ret
+
+    @staticmethod
+    def _get_well_with_volume(well: Union[Well, WellWithVolume]):
+        if isinstance(well, WellWithVolume):
+            well_with_volume = well
+        elif isinstance(well, Well):
+            well_with_volume = WellWithVolume(well, 0)
+        else:
+            raise TransferManagerException("Well passed is not of expected type: {} of type {}.".format(well, type(well)))
+        return well_with_volume
+
+    def mix(self, destination: Union[Well, WellWithVolume], drop_tip: bool = False):
+        well = self._get_well(destination)
+        well_with_volume = self._get_well_with_volume(destination)
+
+        if not self._pipette.has_tip:
+            self._pick_function(self._pipette)
+
+        mix_well(self._pipette, well_with_volume,
+                 min(self._mix_volume, self._pipette_max_volume), self._mix_times,
+                 travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
+                 beads_height=self._beads_expected_height, side_top_ratio=self._side_top_ratio,
+                 side_bottom_ratio=self._side_bottom_ratio)
+        self._pipette.move_to(well.top(), speed=self._vertical_speed, publish=False)
+
+        if self._pipette_air_gap:
+            self._pipette.air_gap(self._pipette_air_gap)
+
+        if drop_tip:
+            self._drop_function(self._pipette)
