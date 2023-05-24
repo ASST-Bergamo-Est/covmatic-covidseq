@@ -230,6 +230,7 @@ class TransferManager:
             self._logger.debug("Remaining volume: {:1f}".format(volume))
             volume_to_transfer = min(volume, pipette_available_volume)
             self._logger.debug("Transferring volume {:1f} for well {}".format(volume_to_transfer, dest_well_with_volume.well))
+
             if (self._pipette.current_volume - self._pipette_air_gap - disposal_volume) < volume_to_transfer:
                 if self._pipette_air_gap and self._pipette.current_volume >= self._pipette_air_gap:
                     self._pipette.dispense(self._pipette_air_gap, self._get_well(source).top())
@@ -238,6 +239,7 @@ class TransferManager:
                         self._pipette.current_volume - disposal_volume)
                 self._logger.debug("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
                 self._aspirate(total_remaining_volume, source)
+
 
                 if self._pipette_air_gap:
                     self._pipette.air_gap(self._pipette_air_gap)
@@ -248,6 +250,8 @@ class TransferManager:
 
             height = min(self._beads_expected_height, dest_well_with_volume.well.depth - 2) if self._onto_beads else dest_well_with_volume.height
             side_movement = get_side_movement(dest_well_with_volume.well, height, self._side_top_ratio, self._side_bottom_ratio) if self._onto_beads else 0
+
+            self._logger.info("Current height: {}".format(height))
             dest_central = dest_well_with_volume.well.bottom(height)
             dest_above = dest_well_with_volume.well.bottom(height + 5)
             dest_side = dest_central.move(Point(x=side_movement))
@@ -316,6 +320,17 @@ class TransferManager:
                            speed=self._vertical_speed, move_close=False):
             self._pipette.aspirate(volume)
 
+    def _dispense(self, volume: float, well: Union[Well, WellWithVolume, MultiTubeSource]):
+        self._logger.info("Dispensing volume {} in {}".format(volume, well))
+        well_with_volume = self._get_well_with_volume(well)
+        well_with_volume.fill(volume)
+
+        with MoveWithSpeed(self._pipette,
+                           from_point=well_with_volume.well.bottom(well_with_volume.height + 5),
+                           to_point=well_with_volume.well.bottom(well_with_volume.height),
+                           speed=self._vertical_speed, move_close=False):
+            self._pipette.dispense(volume)
+
     def _get_well(self, source: Union[Well, WellWithVolume, MultiTubeSource]):
         self._logger.info("GetWell source is: {}".format(type(source)))
         if isinstance(source, MultiTubeSource):
@@ -327,8 +342,10 @@ class TransferManager:
         return ret
 
     @staticmethod
-    def _get_well_with_volume(well: Union[Well, WellWithVolume]):
-        if isinstance(well, WellWithVolume):
+    def _get_well_with_volume(well: Union[Well, WellWithVolume, MultiTubeSource]):
+        if isinstance(well, MultiTubeSource):
+            well_with_volume = well.get_current_well_with_volume()
+        elif isinstance(well, WellWithVolume):
             well_with_volume = well
         elif isinstance(well, Well):
             well_with_volume = WellWithVolume(well, 0)
