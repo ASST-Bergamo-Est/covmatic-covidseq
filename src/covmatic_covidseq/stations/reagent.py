@@ -127,6 +127,10 @@ class ReagentStation(CovidseqBaseStation):
         self.logger.info("Recipe {} assigned to tube: {}; volume: {}".format(r.name, well, volume))
         self._tubes_list.append({"recipe": recipe_name, "tube": WellWithVolume(well, volume)})
 
+    def append_tube_for_reagent(self, reagent_name, well, volume):
+        self.logger.info("Reagent {} assigned to tube: {}; volume: {}".format(reagent_name, well, volume))
+        self._tubes_list.append({"recipe": reagent_name, "tube": WellWithVolume(well, volume)})
+
     @labware_loader(2, '_reagents_chilled')
     def load_reagents_chilled(self):
         self._reagents_chilled = self._reagents_tempdeck.load_labware('opentrons_24_aluminumblock_generic_2ml_screwcap',
@@ -175,20 +179,35 @@ class ReagentStation(CovidseqBaseStation):
             '_tipracks1000': '_p1000'
         }
 
-    def load_reagent_tubes_for_recipe(self, recipe):
-        self.logger.info("Loading reagents for recipe {}".format(recipe.name))
-        if recipe.needs_empty_tube:
-            pass
-            # for step in recipe.steps:
-            #     self.
-        else:
-            self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
-
     def load_tubes(self):
+        reagents_list = {}
+
         for recipe in self.recipes:
-            self.load_reagent_tubes_for_recipe(recipe)
+            self.logger.info("Loading reagents for recipe {}".format(recipe.name))
+
+            if recipe.needs_empty_tube:
+                for step in recipe.steps:
+                    reagent_name = step["reagent"]
+                    reagent_volume = step["vol"] * self._num_samples
+
+                    if reagent_name in reagents_list:
+                        self.logger.info(
+                            "Reagent {} already present, adding volume {}".format(reagent_name, reagent_volume))
+                        reagents_list[reagent_name]["volume"] += reagent_volume
+                    else:
+                        self.logger.info(
+                            "Reagent {} adding in list with volume {}".format(reagent_name, reagent_volume))
+                        reagents_list[reagent_name] = {"volume": reagent_volume}
+
+            else:
+                self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
+
+        self.logger.info("Reagents loaded: {}".format(reagents_list))
+        for reagent in reagents_list:
+            self.append_tube_for_reagent(reagent, self._get_reagent_tube_from_name(reagent), reagents_list[reagent]["volume"])
 
     def _get_reagent_tube_from_name(self, name):
+        self.logger.info("Searching tube for reagent {}".format(name))
         found_tubes = list(filter(lambda x: x["name"] == name, self._reagents_tubes))
 
         if len(found_tubes) > 1:
@@ -256,7 +275,7 @@ class ReagentStation(CovidseqBaseStation):
         if disposal_volume is None:
             disposal_volume = pipette.min_volume * self._disposal_volume_ratio
 
-        self.logger.debug("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
+        self.logger.info("Using pipette {} with disposal volume {}".format(pipette, disposal_volume))
 
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
@@ -316,14 +335,19 @@ class ReagentStation(CovidseqBaseStation):
             recipe = self.get_recipe(recipe_name)
             destination_tube = self.get_tube_for_recipe(recipe_name)
             mix_times = 10
+            last_used_pipette = None
 
             if recipe.needs_empty_tube:
                 for i, step in enumerate(recipe.steps):
                     last_step = (i == (len(recipe.steps) - 1))
                     volume_to_transfer = step["vol"] * self._num_samples
-                    source_tube = self.get_tube_for_recipe(recipe.name)
+                    source_tube = self.get_tube_for_recipe(step["reagent"])
 
                     pipette = self._pipette_chooser.get_pipette(volume_to_transfer)
+
+                    if last_used_pipette is not None and last_used_pipette.has_tip:
+                        self.drop(last_used_pipette)
+                    last_used_pipette = pipette
 
                     self._transfer_manager.setup_transfer(
                         pipette=pipette,
@@ -391,7 +415,7 @@ class ReagentStation(CovidseqBaseStation):
     def body(self):
         self.load_tubes()
         super().body()
-        
+
     def anneal_rna(self):
         self.prepare("EPH3")
         self.distribute("EPH3", self.get_samples_wells_for_labware(self._cdna1_plate), self._p300)
