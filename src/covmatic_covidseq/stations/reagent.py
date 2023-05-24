@@ -356,11 +356,21 @@ class ReagentStation(CovidseqBaseStation):
                         vertical_speed=self._slow_vertical_speed,
                         total_volume_to_transfer=volume_to_transfer
                     )
-                    if last_step:
-                        self._transfer_manager.setup_mix(mix_times=mix_times,
-                                                         mix_volume=recipe.total_prepared_vol * self._num_samples * 0.8)
 
                     self._transfer_manager.transfer(source_tube, destination_tube, volume_to_transfer)
+
+                mix_volume = recipe.total_prepared_vol * self._num_samples * 0.8
+                mix_pipette = self._pipette_chooser.get_pipette(mix_volume)
+
+                if last_used_pipette is not None and last_used_pipette != mix_pipette and last_used_pipette.has_tip:
+                    self.drop(last_used_pipette)
+
+                self._transfer_manager.setup_transfer(mix_pipette,
+                                                      self._pipette_chooser.get_max_volume(mix_pipette),
+                                                      pipette_air_gap=0,
+                                                      vertical_speed=self._slow_vertical_speed)
+                self._transfer_manager.setup_mix(mix_times=mix_times, mix_volume=mix_volume)
+                self._transfer_manager.mix(destination_tube, drop_tip=True)
 
                 # destination_tube.fill(recipe.total_prepared_vol * self._num_samples)
             self.pause("Place tube {} in {}".format(recipe_name, destination_tube), home=False)
