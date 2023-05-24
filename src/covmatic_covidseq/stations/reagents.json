@@ -15,9 +15,44 @@
     "well": "C1"
   },
   {
-    "name": "ST2",
+    "name": "IPM",
     "plate": "chilled tubes",
     "well": "D1"
+  },
+  {
+    "name": "CPP1",
+    "plate": "chilled tubes",
+    "well": "A2"
+  },
+  {
+    "name": "CPP2",
+    "plate": "chilled tubes",
+    "well": "B2"
+  },
+  {
+    "name": "TB1",
+    "plate": "chilled tubes",
+    "well": "C2"
+  },
+  {
+    "name": "EBLTS",
+    "plate": "chilled tubes",
+    "well": "D2"
+  },
+  {
+    "name": "EPM",
+    "plate": "chilled tubes",
+    "well": "A3"
+  },
+  {
+    "name": "WATER",
+    "plate": "chilled tubes",
+    "well": "B3"
+  },
+  {
+    "name": "ST2",
+    "plate": "chilled tubes",
+    "well": "C3"
   },
   {
     "name": "TWB",
