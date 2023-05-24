@@ -376,7 +376,7 @@ class ReagentStation(CovidseqBaseStation):
             self.pause("Place tube {} in {}".format(recipe_name, destination_tube), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
-        self.fill_reagent_plate(recipe_name, pipette)
+        self.fill_reagent_plate(recipe_name, pipette, 5)
 
     def distribute(self, recipe_name, wells, pipette=None, disposal_volume=None):
         source = self.get_tube_for_recipe(recipe_name)
