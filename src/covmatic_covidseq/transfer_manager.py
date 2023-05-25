@@ -208,10 +208,12 @@ class TransferManager:
                  destination: Union[Well, WellWithVolume],
                  volume: float,
                  disposal_volume: float = 0,
-                 change_tip: bool = False):
+                 change_tip: bool = False,
+                 drop_tip_after: bool = False):
         self._logger.info("Starting transfer using pipette {}".format(self._pipette))
         self._logger.info("Current volume: {}ul; total volume: {}".format(volume, self._total_volume_to_transfer))
         self._logger.info("Air gap is: {}".format(self._pipette_air_gap))
+        self._logger.info("Change tip is {}; drop tip after is {}".format(change_tip, drop_tip_after))
 
         pipette_available_volume = self._pipette_max_volume - self._pipette_air_gap - disposal_volume
         self._logger.info("Available volume: {}".format(pipette_available_volume))
@@ -289,7 +291,7 @@ class TransferManager:
         if self._pipette_air_gap:
             self._pipette.air_gap(self._pipette_air_gap)
 
-        if change_tip:
+        if drop_tip_after:
             self._drop_function(self._pipette)
 
     def _aspirate(self, volume, source):
