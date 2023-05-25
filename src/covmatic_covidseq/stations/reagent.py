@@ -339,7 +339,6 @@ class ReagentStation(CovidseqBaseStation):
 
             if recipe.needs_empty_tube:
                 for i, step in enumerate(recipe.steps):
-                    last_step = (i == (len(recipe.steps) - 1))
                     volume_to_transfer = step["vol"] * self._num_samples
                     source_tube = self.get_tube_for_recipe(step["reagent"])
 
@@ -371,9 +370,6 @@ class ReagentStation(CovidseqBaseStation):
                                                       vertical_speed=self._slow_vertical_speed)
                 self._transfer_manager.setup_mix(mix_times=mix_times, mix_volume=mix_volume)
                 self._transfer_manager.mix(destination_tube, drop_tip=True)
-
-                # destination_tube.fill(recipe.total_prepared_vol * self._num_samples)
-            self.pause("Place tube {} in {}".format(recipe_name, destination_tube), home=False)
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette, 5)

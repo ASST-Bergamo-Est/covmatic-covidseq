@@ -67,6 +67,7 @@ def mix_well(pipette,
     dispense_pos_side = [w.move(Point(x=x_side * side_amount, y=y_side * side_amount))
                          for (w, side_amount), (x_side, y_side) in zip(well_bottom_and_side_amount, cycle(dispense_xy_directions))]
 
+    pipette.move_to(well_with_volume.well.bottom(height_max), publish=False)
     for i, (a, d_center, d_side) in enumerate(zip(cycle(aspirate_pos), dispense_pos_center, dispense_pos_side)):
         if i == (repetitions - 1) and last_dispense_flow_rate is not None:
             pipette.flow_rate.dispense = last_dispense_flow_rate
@@ -239,7 +240,6 @@ class TransferManager:
                         self._pipette.current_volume - disposal_volume)
                 self._logger.debug("Volume not enough, aspirating {:.1f}ul".format(total_remaining_volume))
                 self._aspirate(total_remaining_volume, source)
-
 
                 if self._pipette_air_gap:
                     self._pipette.air_gap(self._pipette_air_gap)
