@@ -356,7 +356,6 @@ class TransferManager:
         return well_with_volume
 
     def mix(self, destination: Union[Well, WellWithVolume], drop_tip: bool = False):
-        well = self._get_well(destination)
         well_with_volume = self._get_well_with_volume(destination)
 
         if not self._pipette.has_tip:
@@ -367,7 +366,9 @@ class TransferManager:
                  travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
                  beads_height=self._beads_expected_height, side_top_ratio=self._side_top_ratio,
                  side_bottom_ratio=self._side_bottom_ratio)
-        self._pipette.move_to(well.top(), speed=self._vertical_speed, publish=False)
+
+        over_the_liquid_height = min(well_with_volume.well.depth - 2, well_with_volume.height + 5)
+        self._pipette.move_to(well_with_volume.well.bottom(over_the_liquid_height), speed=self._vertical_speed, publish=False)
 
         if self._pipette_air_gap:
             self._pipette.air_gap(self._pipette_air_gap)

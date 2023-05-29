@@ -420,7 +420,7 @@ class LibraryStation(CovidseqBaseStation):
 
         for i, (dest_well) in enumerate(destinations):
             if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
-                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=True)
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=True, drop_tip_after=True)
             else:
                 source.use_volume_only(recipe.volume_final)
 
