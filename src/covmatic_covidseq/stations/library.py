@@ -454,12 +454,6 @@ class LibraryStation(CovidseqBaseStation):
 
         self.apply_flow_rate(pipette)
 
-        # num_transfers_per_sample = math.ceil(volume / self._pipette_chooser.get_max_volume(pipette))
-        # vol_per_transfer = volume / num_transfers_per_sample
-
-        # self.logger.info(
-        #     "We need {} transfers of {}ul for each sample".format(num_transfers_per_sample, vol_per_transfer))
-
         self._transfer_manager.setup_transfer(pipette,
                                               self._pipette_chooser.get_max_volume(pipette),
                                               self._pipette_chooser.get_air_gap(pipette),
@@ -472,27 +466,7 @@ class LibraryStation(CovidseqBaseStation):
 
         for i, (s, d) in enumerate(zip(sources, destinations)):
             if self.run_stage(self.build_stage("{} {}/{}".format(stage_name, i + 1, len(destinations)))):
-                self._transfer_manager.transfer(s, d, volume, change_tip=True)
-                # self.pick_up(pipette)
-                # for _ in range(num_transfers_per_sample):
-                #     with MoveWithSpeed(pipette,
-                #                        from_point=s.bottom(self._pcr_plate_bottom_height + 2.5),
-                #                        to_point=s.bottom(self._pcr_plate_bottom_height),
-                #                        speed=self._slow_vertical_speed, move_close=False):
-                #         pipette.aspirate(vol_per_transfer)
-                #
-                #     pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
-                #     pipette.dispense(self._pipette_chooser.get_air_gap(pipette), d.top())
-                #
-                #     pipette.dispense(vol_per_transfer, d.bottom(self._pcr_plate_bottom_height))
-                #
-                #     if mix_volume != 0 and mix_times != 0:
-                #         mix_well(pipette, d, mix_volume, self.get_mix_times(mix_times))
-                #
-                #     pipette.move_to(d.top(), speed=self._slow_vertical_speed, publish=False)
-                #     pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
-                #
-                # self.drop(pipette)
+                self._transfer_manager.transfer(s, d, volume, change_tip=True, drop_tip_after=True)
 
     def remove_supernatant(self,
                            labware,
@@ -644,8 +618,8 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle("ANNEAL")
 
     def first_strand_cdna(self):
-        self.transfer_sample_plate_internal(self._hsdeck_slot, "CDNA1")
         self.drop_reagent_plate_in_slot(self._magdeck_slot, "REAGENT_FULL")
+        self.transfer_sample_plate_internal(self._hsdeck_slot, "CDNA1")
         self.distribute_dirty("FS Mix", self._hs_plate)
         self.shake(1000, 60, blocking=False)
         self.pick_reagent_plate("REAGENT_EMPTY")
@@ -654,8 +628,8 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle("FSS")
 
     def amplify_cdna(self):
-        self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1")
         self._drop_plate_with_checks(self._hsdeck_slot, "COV12_FULL")
+        self.transfer_sample_plate_internal(self._magdeck_slot, "TAG1")
 
         self._sample_plate_manager.current_slot = self._hsdeck_slot
 
@@ -673,8 +647,8 @@ class LibraryStation(CovidseqBaseStation):
         self.thermal_cycle("PCR")
 
     def tagment_pcr_amplicons(self):
-        self.transfer_sample_plate_internal(self._magdeck_slot, "COV12")
         self._drop_plate_with_checks(self._hsdeck_slot, "TAG1_FULL")
+        self.transfer_sample_plate_internal(self._magdeck_slot, "COV12")
 
         self._sample_plate_manager.current_slot = self._hsdeck_slot
 
