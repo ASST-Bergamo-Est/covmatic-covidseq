@@ -209,7 +209,8 @@ class TransferManager:
                  volume: float,
                  disposal_volume: float = 0,
                  change_tip: bool = False,
-                 drop_tip_after: bool = False):
+                 drop_tip_after: bool = False,
+                 blow_out: bool = False):
         self._logger.info("Starting transfer using pipette {}".format(self._pipette))
         self._logger.info("Current volume: {}ul; total volume: {}".format(volume, self._total_volume_to_transfer))
         self._logger.info("Air gap is: {}".format(self._pipette_air_gap))
@@ -285,7 +286,17 @@ class TransferManager:
                      min(self._mix_volume, self._pipette_max_volume), self._mix_times,
                      travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
                      beads_height=self._beads_expected_height, side_top_ratio=self._side_top_ratio, side_bottom_ratio=self._side_bottom_ratio)
-            self._pipette.move_to(dest_well_with_volume.well.top(), speed=self._vertical_speed, publish=False)
+
+        over_the_liquid_height = min(dest_well_with_volume.well.depth - 2, dest_well_with_volume.height + 5)
+        if blow_out:
+            self._logger.info("Blowing out at height: {}".format(over_the_liquid_height))
+
+            blow_out_pos = dest_well_with_volume.well.bottom(over_the_liquid_height)
+            self._pipette.move_to(blow_out_pos, speed=self._vertical_speed, publish=False)
+            self._pipette.blow_out(blow_out_pos)
+
+        self._pipette.move_to(dest_well_with_volume.well.bottom(over_the_liquid_height), speed=self._vertical_speed,
+                              publish=False)
 
         self._logger.debug("Checking for air gap")
         if self._pipette_air_gap:

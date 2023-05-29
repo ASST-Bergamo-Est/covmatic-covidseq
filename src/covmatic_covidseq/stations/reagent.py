@@ -284,12 +284,13 @@ class ReagentStation(CovidseqBaseStation):
                                               total_volume_to_transfer=total_volume_to_aspirate)
 
         for i, (dest_well, volume) in enumerate(dest_wells_with_volume):
+            last_transfer = (i+1 == len(dest_wells_with_volume))
             if not self.run_stage(
                     self.build_stage("Dist. {} {}/{}".format(reagent_name, i + 1, len(dest_wells_with_volume)))):
                 if isinstance(source, WellWithVolume):
                     source.extract_vol_and_get_height(volume)
             else:
-                self._transfer_manager.transfer(source, dest_well, volume, disposal_volume)
+                self._transfer_manager.transfer(source, dest_well, volume, disposal_volume, blow_out=last_transfer)
 
         if pipette.has_tip:
             self.drop(pipette)
@@ -340,6 +341,7 @@ class ReagentStation(CovidseqBaseStation):
             if recipe.needs_empty_tube:
                 for i, step in enumerate(recipe.steps):
                     is_destination_dirty = (i != 0)
+                    is_last_step = (i+1 == len(recipe.steps))
                     volume_to_transfer = step["vol"] * self._num_samples
                     source_tube = self.get_tube_for_recipe(step["reagent"])
 
@@ -359,7 +361,8 @@ class ReagentStation(CovidseqBaseStation):
 
                     self._transfer_manager.transfer(source_tube, destination_tube, volume_to_transfer,
                                                     change_tip=is_destination_dirty,
-                                                    drop_tip_after=False)
+                                                    drop_tip_after=False,
+                                                    blow_out=not is_last_step)
 
                 mix_volume = recipe.total_prepared_vol * self._num_samples * 0.8
                 mix_pipette = self._pipette_chooser.get_pipette(mix_volume)
