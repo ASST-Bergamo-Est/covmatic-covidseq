@@ -424,6 +424,12 @@ class ReagentStation(CovidseqBaseStation):
 
                 self.drop(pipette)
 
+    def pick_plate(self, slot, plate_name):
+        self.robot_pick_plate("SLOT{}".format(slot), plate_name, self._task_name)
+
+    def drop_plate(self, slot, plate_name):
+        self.robot_drop_plate("SLOT{}".format(slot), plate_name, self._task_name)
+
     def body(self):
         self.load_tubes()
         super().body()
@@ -431,35 +437,35 @@ class ReagentStation(CovidseqBaseStation):
     def anneal_rna(self):
         self.prepare("EPH3")
         self.distribute("EPH3", self.get_samples_wells_for_labware(self._cdna1_plate), self._p300)
-        self.robot_pick_plate("SLOT{}".format(self._cdna1_plate_slot), "CDNA1_FULL")
+        self.pick_plate(self._cdna1_plate_slot, "CDNA1_FULL")
 
     def first_strand_cdna(self):
         self.prepare("FS Mix")
         self.distribute_reagent("FS Mix", self._p300)
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
+        self.pick_plate(self._reagent_plate_slot, "REAGENT_FULL")
+        self.drop_plate(self._reagent_plate_slot, "REAGENT_EMPTY")
 
     def amplify_cdna(self):
         self.prepare("CPP1 Mix")
         self.prepare("CPP2 Mix")
         self.distribute("CPP1 Mix", self.get_samples_COV1_for_labware(self._cov12_plate), self._p300)
         self.distribute("CPP2 Mix", self.get_samples_COV2_for_labware(self._cov12_plate), self._p300)
-        self.robot_pick_plate("SLOT{}".format(self._cov12_plate_slot), "COV12_FULL")
+        self.pick_plate(self._cov12_plate_slot, "COV12_FULL")
 
     def tagment_pcr_amplicons(self):
         self.prepare("TAG Mix")
         self.distribute("TAG Mix", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
-        self.robot_pick_plate("SLOT{}".format(self._tag1_plate_slot), "TAG1_FULL")
+        self.pick_plate(self._tag1_plate_slot, "TAG1_FULL")
 
     def post_tagmentation_cleanup(self):
         self.prepare("ST2")
         self.prepare("TWB")
         self.distribute_reagent("ST2", self._p300)
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.pick_plate(self._reagent_plate_slot, "REAGENT_FULL")
 
         self.fill_wash_plate("TWB")
-        self.robot_drop_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_EMPTY")
-        self.robot_pick_plate("SLOT{}WASH".format(self._wash_plate_slot), "WASH_FULL")
+        self.drop_plate(self._reagent_plate_slot, "REAGENT_EMPTY")
+        self.pick_plate(self._wash_plate_slot, "WASH_FULL")
 
     def amplify_tagmented_amplicons(self):
         """ We prepare a solution with PCR mastermix and index.
@@ -484,7 +490,8 @@ class ReagentStation(CovidseqBaseStation):
 
         self.distribute_index_to_wells(pcr_mm_and_index_wells, distribute_index_volume)
 
-        self.robot_pick_plate("SLOT{}".format(self._reagent_plate_slot), "REAGENT_FULL")
+        self.pick_plate(self._reagent_plate_slot, "REAGENT_FULL")
+        self.drop_plate(self._reagent_plate_slot, "REAGENT_EMPTY")
 
 
 class ReagentStationCalibration(ReagentStation):
