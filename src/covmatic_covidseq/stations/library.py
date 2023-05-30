@@ -308,9 +308,8 @@ class LibraryStation(CovidseqBaseStation):
                 raise Exception("Thermal cycle step value not supported: {}".format(step))
 
         self.msg = "Setting final block temperature to {}".format(cycle["final_temperature"])
-
-        self._tcdeck.set_lid_temperature(temperature=cycle["final_lid_temperature"])
         self._tcdeck.set_block_temperature(temperature=cycle["final_temperature"], block_max_volume=cycle["volume"])
+        self._tcdeck.set_lid_temperature(temperature=cycle["final_lid_temperature"])
 
         self.watchdog_start()
 
