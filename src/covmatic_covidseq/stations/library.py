@@ -738,8 +738,10 @@ class LibraryStation(CovidseqBaseStation):
         self._check_slot_is_accessible(self._hsdeck_slot)
         self.dual_pause("Check for beads resuspension and pipette manually if necessary")
         self.thermal_cycle("TAG PCR")
-        self.pause("Protocol completed. Please resume to open and deactivate the thermocycler")
-        self.open_and_deactivate_thermocycler()
+        self.pause("Protocol completed. Please resume to open the thermocycler")
+        self._check_and_open_tc_if_needed(self._tc_slot, for_pick_plate=True)
+        self.pause("Please resume to deactivate the thermocycler")
+        self.deactivate_thermocycler()
 
     def engage_magnets(self, height=None):
         self._magdeck.engage(height_from_base=height or self._mag_height)
