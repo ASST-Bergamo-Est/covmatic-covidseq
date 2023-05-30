@@ -37,8 +37,12 @@ class ReagentStation(CovidseqBaseStation):
                  reagents_wash_slot="11",
                  disposal_volume_ratio=0.25,
                  index_list=None,
+                 flow_rate_json_filepath="reagent_flow_rates.json",
                  *args, **kwargs):
-        super().__init__(ot_name=ot_name, *args, **kwargs)
+        super().__init__(
+            ot_name=ot_name,
+            flow_rate_json_filepath=flow_rate_json_filepath,
+            *args, **kwargs)
         self._tipracks300_slots = tipracks300_slots
         self._tipracks1000_slots = tipracks1000_slots
         self._reagent_plate_slot = reagent_plate_slot
@@ -272,6 +276,8 @@ class ReagentStation(CovidseqBaseStation):
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(total_volume_to_aspirate)
 
+        self.apply_flow_rate(pipette)
+
         if disposal_volume is None:
             disposal_volume = pipette.min_volume * self._disposal_volume_ratio
 
@@ -310,6 +316,8 @@ class ReagentStation(CovidseqBaseStation):
 
         if pipette is None:
             pipette = self._pipette_chooser.get_pipette(total_volume_to_aspirate)
+
+        self.apply_flow_rate(pipette)
 
         if disposal_volume is None:
             disposal_volume = pipette.min_volume * self._disposal_volume_ratio
@@ -441,7 +449,9 @@ class ReagentStation(CovidseqBaseStation):
 
     def first_strand_cdna(self):
         self.prepare("FS Mix")
+        self.load_flow_rate("FS Mix distribute")
         self.distribute_reagent("FS Mix", self._p300)
+        self.load_flow_rate()
         self.pick_plate(self._reagent_plate_slot, "REAGENT_FULL")
         self.drop_plate(self._reagent_plate_slot, "REAGENT_EMPTY")
 

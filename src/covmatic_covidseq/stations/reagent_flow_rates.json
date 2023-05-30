@@ -1,0 +1,22 @@
+{
+  "FS Mix distribute": {
+    "aspirate": 46,
+    "dispense": 46,
+    "blow_out": 46
+  },
+  "supernatant discard": {
+    "aspirate": null,
+    "dispense": null,
+    "blow_out": null
+  },
+  "defaults-p1000_single_gen2": {
+    "aspirate": 274.7,
+    "dispense": 274.7,
+    "blow_out": 274.7
+  },
+  "defaults-p300_single_gen2": {
+    "aspirate": 92.86,
+    "dispense": 92.86,
+    "blow_out": 92.86
+  }
+}
