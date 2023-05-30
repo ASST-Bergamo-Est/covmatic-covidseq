@@ -28,7 +28,7 @@
       }
     ],
     "volume_final": 8,
-    "headroom_fraction": 0.5
+    "headroom_fraction": 0.75
   },
   {
     "name": "CPP1 Mix",
