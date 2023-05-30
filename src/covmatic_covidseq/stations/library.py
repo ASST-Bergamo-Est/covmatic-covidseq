@@ -159,14 +159,15 @@ class LibraryStation(CovidseqBaseStation):
 
     def _check_and_open_tc_if_needed(self, slot, for_pick_plate=False):
         if slot == self._tc_slot and self._run_stage:
-            self._tcdeck.deactivate_lid()
-            self._tcdeck.deactivate_block()
-
             if self._tcdeck.lid_position != "open":
                 self._tcdeck.open_lid()
 
             if for_pick_plate:
                 self._thermocycler_release_plate()
+
+    def _check_tc_to_deactivate(self, slot):
+        if slot == self._tc_slot and self._run_stage:
+            self.deactivate_thermocycler()
 
     def _thermocycler_release_plate(self):
         self.pause("Please press the thermocycler button for 3 seconds to release the plate.")
@@ -184,6 +185,7 @@ class LibraryStation(CovidseqBaseStation):
     def _pick_plate_with_checks(self, from_slot, plate_name: str):
         self._check_slot_is_accessible(from_slot, for_pick_plate=True)
         self.robot_pick_plate("SLOT{}".format(from_slot), plate_name, self._task_name)
+        self._check_tc_to_deactivate(from_slot)
 
     def _drop_plate_with_checks(self, to_slot, plate_name: str):
         self._check_slot_is_accessible(to_slot)
@@ -195,6 +197,7 @@ class LibraryStation(CovidseqBaseStation):
         self._check_slot_is_accessible(to_slot)
         self.robot_transfer_plate_internal("SLOT{}".format(from_slot), "SLOT{}".format(to_slot), plate_name, self._task_name)
         self._check_slot_is_workable(to_slot)
+        self._check_tc_to_deactivate(from_slot)
 
     def _trash_plate_with_checks(self, from_slot, trash_slot="SLOT1", plate_name="TRASH"):
         self._check_slot_is_accessible(from_slot, for_pick_plate=True)
@@ -312,7 +315,13 @@ class LibraryStation(CovidseqBaseStation):
         self.watchdog_start()
 
     def open_and_deactivate_thermocycler(self):
+        self._tc_open_lid()
+        self.deactivate_thermocycler()
+
+    def _tc_open_lid(self):
         self._tcdeck.open_lid()
+
+    def deactivate_thermocycler(self):
         self._tcdeck.deactivate_lid()
         self._tcdeck.deactivate_block()
 
@@ -800,6 +809,12 @@ class LibraryStationNoThermalCycler(LibraryStation):
         pass
 
     def _check_and_open_tc_if_needed(self, slot, for_pick_plate=False):
+        pass
+
+    def _check_tc_to_deactivate(self, slot):
+        pass
+
+    def _tc_open_lid(self):
         pass
 
 
