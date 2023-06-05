@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-from .common import logger
+from .common import logger, NUM_SAMPLES
 from src.covmatic_covidseq.stations.library import LibraryStation
 
 EXPECTED_SAMPLES_ROW_1 = ["A1"]
@@ -30,7 +30,8 @@ class TestLibrary(unittest.TestCase):
     def setUp(self) -> None:
         self._s = LibraryStation(robot_manager_host="FAKEHOST",
                                  robot_manager_port=1234,
-                                 logger=logger)
+                                 logger=logger,
+                                 num_samples=NUM_SAMPLES)
 
     def test_creation(self):
         self.assertTrue(self._s)
