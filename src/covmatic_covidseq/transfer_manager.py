@@ -287,15 +287,10 @@ class TransferManager:
                      travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
                      beads_height=self._beads_expected_height, side_top_ratio=self._side_top_ratio, side_bottom_ratio=self._side_bottom_ratio)
 
-        over_the_liquid_height = min(dest_well_with_volume.well.depth - 2, dest_well_with_volume.height + 5)
         if blow_out:
-            self._logger.info("Blowing out at height: {}".format(over_the_liquid_height))
+            self._blow_out_in_well(dest_well_with_volume)
 
-            blow_out_pos = dest_well_with_volume.well.bottom(over_the_liquid_height)
-            self._pipette.move_to(blow_out_pos, speed=self._vertical_speed, publish=False)
-            self._pipette.blow_out(blow_out_pos)
-
-        self._pipette.move_to(dest_well_with_volume.well.bottom(over_the_liquid_height), speed=self._vertical_speed,
+        self._pipette.move_to(dest_well_with_volume.well.bottom(self._get_over_the_liquid_height(dest_well_with_volume)), speed=self._vertical_speed,
                               publish=False)
 
         self._logger.debug("Checking for air gap")
@@ -304,6 +299,10 @@ class TransferManager:
 
         if drop_tip_after:
             self._drop_function(self._pipette)
+
+    def _get_over_the_liquid_height(self, well):
+        well_with_volume = self._get_well_with_volume(well)
+        return min(well_with_volume.well.depth - 2, well_with_volume.height + 6)
 
     def _aspirate(self, volume, source):
         if isinstance(source, MultiTubeSource):
@@ -344,6 +343,18 @@ class TransferManager:
                            speed=self._vertical_speed, move_close=False):
             self._pipette.dispense(volume)
 
+    def _blow_out_in_well(self, well):
+        well_with_volume = self._get_well_with_volume(well)
+        over_the_liquid_height = self._get_over_the_liquid_height(well_with_volume)
+        self._logger.info("Blowing out at height: {}".format(over_the_liquid_height))
+
+        side_movement = get_side_movement(well_with_volume.well, over_the_liquid_height, self._side_top_ratio,
+                                          self._side_bottom_ratio)
+
+        blow_out_pos = well_with_volume.well.bottom(over_the_liquid_height).move(Point(x=side_movement))
+        self._pipette.move_to(blow_out_pos, speed=self._vertical_speed, publish=False)
+        self._pipette.blow_out(blow_out_pos)
+
     def _get_well(self, source: Union[Well, WellWithVolume, MultiTubeSource]):
         self._logger.info("GetWell source is: {}".format(type(source)))
         if isinstance(source, MultiTubeSource):
@@ -366,7 +377,8 @@ class TransferManager:
             raise TransferManagerException("Well passed is not of expected type: {} of type {}.".format(well, type(well)))
         return well_with_volume
 
-    def mix(self, destination: Union[Well, WellWithVolume], drop_tip: bool = False):
+    def mix(self, destination: Union[Well, WellWithVolume],
+            drop_tip: bool = False, blow_out: bool = False):
         well_with_volume = self._get_well_with_volume(destination)
 
         if not self._pipette.has_tip:
@@ -380,6 +392,9 @@ class TransferManager:
 
         over_the_liquid_height = min(well_with_volume.well.depth - 2, well_with_volume.height + 5)
         self._pipette.move_to(well_with_volume.well.bottom(over_the_liquid_height), speed=self._vertical_speed, publish=False)
+
+        if blow_out:
+            self._blow_out_in_well(well_with_volume)
 
         if self._pipette_air_gap:
             self._pipette.air_gap(self._pipette_air_gap)

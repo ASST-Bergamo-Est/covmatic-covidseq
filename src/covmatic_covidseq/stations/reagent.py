@@ -385,7 +385,7 @@ class ReagentStation(CovidseqBaseStation):
                                                       pipette_air_gap=0,
                                                       vertical_speed=self._slow_vertical_speed)
                 self._transfer_manager.setup_mix(mix_times=mix_times, mix_volume=mix_volume)
-                self._transfer_manager.mix(destination_tube, drop_tip=True)
+                self._transfer_manager.mix(destination_tube, drop_tip=True, blow_out=True)
 
     def distribute_reagent(self, recipe_name, pipette=None):
         self.fill_reagent_plate(recipe_name, pipette, 5)
