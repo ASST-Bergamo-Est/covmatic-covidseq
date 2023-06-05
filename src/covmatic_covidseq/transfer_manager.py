@@ -404,6 +404,7 @@ class TransferManager:
         if not self._pipette.has_tip:
             self._pick_function(self._pipette)
 
+        self._pipette.move_to(well_with_volume.well.bottom(self._get_over_the_liquid_height(well_with_volume)))
         mix_well(self._pipette, well_with_volume,
                  min(self._mix_volume, self._pipette_max_volume), self._mix_times,
                  travel_speed=self._horizontal_speed, onto_beads=self._onto_beads,
