@@ -1,6 +1,7 @@
 import logging
 import unittest
 
+from src.covmatic_covidseq.station import NUM_SAMPLES_MAX
 from src.covmatic_covidseq.recipe import Recipe
 from .common import CovidseqTestStation
 
@@ -45,3 +46,19 @@ class TestWithLoadRecipes(unittest.TestCase):
     def test_recipes_load(self):
         self.assertGreater(len(self._s._recipes), 0)
 
+class TestNumSamples(unittest.TestCase):
+    def test_num_samples_ok(self):
+        s = CovidseqTestStation(robot_manager_host="FAKEHOST",
+                                robot_manager_port=1234,
+                                ot_name="TEST",
+                                logger=logging.getLogger(),
+                                num_samples=NUM_SAMPLES_MAX)
+        self.assertTrue(s)
+
+    def test_num_samples_too_much(self):
+        with self.assertRaises(Exception):
+            s = CovidseqTestStation(robot_manager_host="FAKEHOST",
+                                    robot_manager_port=1234,
+                                    ot_name="TEST",
+                                    logger=logging.getLogger(),
+                                    num_samples=NUM_SAMPLES_MAX+1)

@@ -13,9 +13,7 @@ from opentrons.protocol_api.labware import Labware
 from .reagent_helper import ReagentPlateHelper, ReagentPlateException
 from .recipe import Recipe
 
-
-
-
+NUM_SAMPLES_MAX = 48
 
 class ConfigFileException(Exception):
     pass
@@ -138,6 +136,11 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._flow_rates = FlowRates()
         if flow_rate_json_filepath is not None:
             self._flow_rates.load_from_file(self.check_and_get_absolute_path(flow_rate_json_filepath))
+        self._check_num_samples()
+
+    def _check_num_samples(self):
+        if self._num_samples > NUM_SAMPLES_MAX:
+            raise Exception("Number of samples {} greater than maximum allowed that is {}".format(self._num_samples, NUM_SAMPLES_MAX))
 
     def pre_loaders_initializations(self):
         super().pre_loaders_initializations()
