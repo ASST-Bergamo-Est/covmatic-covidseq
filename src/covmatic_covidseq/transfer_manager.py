@@ -16,7 +16,8 @@ def mix_well(pipette,
              volume,
              repetitions,
              last_dispense_flow_rate=None,
-             min_z_difference=1.0,
+             min_z_difference=2.0,
+             max_submersed_height=10,
              travel_speed=25.0,
              onto_beads=False,
              beads_height: float = 8,
@@ -40,44 +41,63 @@ def mix_well(pipette,
     """
     logger.info("Requested mix with pipette {} for well {}; repetitions {}, volume {}".format(pipette, well,
                                                                                               repetitions, volume))
-
+    logger.info("Well type is {}".format(type(well)))
     if isinstance(well, WellWithVolume):
         well_with_volume = well
     else:
-        well_with_volume = WellWithVolume(well, headroom_height=0)
+        well_with_volume = WellWithVolume(well, initial_vol=volume, headroom_height=0)
 
-    height_min = well_with_volume.extract_vol_and_get_height(volume)
-    well_with_volume.fill(volume)
-    height_max = max(well_with_volume.height, height_min + min_z_difference)
+    steps = math.ceil(well_with_volume.height / max_submersed_height)
+    volume_per_step = volume / steps
+    logger.info("Steps are: {}".format(steps))
+    logger.info("Volume per step is: {:.2f}".format(volume_per_step))
 
-    aspirate_pos = [well_with_volume.well.bottom((height_min + height_max)/2)]
+    aspirate_pos = []
+    for _ in range(steps):
+        aspirate_height = well_with_volume.extract_vol_and_get_height(volume_per_step)
+        logger.info("Set aspirate height to {}".format(aspirate_height))
+        aspirate_pos.append(well_with_volume.well.bottom(aspirate_height))
+
+    dispense_heights = []
+    for i in range(steps):
+        well_with_volume.fill(volume_per_step)
+        if steps == 1:
+            height = min(well_with_volume.height + min_z_difference, well_with_volume.well.depth)
+        else:
+            height = max(well_with_volume.height + (0 if i % 2 else -max_submersed_height), well_with_volume.min_height)
+        dispense_heights.append(height)
+    logger.info("Dispense heights are: {}".format(dispense_heights))
+
     if onto_beads:
         dispense_heights = [beads_height]
         direction = get_magnets_direction(well_with_volume.well)
         dispense_xy_directions = [(direction, 0), (direction, 1), (direction, -1)]
     else:
-        dispense_heights = [height_max, (height_min + height_max)/2,  height_min]
         dispense_xy_directions = [(1, 0), (0, 1), (-1, 0),  (0, -1),  (1, -1),  (1, 1), (-1, +1), (-1, -1)]
+
+    dispense_xy_directions_generator = cycle(dispense_xy_directions)
 
     limited_dispense_heights = list(map(lambda x: min(x, well_with_volume.well.depth-2), dispense_heights))
     logger.info("Dispensing at height: {}".format(limited_dispense_heights))
 
-    well_bottom_and_side_amount = [(well_with_volume.well.bottom(h), get_side_movement(well_with_volume.well, h, side_top_ratio, side_bottom_ratio)) for h in islice(cycle(limited_dispense_heights), repetitions)]
-    dispense_pos_center = [w for (w, s) in well_bottom_and_side_amount]
-    dispense_pos_side = [w.move(Point(x=x_side * side_amount, y=y_side * side_amount))
-                         for (w, side_amount), (x_side, y_side) in zip(well_bottom_and_side_amount, cycle(dispense_xy_directions))]
-
-    pipette.move_to(well_with_volume.well.bottom(height_max), publish=False)
-    for i, (a, d_center, d_side) in enumerate(zip(cycle(aspirate_pos), dispense_pos_center, dispense_pos_side)):
+    for i in range(repetitions):
         if i == (repetitions - 1) and last_dispense_flow_rate is not None:
             pipette.flow_rate.dispense = last_dispense_flow_rate
-        pipette.move_to(a, speed=travel_speed, publish=False)
-        pipette.aspirate(volume)
-        pipette.move_to(d_center, speed=travel_speed, publish=False)
-        pipette.move_to(d_side, speed=travel_speed, publish=False)
-        pipette.dispense(volume)
-        pipette.move_to(d_center, speed=travel_speed, publish=False)
-    pipette.move_to(well_with_volume.well.bottom(height_max), speed=travel_speed, publish=False)
+
+        for pos in aspirate_pos:
+            pipette.move_to(pos, speed=travel_speed)
+            pipette.aspirate(volume_per_step)
+
+        for height in dispense_heights:
+            well_center = well_with_volume.well.bottom(height)
+            x_side, y_side = next(dispense_xy_directions_generator)
+            side_amount = get_side_movement(well_with_volume.well, height, side_top_ratio, side_bottom_ratio)
+            well_side = well_center.move(Point(x=x_side * side_amount, y=y_side * side_amount))
+            pipette.move_to(well_center, speed=travel_speed)
+            pipette.move_to(well_side, speed=travel_speed)
+            pipette.dispense(volume_per_step)
+            pipette.move_to(well_center, speed=travel_speed)
+    pipette.move_to(well_with_volume.well.bottom(well_with_volume.height + 5), speed=travel_speed, publish=False)
 
 
 def get_magnets_opposite_direction(well: Well):
