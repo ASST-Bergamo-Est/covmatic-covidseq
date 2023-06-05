@@ -358,6 +358,8 @@ class ReagentStation(CovidseqBaseStation):
 
                     pipette = self._pipette_chooser.get_pipette(volume_to_transfer)
 
+                    self.apply_flow_rate(pipette)
+
                     if last_used_pipette is not None and last_used_pipette.has_tip:
                         self.drop(last_used_pipette)
                     last_used_pipette = pipette
