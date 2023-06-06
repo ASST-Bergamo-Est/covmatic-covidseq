@@ -299,7 +299,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
 
     def _load_reagent_plate(self):
         self.logger.info("Initializing Reagent plate helper")
-        available_cols_for_reagent = max(0, 12-self._pcr_mastermix_with_index_col_offset)
+        available_cols_for_reagent = self._pcr_mastermix_with_index_col_offset
         self.logger.info("Reagent plate has {} columns available.".format(available_cols_for_reagent))
         
         self._reagent_plate_helper = ReagentPlateHelper(self.num_samples_in_rows,
