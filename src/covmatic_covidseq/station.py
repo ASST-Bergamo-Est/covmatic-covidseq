@@ -13,7 +13,8 @@ from opentrons.protocol_api.labware import Labware
 from .reagent_helper import ReagentPlateHelper, ReagentPlateException
 from .recipe import Recipe
 
-NUM_SAMPLES_MAX = 48
+NUM_SAMPLES_MAX = 40
+
 
 class ConfigFileException(Exception):
     pass

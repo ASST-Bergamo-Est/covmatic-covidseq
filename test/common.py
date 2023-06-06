@@ -5,7 +5,7 @@ from src.covmatic_covidseq.station import CovidseqBaseStation
 logger = logging.getLogger("TEST")
 logger.setLevel(logging.DEBUG)
 
-NUM_SAMPLES = 48
+NUM_SAMPLES = 40
 
 
 class CovidseqTestStation(CovidseqBaseStation):
