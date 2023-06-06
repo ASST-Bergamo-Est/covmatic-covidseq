@@ -84,8 +84,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
                  wash_plate_max_volume: float = 10000,
                  very_slow_vertical_speed: float = 5,
                  slow_vertical_speed: float = 10,
+                 column_offset_samples: int = 1,
                  column_offset_cov2: int = 6,
-                 pcr_mastermix_with_index_col_offset=6,
+                 pcr_mastermix_with_index_col_offset=7,
                  flow_rate_json_filepath=None,
                  offsets_json_filepath="/var/lib/jupyter/notebooks/config/labware_offsets.json",
                  config_json_filepath="/var/lib/jupyter/notebooks/config/config.json",
@@ -105,6 +106,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             so a common class that assigns everything shared is helpful.
             **Note**: this is an abstract class because each OT will have its own implementation.
 
+            :param column_offset_samples: the column offset to use when distributing samples
+            :param column_offset_cov2: the column offset to use for COV2 samples
             :param labware_load_offset: if True loads labware offset from specified file. Do not use with OT App.
             :param drop_loc_l: offset for dropping to the left side (should be positive) in mm
             :param drop_loc_r: offset for dropping to the right side (should be negative) in mm
@@ -127,6 +130,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         self._wash_plate_helper = None          # Initialized afterward
         self._very_slow_vertical_speed = very_slow_vertical_speed
         self._slow_vertical_speed = slow_vertical_speed
+        self._column_offset_samples = column_offset_samples
         self._column_offset_cov2 = column_offset_cov2
         self._pcr_mastermix_with_index_col_offset = pcr_mastermix_with_index_col_offset
         self._offsets_json_filepath = offsets_json_filepath
@@ -334,8 +338,9 @@ class CovidseqBaseStation(RobotStationABC, ABC):
             raise Exception("You must call load_wash_plate before using wash_plate_helper")
         return self._wash_plate_helper
 
-    def get_columns_for_samples(self, labware, column_offset=0):
-        return labware.columns()[column_offset:column_offset+self.num_cols]
+    def get_columns_for_samples(self, labware, column_offset=None):
+        offset = column_offset or self._column_offset_samples
+        return labware.columns()[offset:offset+self.num_cols]
 
     def get_samples_wells_for_labware(self, labware: Labware):
         return [w for c in self.get_columns_for_samples(labware) for w in c][:self._num_samples]
