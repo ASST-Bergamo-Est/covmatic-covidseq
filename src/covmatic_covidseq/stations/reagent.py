@@ -210,6 +210,9 @@ class ReagentStation(CovidseqBaseStation):
         for reagent in reagents_list:
             self.append_tube_for_reagent(reagent, self._get_reagent_tube_from_name(reagent), reagents_list[reagent]["volume"])
 
+        self.set_reagents_temperatue(4)
+        self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
+
     def _get_reagent_tube_from_name(self, name):
         self.logger.info("Searching tube for reagent {}".format(name))
         found_tubes = list(filter(lambda x: x["name"] == name, self._reagents_tubes))
@@ -440,6 +443,14 @@ class ReagentStation(CovidseqBaseStation):
     def drop_plate(self, slot, plate_name):
         self.robot_drop_plate("SLOT{}".format(slot), plate_name, self._task_name)
 
+    def set_reagents_temperatue(self, celsius):
+        self.logger.info("Setting tempdeck to {}°C".format(celsius))
+        self._reagents_tempdeck.start_set_temperature(celsius)
+
+    def deactivate_reagents_temperature(self):
+        self.logger.info("Deactivating tempdeck")
+        self._reagents_tempdeck.deactivate()
+
     def body(self):
         self.load_tubes()
         super().body()
@@ -460,11 +471,15 @@ class ReagentStation(CovidseqBaseStation):
     def amplify_cdna(self):
         self.prepare("CPP1 Mix")
         self.prepare("CPP2 Mix")
+        self.deactivate_reagents_temperature()
         self.distribute("CPP1 Mix", self.get_samples_COV1_for_labware(self._cov12_plate), self._p300)
         self.distribute("CPP2 Mix", self.get_samples_COV2_for_labware(self._cov12_plate), self._p300)
         self.pick_plate(self._cov12_plate_slot, "COV12_FULL")
+        self.dual_pause("Please wait for the PCR cycle to finish. When ready, continue to start cooling reagents")
 
     def tagment_pcr_amplicons(self):
+        self.set_reagents_temperatue(4)
+        self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
         self.prepare("TAG Mix")
         self.distribute("TAG Mix", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
         self.pick_plate(self._tag1_plate_slot, "TAG1_FULL")
@@ -505,6 +520,7 @@ class ReagentStation(CovidseqBaseStation):
         self.pick_plate(self._reagent_plate_slot, "REAGENT_FULL")
         self.drop_plate(self._reagent_plate_slot, "REAGENT_EMPTY")
 
+        self.deactivate_reagents_temperature()
 
 class ReagentStationCalibration(ReagentStation):
     """ ReagentStationClass used for calibration.
