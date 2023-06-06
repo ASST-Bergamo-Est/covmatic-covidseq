@@ -351,8 +351,8 @@ class CovidseqBaseStation(RobotStationABC, ABC):
     def get_samples_COV2_for_labware(self, labware):
         return [w for c in self.get_columns_for_samples(labware, self._column_offset_cov2) for w in c][:self._num_samples]
 
-    def get_samples_first_row_for_labware(self, labware):
-        return [c[0] for c in self.get_columns_for_samples(labware)]
+    def get_samples_first_row_for_labware(self, labware, column_offset=None):
+        return [c[0] for c in self.get_columns_for_samples(labware, column_offset)]
 
     def get_samples_first_row_COV2_for_labware(self, labware):
         return [c[0] for c in self.get_columns_for_samples(labware, self._column_offset_cov2)]

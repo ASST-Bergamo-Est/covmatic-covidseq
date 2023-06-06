@@ -448,8 +448,8 @@ class LibraryStation(CovidseqBaseStation):
                 pipette.air_gap(self._pipette_chooser.get_air_gap(pipette))
                 self.drop(pipette)
 
-    def transfer_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
-        sources = self.get_samples_first_row_for_labware(source_labware)
+    def transfer_source_samples(self, volume, source_labware, destination_labware, mix_times=0, mix_volume=0, stage_name="add sample"):
+        sources = self.get_samples_first_row_for_labware(source_labware, self._source_samples_starting_column)
         destinations = self.get_samples_first_row_for_labware(destination_labware)
         self.transfer_dirty(sources, destinations, volume, mix_times=mix_times, mix_volume=mix_volume, stage_name=stage_name)
 
@@ -618,7 +618,7 @@ class LibraryStation(CovidseqBaseStation):
 
         self.drop_sample_plate_in_slot(self._hsdeck_slot, "CDNA1_FULL")
 
-        self.transfer_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
+        self.transfer_source_samples(8.5, self._mag_plate, self._sample_plate_manager.current_plate)
 
         self.shake(1000, 60, blocking=False)
         self._trash_plate_with_checks(self._magdeck_slot, plate_name="INITIAL_SAMPLES")
