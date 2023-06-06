@@ -824,6 +824,9 @@ class LibraryStationNoThermalCycler(LibraryStation):
     def _tc_open_lid(self):
         pass
 
+    def deactivate_thermocycler(self):
+        pass
+
 
 class LibraryStationNoHeaterShaker(LibraryStation):
     def load_hsdeck(self):
