@@ -62,6 +62,7 @@ class LibraryStation(CovidseqBaseStation):
                  thermal_cycles_json_filepath="library_thermal_cycles.json",
                  beads_expected_height=10.0,
                  slow_speed=25.0,
+                 source_samples_starting_column: int = 0,
                  *args, **kwargs):
         super().__init__(
             ot_name=ot_name,
@@ -83,6 +84,7 @@ class LibraryStation(CovidseqBaseStation):
         self._mag_height = mag_height
         self._beads_expected_height = beads_expected_height
         self._slow_speed = slow_speed
+        self._source_samples_starting_column = source_samples_starting_column
         self._reagents_mts = []
         self._reagent_plate_manager = PlateManager("reagent")
         self._sample_plate_manager = PlateManager("sample")

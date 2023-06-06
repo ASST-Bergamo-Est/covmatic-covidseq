@@ -339,7 +339,7 @@ class CovidseqBaseStation(RobotStationABC, ABC):
         return self._wash_plate_helper
 
     def get_columns_for_samples(self, labware, column_offset=None):
-        offset = column_offset or self._column_offset_samples
+        offset = self._column_offset_samples if column_offset is None else column_offset
         return labware.columns()[offset:offset+self.num_cols]
 
     def get_samples_wells_for_labware(self, labware: Labware):

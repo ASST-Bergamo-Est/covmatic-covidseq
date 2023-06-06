@@ -268,6 +268,7 @@ class TransferManager:
                     self._pipette.air_gap(self._pipette_air_gap)
 
             dest_well_with_volume.fill(volume_to_transfer)
+            self._logger.info("Dispensing to: {}".format(dest_well_with_volume))
             self._logger.debug("Volume in tip before dispensing: {}ul".format(self._pipette.current_volume))
             self._logger.debug("Dispensing at {}".format(dest_well_with_volume.height))
 
