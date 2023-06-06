@@ -5,7 +5,7 @@ import os
 config_path = os.path.join('test', 'assets', 'example_config_file.json')
 
 metadata = {'apiLevel': '2.13'}
-station = ReagentStation(num_samples=48, config_json_filepath=config_path)
+station = ReagentStation(num_samples=40, config_json_filepath=config_path)
 
 
 def run(ctx):

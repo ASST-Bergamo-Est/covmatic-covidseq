@@ -2,7 +2,7 @@ from covmatic_covidseq.stations.reagent import ReagentStation
 
 FAKE_ROBOTMANAGER_HOST = "fakehost"
 FAKE_ROBOTMANAGER_PORT = 8080
-NUM_SAMPLES = 48
+NUM_SAMPLES = 40
 
 metadata = {'apiLevel': '2.13'}
 station = ReagentStation(robot_manager_host=FAKE_ROBOTMANAGER_HOST,
