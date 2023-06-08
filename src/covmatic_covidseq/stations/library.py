@@ -700,7 +700,7 @@ class LibraryStation(CovidseqBaseStation):
         self._drop_plate_with_checks(self._wash_plate_slot, "WASH_FULL")
         self.delay_wait_to_elapse(minutes=3)
 
-        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A11'], 60)
+        self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A10'], 60)
         self.disengage_magnets()
 
         self.load_flow_rate()
@@ -723,13 +723,15 @@ class LibraryStation(CovidseqBaseStation):
         self.shake(1000, 60)
 
         self.transfer_sample_plate_internal(self._magdeck_slot)
-        self.engage_magnets()
 
     def amplify_tagmented_amplicons(self):
+        self.engage_magnets()
+
         self.delay_start_count()
         self.drop_reagent_plate_in_slot(self._hsdeck_slot)
         self.shake(500, 20)
         self.delay_wait_to_elapse(minutes=3)
+
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 100, stage_name="rem TWB2")
         self.remove_supernatant(self._mag_plate, self._wash_plate.wells_by_name()['A12'], 15, stage_name="rem TWB2 deep",
                                 deep_steps=3, deep_transfer_volume_ratio=1.0)
