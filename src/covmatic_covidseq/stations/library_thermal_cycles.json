@@ -100,5 +100,55 @@
     ],
     "final_temperature": 10,
     "final_lid_temperature": 31
+  },
+  "TAG": {
+    "lid_temperature": 105,
+    "volume": 50,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 55,
+        "hold_time_seconds": 300
+      }
+    ],
+    "final_temperature": 10,
+    "final_lid_temperature": 31
+  },
+  "COVID": {
+    "lid_temperature": 105,
+    "volume": 30,
+    "program": [
+      {
+        "type": "step",
+        "temperature": 45,
+        "hold_time_seconds": 1200
+      },
+      {
+        "type": "step",
+        "temperature": 95,
+        "hold_time_seconds": 120
+      },
+      {
+        "type": "profile",
+        "repetitions": 43,
+        "profile": [
+          { "temperature": 95, "hold_time_seconds": 10},
+          { "temperature": 60, "hold_time_seconds": 30},
+          { "temperature": 72, "hold_time_seconds": 20}
+        ]
+      },
+      {
+        "type": "step",
+        "temperature": 95,
+        "hold_time_seconds": 10
+      },
+      {
+        "type": "step",
+        "temperature": 60,
+        "hold_time_seconds": 10
+      }
+    ],
+    "final_temperature": 60,
+    "final_lid_temperature": 105
   }
 }

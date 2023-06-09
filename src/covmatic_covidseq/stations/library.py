@@ -860,3 +860,12 @@ class LibraryStationNoHSTC(LibraryStationNoHeaterShaker, LibraryStationNoThermal
 
 class LibraryStationNoHSTCCalibration(LibraryStationNoHSTC, LibraryStationCalibration):
     pass
+
+class LibraryTestCovid(LibraryStation):
+    def body(self):
+        self._tcdeck.open_lid()
+        self.dual_pause("Clean thermocycler lid seal")
+        self.dual_pause("Load covid plate in thermocycler")
+        self.thermal_cycle("COVID")
+        self.pause("Please continue to deactivate thermocycler")
+        self.open_and_deactivate_thermocycler()
