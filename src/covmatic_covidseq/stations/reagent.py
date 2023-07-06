@@ -506,7 +506,7 @@ class ReagentStation(CovidseqBaseStation):
 
     def tagment_pcr_amplicons(self):
         self.set_reagents_temperatue(4)
-        self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
+        self.load_tubes_for_recipes_names("TAG Mix", "ST2", "TWB", "PCR Mix")
         self.prepare("TAG Mix")
         self.distribute("TAG Mix", self.get_samples_wells_for_labware(self._tag1_plate), self._p300)
         self.pick_plate(self._tag1_plate_slot, "TAG1_FULL")
