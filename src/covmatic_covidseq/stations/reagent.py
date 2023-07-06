@@ -549,6 +549,7 @@ class ReagentStation(CovidseqBaseStation):
 
         self.deactivate_reagents_temperature()
 
+
 class ReagentStationCalibration(ReagentStation):
     """ ReagentStationClass used for calibration.
         Since OT app v6.0.0 offsets are extracted from the runlog of the OT App run, but in this case we must not apply

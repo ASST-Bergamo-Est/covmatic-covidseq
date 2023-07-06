@@ -30,22 +30,22 @@
     "well": "B2"
   },
   {
-    "name": "TB1",
+    "name": "WATER1",
     "plate": "chilled tubes",
     "well": "C2"
   },
   {
-    "name": "EBLTS",
+    "name": "TB1",
     "plate": "chilled tubes",
     "well": "D2"
   },
   {
-    "name": "EPM",
+    "name": "EBLTS",
     "plate": "chilled tubes",
     "well": "A3"
   },
   {
-    "name": "WATER",
+    "name": "EPM",
     "plate": "chilled tubes",
     "well": "B3"
   },
@@ -53,6 +53,11 @@
     "name": "ST2",
     "plate": "chilled tubes",
     "well": "C3"
+  },
+  {
+    "name": "WATER2",
+    "plate": "chilled tubes",
+    "well": "D3"
   },
   {
     "name": "TWB",

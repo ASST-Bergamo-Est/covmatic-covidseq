@@ -46,7 +46,7 @@
       },
       {
         "name": "",
-        "reagent": "WATER",
+        "reagent": "WATER1",
         "vol": 4.7
       }
     ],
@@ -69,7 +69,7 @@
       },
       {
         "name": "",
-        "reagent": "WATER",
+        "reagent": "WATER1",
         "vol": 4.7
       }
     ],
@@ -92,7 +92,7 @@
       },
       {
         "name": "",
-        "reagent": "WATER",
+        "reagent": "WATER2",
         "vol": 20
       }
     ],
@@ -137,7 +137,7 @@
       },
       {
         "name": "",
-        "reagent": "WATER",
+        "reagent": "WATER2",
         "vol": 24
       }
     ],
