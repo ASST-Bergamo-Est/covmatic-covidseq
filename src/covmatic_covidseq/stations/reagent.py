@@ -183,10 +183,12 @@ class ReagentStation(CovidseqBaseStation):
             '_tipracks1000': '_p1000'
         }
 
-    def load_tubes(self):
+    def load_tubes_for_recipes_names(self, *recipes_names):
+        self.logger.info("Loading tubes for recipes names: {}".format(recipes_names))
         reagents_list = {}
 
-        for recipe in self.recipes:
+        for name in recipes_names:
+            recipe = self.get_recipe(name)
             self.logger.info("Loading reagents for recipe {}".format(recipe.name))
 
             if recipe.needs_empty_tube:
@@ -207,13 +209,21 @@ class ReagentStation(CovidseqBaseStation):
                 self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
 
         self.logger.info("Reagents loaded: {}".format(reagents_list))
+
+        reagent_message = "Load reagents in chilled block on slot {}:\n".format(self._reagents_tempdeck_slot)
         for reagent in reagents_list:
-            self.append_tube_for_reagent(reagent, self._get_reagent_tube_from_name(reagent), reagents_list[reagent]["volume"])
+            well = self._get_reagent_tube_from_name(reagent)
+            volume = reagents_list[reagent]["volume"]
+            self.append_tube_for_reagent(reagent, well, volume)
+            reagent_message += "{}\t{} ul in {}\n".format(reagent, volume, well)
 
         self.set_reagents_temperatue(4)
-        self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
 
-    def _get_reagent_tube_from_name(self, name):
+        self.logger.info("Reagent message: {}".format(reagent_message))
+
+        # self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
+
+    def _get_reagent_well_position_and_plate_from_name(self, name) -> Tuple[str, str]:
         self.logger.info("Searching tube for reagent {}".format(name))
         found_tubes = list(filter(lambda x: x["name"] == name, self._reagents_tubes))
 
@@ -222,14 +232,17 @@ class ReagentStation(CovidseqBaseStation):
         if len(found_tubes) < 1:
             raise Exception("None reagent tubes found for reagent {}".format(name, found_tubes))
 
-        well_position = found_tubes[0]["well"]
+        return found_tubes[0]["well"], found_tubes[0]["plate"]
 
-        if found_tubes[0]["plate"] == "chilled tubes":
+    def _get_reagent_tube_from_name(self, name):
+        well_position, plate = self._get_reagent_well_position_and_plate_from_name(name)
+
+        if plate == "chilled tubes":
             plate = self._reagents_chilled
-        elif found_tubes[0]["plate"] == "wash":
+        elif plate == "wash":
             plate = self._reagents_wash
         else:
-            raise Exception("Plate {} unknown".format(found_tubes[0]["plate"]))
+            raise Exception("Plate {} unknown".format(plate))
 
         well = plate.wells_by_name()[well_position]
 
@@ -452,7 +465,7 @@ class ReagentStation(CovidseqBaseStation):
         self._reagents_tempdeck.deactivate()
 
     def body(self):
-        self.load_tubes()
+        self.load_tubes_for_recipes_names("EPH3", "FS Mix", "CPP1 Mix", "CPP2 Mix")
         super().body()
 
     def anneal_rna(self):
