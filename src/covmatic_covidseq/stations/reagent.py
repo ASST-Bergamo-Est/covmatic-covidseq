@@ -235,6 +235,7 @@ class ReagentStation(CovidseqBaseStation):
         self.set_reagents_temperatue(4)
 
         self.logger.info("Reagent message: {}".format(reagent_message))
+        self.dual_pause(reagent_message, home=(False, False))
 
     def _get_reagent_well_position_and_plate_from_name(self, name) -> Tuple[str, str]:
         self.logger.info("Searching tube for reagent {}".format(name))
