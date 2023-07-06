@@ -183,9 +183,18 @@ class ReagentStation(CovidseqBaseStation):
             '_tipracks1000': '_p1000'
         }
 
+    @staticmethod
+    def _sort_reagents(reagents):
+        def sort_function(elem):
+            print("ELEM: {}".format(elem))
+            row_letter = elem["well_pos"][0]
+            column_numbers = elem["well_pos"][1:]
+            return elem["plate"] + column_numbers + row_letter
+        return sorted(reagents, key=sort_function)
+
     def load_tubes_for_recipes_names(self, *recipes_names):
         self.logger.info("Loading tubes for recipes names: {}".format(recipes_names))
-        reagents_list = {}
+        reagents_dict = {}
 
         for name in recipes_names:
             recipe = self.get_recipe(name)
@@ -195,32 +204,37 @@ class ReagentStation(CovidseqBaseStation):
                 reagent_name = step["reagent"]
                 reagent_volume = step["vol"] * self._num_samples
 
-                if reagent_name in reagents_list:
+                if reagent_name in reagents_dict:
                     self.logger.info(
                         "Reagent {} already present, adding volume {}".format(reagent_name, reagent_volume))
-                    reagents_list[reagent_name]["volume"] += reagent_volume
+                    reagents_dict[reagent_name]["volume"] += reagent_volume
                 else:
                     self.logger.info(
                         "Reagent {} adding in list with volume {}".format(reagent_name, reagent_volume))
-                    reagents_list[reagent_name] = {"volume": reagent_volume}
+                    reagents_dict[reagent_name] = {"volume": reagent_volume}
 
-            if not recipe.needs_empty_tube:
-                self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
-
-        self.logger.info("Reagents loaded: {}".format(reagents_list))
+        self.logger.info("Reagents loaded: {}".format(reagents_dict))
 
         reagent_message = "Load reagents in chilled block on slot {}:\n".format(self._reagents_tempdeck_slot)
-        for reagent in reagents_list:
+
+        reagents_list = []
+        for reagent in reagents_dict:
             well = self._get_reagent_tube_from_name(reagent)
-            volume = reagents_list[reagent]["volume"]
+            well_pos, plate = self._get_reagent_well_position_and_plate_from_name(reagent)
+            volume = reagents_dict[reagent]["volume"]
             self.append_tube_for_reagent(reagent, well, volume)
-            reagent_message += "{}\t{} ul in {}\n".format(reagent, volume, well)
+            reagents_list.append({"name": reagent, "well": well, "well_pos": well_pos, "plate": plate, "volume": volume})
+
+        sorted_reagents_list = self._sort_reagents(reagents_list)
+
+        for reagent in sorted_reagents_list:
+            reagent_message += "{}\t{} ul in {}\n".format(reagent["name"],
+                                                          reagent["volume"],
+                                                          reagent["well"])
 
         self.set_reagents_temperatue(4)
 
         self.logger.info("Reagent message: {}".format(reagent_message))
-
-        # self.dual_pause("Load reagents in chilled block on slot {}".format(self._reagents_tempdeck_slot))
 
     def _get_reagent_well_position_and_plate_from_name(self, name) -> Tuple[str, str]:
         self.logger.info("Searching tube for reagent {}".format(name))
