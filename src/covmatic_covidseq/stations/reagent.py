@@ -191,21 +191,20 @@ class ReagentStation(CovidseqBaseStation):
             recipe = self.get_recipe(name)
             self.logger.info("Loading reagents for recipe {}".format(recipe.name))
 
-            if recipe.needs_empty_tube:
-                for step in recipe.steps:
-                    reagent_name = step["reagent"]
-                    reagent_volume = step["vol"] * self._num_samples
+            for step in recipe.steps:
+                reagent_name = step["reagent"]
+                reagent_volume = step["vol"] * self._num_samples
 
-                    if reagent_name in reagents_list:
-                        self.logger.info(
-                            "Reagent {} already present, adding volume {}".format(reagent_name, reagent_volume))
-                        reagents_list[reagent_name]["volume"] += reagent_volume
-                    else:
-                        self.logger.info(
-                            "Reagent {} adding in list with volume {}".format(reagent_name, reagent_volume))
-                        reagents_list[reagent_name] = {"volume": reagent_volume}
+                if reagent_name in reagents_list:
+                    self.logger.info(
+                        "Reagent {} already present, adding volume {}".format(reagent_name, reagent_volume))
+                    reagents_list[reagent_name]["volume"] += reagent_volume
+                else:
+                    self.logger.info(
+                        "Reagent {} adding in list with volume {}".format(reagent_name, reagent_volume))
+                    reagents_list[reagent_name] = {"volume": reagent_volume}
 
-            else:
+            if not recipe.needs_empty_tube:
                 self.append_tube_for_recipe(recipe.name, self._get_reagent_tube_from_name(recipe.name))
 
         self.logger.info("Reagents loaded: {}".format(reagents_list))
