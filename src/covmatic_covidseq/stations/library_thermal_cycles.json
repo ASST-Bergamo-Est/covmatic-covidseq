@@ -102,27 +102,33 @@
     "final_lid_temperature": 31
   },
   "COVID": {
-    "lid_temperature": 105,
+    "lid_temperature": 30,
     "volume": 30,
     "program": [
       {
         "type": "step",
-        "temperature": 45,
-        "hold_time_seconds": 1200
+        "temperature": 4,
+        "hold_time_seconds": 300
       },
       {
         "type": "step",
-        "temperature": 95,
-        "hold_time_seconds": 120
+        "temperature": 10,
+        "hold_time_seconds": 300
       },
       {
-        "type": "profile",
-        "repetitions": 44,
-        "profile": [
-          { "temperature": 95, "hold_time_seconds": 10},
-          { "temperature": 60, "hold_time_seconds": 30},
-          { "temperature": 72, "hold_time_seconds": 20}
-        ]
+        "type": "step",
+        "temperature": 20,
+        "hold_time_seconds": 300
+      },
+      {
+        "type": "step",
+        "temperature": 45,
+        "hold_time_seconds": 300
+      },
+      {
+        "type": "step",
+        "temperature": 65,
+        "hold_time_seconds": 300
       }
     ],
     "final_temperature": 25,
