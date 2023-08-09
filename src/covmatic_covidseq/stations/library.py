@@ -741,6 +741,7 @@ class LibraryStation(CovidseqBaseStation):
         self.shake(1000, 60)
         self._check_slot_is_accessible(self._hsdeck_slot)
         self.dual_pause("Check for beads resuspension and pipette manually if necessary")
+        self.transfer_sample_plate_internal(self._tc_slot)
         self.thermal_cycle("TAG PCR")
         self.pause("Protocol completed. Please resume to open the thermocycler")
         self._check_and_open_tc_if_needed(self._tc_slot, for_pick_plate=True)
