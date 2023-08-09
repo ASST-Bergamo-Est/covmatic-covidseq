@@ -3,12 +3,12 @@ from unittest import mock
 from .common import logger, NUM_SAMPLES
 from src.covmatic_covidseq.stations.library import LibraryStation
 
-EXPECTED_SAMPLES_ROW_1 = ["A1"]
-EXPECTED_SAMPLES_ROW_2 = ["A1"]
-EXPECTED_SAMPLES_ROW_8 = ["A1"]
-EXPECTED_SAMPLES_ROW_9 = ["A1", "A2"]
-EXPECTED_SAMPLES_ROW_64 = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
-EXPECTED_SAMPLES_ROW_96 = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12"]
+EXPECTED_SAMPLES_ROW_1 = ["A2"]
+EXPECTED_SAMPLES_ROW_2 = ["A2"]
+EXPECTED_SAMPLES_ROW_8 = ["A2"]
+EXPECTED_SAMPLES_ROW_9 = ["A2", "A3"]
+EXPECTED_SAMPLES_ROW_64 = ["A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"]
+EXPECTED_SAMPLES_ROW_96 = ["A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12"]
 
 
 mock_labware = mock.MagicMock()

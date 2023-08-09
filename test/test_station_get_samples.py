@@ -23,24 +23,24 @@ mock_labware = mock.MagicMock()
 mock_labware.wells.return_value = ALL_WELLS
 mock_labware.columns.return_value = ALL_COLUMNS
 
-EXPECTED_WELLS_1 = ["A1"]
-EXPECTED_WELLS_2 = ["A1", "B1"]
-EXPECTED_WELLS_8 = ["A1",  "B1",  "C1",  "D1",  "E1",  "F1",  "G1",  "H1"]
-EXPECTED_WELLS_96 = ALL_WELLS
+EXPECTED_WELLS_1 = ["A2"]
+EXPECTED_WELLS_2 = ["A2", "B2"]
+EXPECTED_WELLS_8 = ["A2",  "B2",  "C2",  "D2",  "E2",  "F2",  "G2",  "H2"]
+EXPECTED_WELLS_96 = [w for c in ALL_COLUMNS[1:] for w in c]     # skipping first column
 
 EXPECTED_WELLS_1_OFFSET_48 = ["A7"]
 EXPECTED_WELLS_2_OFFSET_48 = ["A7", "B7"]
 EXPECTED_WELLS_8_OFFSET_48 = ["A7",  "B7",  "C7",  "D7",  "E7",  "F7",  "G7",  "H7"]
 EXPECTED_WELLS_9_OFFSET_48 = ["A7",  "B7",  "C7",  "D7",  "E7",  "F7",  "G7",  "H7",  "A8"]
 
-EXPECTED_COLUMNS_1 = [["A1",  "B1",  "C1",  "D1",  "E1",  "F1",  "G1",  "H1"]]
-EXPECTED_COLUMNS_8 = [["A1",  "B1",  "C1",  "D1",  "E1",  "F1",  "G1",  "H1"]]
-EXPECTED_COLUMNS_9 = [["A1",  "B1",  "C1",  "D1",  "E1",  "F1",  "G1",  "H1"], 
-                      ["A2",  "B2",  "C2",  "D2",  "E2",  "F2",  "G2",  "H2"]]
+EXPECTED_COLUMNS_1 = [["A2",  "B2",  "C2",  "D2",  "E2",  "F2",  "G2",  "H2"]]
+EXPECTED_COLUMNS_8 = [["A2",  "B2",  "C2",  "D2",  "E2",  "F2",  "G2",  "H2"]]
+EXPECTED_COLUMNS_9 = [["A2",  "B2",  "C2",  "D2",  "E2",  "F2",  "G2",  "H2"], 
+                      ["A3",  "B3",  "C3",  "D3",  "E3",  "F3",  "G3",  "H3"]]
 
-EXPECTED_FIRST_ROW_1 = ["A1"]
-EXPECTED_FIRST_ROW_8 = ["A1"]
-EXPECTED_FIRST_ROW_9 = ["A1", "A2"]
+EXPECTED_FIRST_ROW_1 = ["A2"]
+EXPECTED_FIRST_ROW_8 = ["A2"]
+EXPECTED_FIRST_ROW_9 = ["A2", "A3"]
 
 EXPECTED_FIRST_ROW_1_COV2 = ["A7"]
 EXPECTED_FIRST_ROW_8_COV2 = ["A7"]
