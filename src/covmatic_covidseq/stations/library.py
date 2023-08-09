@@ -662,10 +662,6 @@ class LibraryStation(CovidseqBaseStation):
 
         self._sample_plate_manager.current_slot = self._hsdeck_slot
 
-        self._check_slot_is_accessible(self._hsdeck_slot)
-        self.dual_pause("Please check plate in slot {slot} for bubbles; if necessary seal, spin the plate and put in slot {slot}".format(slot=self._hsdeck_slot))
-        self._check_slot_is_workable(self._hsdeck_slot)
-
         sources_cov1 = self.get_samples_first_row_for_labware(self._mag_plate)
         sources_cov2 = self.get_samples_first_row_COV2_for_labware(self._mag_plate)
         destinations = self.get_samples_first_row_for_labware(self._sample_plate_manager.current_plate)
