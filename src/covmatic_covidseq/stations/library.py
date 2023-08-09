@@ -57,7 +57,7 @@ class LibraryStation(CovidseqBaseStation):
                  pcr_plate_bottom_height=0.5,
                  skip_mix: bool = False,
                  skip_thermal_cycles: bool = False,
-                 mag_height=14,
+                 mag_height=15,
                  flow_rate_json_filepath="library_flow_rates.json",
                  thermal_cycles_json_filepath="library_thermal_cycles.json",
                  beads_expected_height=10.0,
