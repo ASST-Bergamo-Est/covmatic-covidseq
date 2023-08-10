@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from src.covmatic_covidseq.pipette_chooser import PipetteChooser
 import unittest
 
@@ -14,6 +16,11 @@ TEST_VOLS_PIPETTE_2 = [11, 12, 20, 30]
 
 TEST_VOL_PIPETTE_1_W_AIRGAP = 8
 TEST_VOL_PIPETTE_2_W_AIRGAP = 9.9
+
+UNSTICK_INTERVAL = 25 * 60
+INITIAL_TIME = 10
+UNSTICK_TIME_NOT_ELAPSED = INITIAL_TIME + UNSTICK_INTERVAL - 1
+UNSTICK_TIME_ELAPSED = INITIAL_TIME + UNSTICK_INTERVAL + 1
 
 
 class TestBaseClass(unittest.TestCase):
@@ -98,3 +105,51 @@ class TestAirGap(TestBaseClass):
 
     def test_pipette_2_get_max_vol_w_airgap(self):
         self.assertEqual(PIPETTE_2_VOL-EXPECTED_AIR_GAP_2, self._pc.get_max_volume(PIPETTE_2, True))
+
+
+class TestNeedsUstickCallsMonotinic(TestBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._time_patcher = patch("time.monotonic")
+        self._time_mock = self._time_patcher.start()
+
+    def tearDown(self) -> None:
+        self._time_patcher.stop()
+
+    def test_time_called_at_registration(self):
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+        self._time_mock.assert_called_once()
+
+    def test_time_is_saved_at_registration(self):
+        self._time_mock.side_effect = [INITIAL_TIME]
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+        self.assertEqual(self._pc._pipettes[0]["last_used"], INITIAL_TIME)
+
+    def test_time_is_updated_at_get_pipette(self):
+        self._time_mock.side_effect = [INITIAL_TIME]
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+        self._time_mock.reset_mock()
+        self._time_mock.side_effect = [UNSTICK_TIME_NOT_ELAPSED]
+
+        self._pc.get_pipette(PIPETTE_1_VOL)
+        self._time_mock.assert_called_once()
+
+
+class TestNeedsUstickTime(TestBaseClass):
+    def setUp(self) -> None:
+        super().setUp()
+        self._time_patcher = patch("time.monotonic")
+        self._time_mock = self._time_patcher.start()
+        self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
+        self._time_mock.reset_mock()
+
+    def test_time_not_elapsed(self):
+        self._time_mock.side_effect = [INITIAL_TIME, UNSTICK_TIME_NOT_ELAPSED]
+        p = self._pc.get_pipette(PIPETTE_1_VOL)
+        self.assertFalse(self._pc.needs_unstick(p))
+
+    def test_time_elapsed(self):
+        self._time_mock.side_effect = [INITIAL_TIME, UNSTICK_TIME_ELAPSED]
+        p = self._pc.get_pipette(PIPETTE_1_VOL)
+        self.assertTrue(self._pc.needs_unstick(p))
+
