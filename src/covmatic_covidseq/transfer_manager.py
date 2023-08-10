@@ -8,9 +8,11 @@ from covmatic_stations.utils import WellWithVolume, MoveWithSpeed
 from opentrons.protocol_api import Well
 from opentrons.types import Point
 
+# Module constants
+FAKE_ASPIRATE_VOL = 1        # ul, volume to do a fake aspiration to generate an unstick pipette plunger
+
 
 # General use functions
-
 def mix_well(pipette,
              well: Union[Well, WellWithVolume],
              volume,
@@ -230,7 +232,8 @@ class TransferManager:
                  disposal_volume: float = 0,
                  change_tip: bool = False,
                  drop_tip_after: bool = False,
-                 blow_out: bool = False):
+                 blow_out: bool = False,
+                 pipette_needs_unstick: bool = False):
         self._logger.info("Starting transfer using pipette {}".format(self._pipette))
         self._logger.info("Current volume: {}ul; total volume: {}".format(volume, self._total_volume_to_transfer))
         self._logger.info("Air gap is: {}".format(self._pipette_air_gap))
@@ -250,6 +253,14 @@ class TransferManager:
 
             if not self._pipette.has_tip:
                 self._pick_function(self._pipette)
+
+            if pipette_needs_unstick:
+                if self._pipette.current_volume == 0:
+                    self._logger.info("Unsticking pipette {}".format(self._pipette))
+                    self._pipette.aspirate(FAKE_ASPIRATE_VOL, self._get_well(source).top())
+                    self._pipette.dispense(FAKE_ASPIRATE_VOL, self._get_well(source).top())
+                else:
+                    self._logger.info("Skipping unsticking pipette {} because tip is not empty!".format(self._pipette))
 
             self._logger.debug("Remaining volume: {:1f}".format(volume))
             volume_to_transfer = min(volume, pipette_available_volume)

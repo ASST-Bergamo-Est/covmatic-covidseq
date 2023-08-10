@@ -63,3 +63,8 @@ class PipetteChooser:
     def needs_unstick(self, pipette) -> bool:
         p = self._find_pipette(pipette)
         return time.monotonic() - p["last_used"] > self._unstick_time_seconds
+
+    def get_needs_unstick_and_update(self, pipette) -> bool:
+        ret = self.needs_unstick(pipette)
+        self._update_pipette_last_used_time(pipette)
+        return ret
