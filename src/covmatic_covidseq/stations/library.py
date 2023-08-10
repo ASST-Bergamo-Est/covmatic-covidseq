@@ -8,7 +8,7 @@ from opentrons.types import Point
 
 from ..pipette_chooser import PipetteChooser
 from ..station import CovidseqBaseStation, labware_loader, instrument_loader
-from ..transfer_manager import TransferManager, get_side_movement, mix_well, get_magnets_opposite_direction
+from ..transfer_manager import TransferManager, get_side_movement, mix_well, get_magnets_opposite_direction, FAKE_ASPIRATE_VOL
 
 
 class PlateManager:
@@ -383,15 +383,17 @@ class LibraryStation(CovidseqBaseStation):
         self.logger.info("Transferring to {}".format(destinations))
 
         self._transfer_manager.setup_transfer(pipette,
-                                              self._pipette_chooser.get_max_volume(pipette),
-                                              self._pipette_chooser.get_air_gap(pipette),
-                                              len(destinations) * recipe.volume_final,
-                                              self._very_slow_vertical_speed,
-                                              source_tip_per_row)
+                                              pipette_max_volume=self._pipette_chooser.get_max_volume(pipette),
+                                              pipette_air_gap=self._pipette_chooser.get_air_gap(pipette),
+                                              total_volume_to_transfer=len(destinations) * recipe.volume_final,
+                                              vertical_speed=self._very_slow_vertical_speed,
+                                              source_tips_per_row=source_tip_per_row)
 
         for i, (dest_well) in enumerate(destinations):
             if self.run_stage(self.build_stage("add {} {}/{}".format(recipe_name, i+1, len(destinations)))):
-                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, disposal_volume=disposal_volume)
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final,
+                                                disposal_volume=disposal_volume,
+                                                pipette_needs_unstick=self._pipette_chooser.get_needs_unstick_and_update(pipette))
             else:
                 source.use_volume_only(recipe.volume_final)
 
@@ -430,7 +432,9 @@ class LibraryStation(CovidseqBaseStation):
 
         for i, (dest_well) in enumerate(destinations):
             if self.run_stage(self.build_stage("add {} {}/{}".format(stage_name or recipe_name, i + 1, len(destinations)))):
-                self._transfer_manager.transfer(source, dest_well, recipe.volume_final, change_tip=True, drop_tip_after=True)
+                self._transfer_manager.transfer(source, dest_well, recipe.volume_final,
+                                                change_tip=True, drop_tip_after=True,
+                                                pipette_needs_unstick=self._pipette_chooser.get_needs_unstick_and_update(pipette))
             else:
                 source.use_volume_only(recipe.volume_final)
 
@@ -476,7 +480,8 @@ class LibraryStation(CovidseqBaseStation):
 
         for i, (s, d) in enumerate(zip(sources, destinations)):
             if self.run_stage(self.build_stage("{} {}/{}".format(stage_name, i + 1, len(destinations)))):
-                self._transfer_manager.transfer(s, d, volume, change_tip=True, drop_tip_after=True)
+                self._transfer_manager.transfer(s, d, volume, change_tip=True, drop_tip_after=True,
+                                                pipette_needs_unstick=self._pipette_chooser.get_needs_unstick_and_update(pipette))
 
     def remove_supernatant(self,
                            labware,
