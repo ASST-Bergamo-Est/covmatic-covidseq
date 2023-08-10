@@ -8,7 +8,7 @@ description = 'Covmatic package that implements the Illumina CovidSeq NGS librar
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
-keywords = []
+keywords = ["automation", "lab", "biology", "robotics", "NGS", "sequencing", "covidseq"]
 authors = [
     { name="Agostino Facotti", email="agostino.facotti@asst-bergamoest.it"},
 ]
