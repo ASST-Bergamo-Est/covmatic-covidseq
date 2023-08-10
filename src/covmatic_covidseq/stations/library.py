@@ -566,6 +566,11 @@ class LibraryStation(CovidseqBaseStation):
                 self.apply_flow_rate(pipette, supernatant_flow_rate)
                 self.pick_up(pipette)
 
+                if self._pipette_chooser.get_needs_unstick_and_update(pipette):
+                    self.logger.info("Unstiking pipette {}".format(pipette))
+                    pipette.aspirate(FAKE_ASPIRATE_VOL, s.top())
+                    pipette.dispense(FAKE_ASPIRATE_VOL, s.top())
+
                 side_direction = get_magnets_opposite_direction(s)
 
                 pipette.move_to(s.top())
