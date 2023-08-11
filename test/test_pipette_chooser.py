@@ -125,14 +125,13 @@ class TestNeedsUstickCallsMonotinic(TestBaseClass):
         self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
         self.assertEqual(self._pc._pipettes[0]["last_used"], INITIAL_TIME)
 
-    def test_time_is_updated_at_get_pipette(self):
+    def test_time_is_not_updated_at_get_pipette(self):
         self._time_mock.side_effect = [INITIAL_TIME]
         self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
         self._time_mock.reset_mock()
-        self._time_mock.side_effect = [UNSTICK_TIME_NOT_ELAPSED]
 
         self._pc.get_pipette(PIPETTE_1_VOL)
-        self._time_mock.assert_called_once()
+        self._time_mock.assert_not_called()
 
 
 class TestNeedsUstickTime(TestBaseClass):
@@ -140,16 +139,17 @@ class TestNeedsUstickTime(TestBaseClass):
         super().setUp()
         self._time_patcher = patch("time.monotonic")
         self._time_mock = self._time_patcher.start()
+        self._time_mock.side_effect = [INITIAL_TIME]
         self._pc.register(PIPETTE_1, PIPETTE_1_VOL)
         self._time_mock.reset_mock()
 
     def test_time_not_elapsed(self):
-        self._time_mock.side_effect = [INITIAL_TIME, UNSTICK_TIME_NOT_ELAPSED]
+        self._time_mock.side_effect = [UNSTICK_TIME_NOT_ELAPSED, UNSTICK_TIME_NOT_ELAPSED]
         p = self._pc.get_pipette(PIPETTE_1_VOL)
-        self.assertFalse(self._pc.needs_unstick(p))
+        self.assertFalse(self._pc.get_needs_unstick_and_update(p))
 
     def test_time_elapsed(self):
-        self._time_mock.side_effect = [INITIAL_TIME, UNSTICK_TIME_ELAPSED]
+        self._time_mock.side_effect = [UNSTICK_TIME_ELAPSED, UNSTICK_TIME_ELAPSED]
         p = self._pc.get_pipette(PIPETTE_1_VOL)
-        self.assertTrue(self._pc.needs_unstick(p))
+        self.assertTrue(self._pc.get_needs_unstick_and_update(p))
 

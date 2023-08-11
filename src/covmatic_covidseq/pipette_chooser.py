@@ -50,7 +50,6 @@ class PipetteChooser:
                 selected = p
                 break
         self._logger.info("Selected pipette {} for volume {}".format(selected["pipette"], volume))
-        self._update_pipette_last_used_time(selected["pipette"])
         return selected["pipette"]
 
     def get_max_volume(self, pipette, consider_air_gap: bool=False):
