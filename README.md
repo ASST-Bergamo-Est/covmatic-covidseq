@@ -19,6 +19,7 @@
 * [Execution](#execution)
 * [Development](#development)
 * [Testing](#testing)
+* [Simulation](#simulation)
 * [Publish](#publish)
 
 ## Introduction
@@ -126,7 +127,7 @@ If you want to develop the package follow these step:
    ```
    pip install .
    ```
-   or use the wheel created in the *dist* folder.
+   or use the wheel created in the *dist* folder to install it on an OT2 robot.
 
 ## Testing
 
@@ -136,6 +137,24 @@ To execute tests and coverage report just launch:
 ```
 hatch run cov
 ```
+
+# Simulation
+You can simulate both *Reagent* and *Library* protocols before deploying. The simulation is done locally using *opentrons_simulate* program.
+1. Simulate *Reagent* and then *Library*:
+   ```
+   hatch run simulate_all:install
+   hatch run simulate_all:run
+   ```
+2. Simulate *Reagent* protocol:
+   ```
+   hatch run simulate:install
+   hatch run simulate:run_reagent
+   ```
+3. Simulate *Library* protocol:
+   ```
+   hatch run simulate:install
+   hatch run simulate:run_library
+   ```
 
 ## Publish
 
